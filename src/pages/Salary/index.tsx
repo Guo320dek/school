@@ -3,6 +3,7 @@ import { Table, Button, Select, Modal, Form, Popconfirm, InputNumber, Space, Tag
 import type { ColumnsType } from 'antd/es/table';
 import { getSalaries, createSalary, updateSalary, deleteSalary, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { SalaryRecord, Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -24,6 +25,7 @@ export default function Salary() {
   const loadSalaries = () => { getSalaries().then(setSalaries).catch(console.error); };
   useEffect(() => { loadSalaries(); getStaff().then(setAllStaff).catch(console.error); }, []);
   useRealtime('salary_records', loadSalaries);
+  const { editable } = usePermission();
 
   const filtered = useMemo(() => salaries.filter((s) => {
     if (filterYear && s.year !== filterYear) return false;
@@ -80,9 +82,9 @@ export default function Salary() {
     { title: '实发合计', dataIndex: 'total', width: 120, sorter: (a, b) => a.total - b.total, render: (v: number) => <strong>{fmt(v)}</strong> },
     { title: '状态', dataIndex: 'status', width: 90, render: (s: string) => <Tag color={s === '已发放' ? 'green' : 'orange'}>{s}</Tag> },
     { title: '发放日期', dataIndex: 'paidDate', width: 110, render: (v: string | undefined) => v || '--' },
-    { title: '操作', width: 120, fixed: 'right', render: (_, r) => (
-      <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
-    )},
+    { title: '操作', width: 120, fixed: 'right', render: (_, r) => 
+      editable ? <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space> : null
+    },
   ];
 
   return (
@@ -102,7 +104,7 @@ export default function Salary() {
             <Select placeholder="状态" value={filterStatus} onChange={setFilterStatus} allowClear style={{ width: 110 }} options={[{ label: '待发放', value: '待发放' }, { label: '已发放', value: '已发放' }]} />
           </Space>
         </Col>
-        <Col><Space><Button onClick={handleBatchPay} disabled={selectedRowKeys.length === 0}>批量发放</Button><Button type="primary" onClick={openAdd}>添加工资</Button></Space></Col>
+        {editable && <Col><Space><Button onClick={handleBatchPay} disabled={selectedRowKeys.length === 0}>批量发放</Button><Button type="primary" onClick={openAdd}>添加工资</Button></Space></Col>}
       </Row>
       <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 10 }} scroll={{ x: 900 }}
         rowSelection={{ selectedRowKeys, onChange: (keys) => setSelectedRowKeys(keys), getCheckboxProps: (r) => ({ disabled: r.status !== '待发放' }) }} />

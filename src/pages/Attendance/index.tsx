@@ -3,6 +3,7 @@ import { Table, Button, Select, Modal, Form, Popconfirm, DatePicker, TimePicker,
 import type { ColumnsType } from 'antd/es/table';
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { AttendanceRecord, Staff } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -25,6 +26,7 @@ export default function Attendance() {
   const loadRecords = () => { getAttendance().then(setRecords).catch(console.error); };
   useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(console.error); }, []);
   useRealtime('attendance_records', loadRecords);
+  const { editable } = usePermission();
 
   const filtered = useMemo(() => records.filter((r) => {
     if (searchName && !r.staffName.includes(searchName)) return false;
@@ -68,9 +70,9 @@ export default function Attendance() {
     { title: '签退', dataIndex: 'checkOut', width: 90, render: (v: string | null) => v ?? <span style={{ color: '#ccc' }}>--</span> },
     { title: '状态', dataIndex: 'status', width: 80, render: (s: string) => <Tag color={statusColor[s]}>{s}</Tag> },
     { title: '备注', dataIndex: 'remark', ellipsis: true },
-    { title: '操作', width: 120, fixed: 'right', render: (_, r) => (
-      <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
-    )},
+    { title: '操作', width: 120, fixed: 'right', render: (_, r) => 
+      editable ? <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space> : null
+    },
   ];
 
   return (
@@ -99,7 +101,7 @@ export default function Attendance() {
               options={[{ label: '正常', value: '正常' }, { label: '迟到', value: '迟到' }, { label: '早退', value: '早退' }, { label: '缺勤', value: '缺勤' }, { label: '请假', value: '请假' }]} />
           </Space>
         </Col>
-        <Col><Button type="primary" onClick={openAdd}>添加考勤</Button></Col>
+        {editable && <Col><Button type="primary" onClick={openAdd}>添加考勤</Button></Col>}
       </Row>
       <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 10 }} scroll={{ x: 800 }} />
       <Modal title={editing ? '编辑考勤' : '添加考勤'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={480}>
