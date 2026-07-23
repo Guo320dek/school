@@ -8,6 +8,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { getStaff, createStaff, updateStaff, deleteStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -36,6 +37,7 @@ export default function StaffArchive() {
   const loadStaff = () => { getStaff().then(setStaff).catch(console.error); };
   useEffect(() => { loadStaff(); }, []);
   useRealtime('staff', loadStaff);
+  const { editable } = usePermission();
 
   const departments = useMemo(() => [...new Set(staff.map((s) => s.department))].sort(), [staff]);
 
@@ -131,10 +133,10 @@ export default function StaffArchive() {
       title: '操作', width: 100, fixed: 'right',
       render: (_, r) => (
         <Space size={4}>
-          <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
+          {editable && <><a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
             <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
-          </Popconfirm>
+          </Popconfirm></>}
         </Space>
       ),
     },
@@ -212,7 +214,7 @@ export default function StaffArchive() {
                   </Tag>
                 </Tooltip>
               )}
-              <Button type="primary" icon={<PlusOutlined />} size="small" onClick={openAdd}>添加职工</Button>
+              {editable && <Button type="primary" icon={<PlusOutlined />} size="small" onClick={openAdd}>添加职工</Button>}
             </Space>
           </Col>
         </Row>

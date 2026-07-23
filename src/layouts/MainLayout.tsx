@@ -70,6 +70,17 @@ export default function MainLayout() {
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
+        trigger={
+          <div style={{
+            width: 24, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: token.colorPrimary, color: '#fff', borderRadius: '0 8px 8px 0',
+            cursor: 'pointer', fontSize: 14, position: 'absolute', right: -24, top: '50%',
+            transform: 'translateY(-50%)', boxShadow: '0 2px 6px rgba(79,110,247,0.3)',
+            zIndex: 10,
+          }}>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </div>
+        }
         style={{
           borderRight: `1px solid ${token.colorBorderSecondary}`,
           background: token.colorBgLayout,
@@ -100,8 +111,6 @@ export default function MainLayout() {
           display: 'flex', alignItems: 'center', gap: 12,
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
         }}>
-          <Button type="text" icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)} style={{ fontSize: 16, width: 40, height: 40 }} />
           <span style={{ fontSize: 15, fontWeight: 500, flex: 1 }}>{activeCategory.label}</span>
           <Button type="text" icon={editable ? <UnlockOutlined style={{ color: '#10B981' }} /> : <LockOutlined style={{ color: '#9CA3AF' }} />}
             onClick={() => editable ? lock() : setPwModal(true)} title={editable ? '点击锁定' : '解锁编辑'} />
