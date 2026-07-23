@@ -4,3 +4,8 @@
 
 [deploy]
   startCommand = "node server/index.cjs"
+
+[service]
+  [service.volume]
+    name = "data"
+    mountPath = "/data"
