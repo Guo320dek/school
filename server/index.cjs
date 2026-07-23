@@ -1,16 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { getDb } = require('./db');
+const fs = require('fs');
+const { getDb } = require('./db.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Startup diagnostics
+const distPath = path.join(__dirname, '..', 'dist');
+console.log('dist path:', distPath);
+console.log('dist exists:', fs.existsSync(distPath));
+console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
+
+try {
+  const db = getDb();
+  const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
+  console.log('Database OK - staff count:', staffCount.c);
+} catch (e) {
+  console.error('Database init failed:', e.message);
+}
+
 app.use(cors());
 app.use(express.json());
 
+// Health check
+app.get('/api/health', (_req, res) => {
+  try {
+    const db = getDb();
+    db.prepare('SELECT 1').get();
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (e) {
+    res.status(500).json({ status: 'error', db: e.message });
+  }
+});
+
 // Serve static frontend in production
-const distPath = path.join(__dirname, '..', 'dist');
 app.use(express.static(distPath));
 
 // ===== UTILITY =====
@@ -210,9 +235,26 @@ app.get('/api/school', (req, res) => {
 
 // SPA fallback: serve index.html for all non-API routes
 app.get(/^(?!\/api\/).*/, (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) res.status(404).send('Not found');
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Global error handler
+app.use((err, req, res, _next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+});
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  console.error('Server failed to start:', err);
+  process.exit(1);
 });
