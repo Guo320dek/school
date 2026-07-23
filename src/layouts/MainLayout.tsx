@@ -1,10 +1,12 @@
-import { useMemo } from 'react';
-import { Layout, Menu, Tabs, theme } from 'antd';
+import { useMemo, useState } from 'react';
+import { Layout, Menu, Tabs, theme, Button } from 'antd';
 import {
   DashboardOutlined,
   BookOutlined,
   TeamOutlined,
   NotificationOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -40,6 +42,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { token } = theme.useToken();
+  const [collapsed, setCollapsed] = useState(false);
 
   const activeCategory = useMemo(() => {
     if (location.pathname === '/') return categories[0];
@@ -53,6 +56,9 @@ export default function MainLayout() {
       <Sider
         theme="light"
         width={180}
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
         style={{
           borderRight: `1px solid ${token.colorBorderSecondary}`,
           background: token.colorBgLayout,
@@ -60,10 +66,11 @@ export default function MainLayout() {
       >
         <div style={{
           height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 16, fontWeight: 600, color: token.colorPrimary,
-          borderBottom: `1px solid ${token.colorBorderSecondary}`, letterSpacing: 2,
+          fontSize: collapsed ? 14 : 16, fontWeight: 600, color: token.colorPrimary,
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+          overflow: 'hidden', whiteSpace: 'nowrap',
         }}>
-          青云高级中学
+          {collapsed ? '青云' : '青云高级中学'}
         </div>
         <Menu
           mode="inline"
