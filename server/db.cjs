@@ -380,4 +380,4 @@ function seed() {
   });
 }
 
-module.exports = { getDb, ensureDb };
+module.exports = { getDb, ensureDb, DB_PATH };

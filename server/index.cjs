@@ -28,7 +28,8 @@ app.get('/api/health', (_req, res) => {
   try {
     const db = getDb();
     db.prepare('SELECT 1').get();
-    res.json({ status: 'ok', db: 'connected' });
+    const { DB_PATH } = require('./db.cjs');
+    res.json({ status: 'ok', db: 'connected', dbPath: DB_PATH });
   } catch (e) {
     res.status(500).json({ status: 'error', db: e.message });
   }

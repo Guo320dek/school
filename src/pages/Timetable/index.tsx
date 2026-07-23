@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { TimetableEntry, ClassInfo, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -35,6 +36,7 @@ export default function Timetable() {
   const loadEntries = () => { getTimetable().then(setEntries).catch(console.error); };
   useEffect(() => { loadEntries(); getClasses().then(setClasses).catch(console.error); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error);   }, []);
   useRealtime('timetable_entries', loadEntries);
+  const { editable } = usePermission();
 
   const selectedClassName = useMemo(() => {
     const cls = classes.find((c) => c.id === selectedClass);
@@ -167,9 +169,9 @@ export default function Timetable() {
                           }}
                           onMouseEnter={() => setHoveredCell(cellKey)}
                           onMouseLeave={() => setHoveredCell('')}
-                          onClick={() => openAdd(di + 1, p.idx)}
+                           onClick={() => editable && openAdd(di + 1, p.idx)}
                         >
-                          {isHovered && (
+                        {editable && isHovered && (
                             <PlusOutlined style={{ color: '#bbb', fontSize: 16 }} />
                           )}
                         </td>
@@ -187,7 +189,7 @@ export default function Timetable() {
                         }}
                         onMouseEnter={() => setHoveredCell(cellKey)}
                         onMouseLeave={() => setHoveredCell('')}
-                        onClick={() => openEdit(entry)}
+                         onClick={() => editable && openEdit(entry)}
                       >
                         <div style={{ fontWeight: 600, color: '#5B8DEF', fontSize: 13, marginBottom: 2 }}>
                           {entry.subjectName}
@@ -203,7 +205,7 @@ export default function Timetable() {
                             }} />
                           </Tooltip>
                         )}
-                        {isHovered && (
+                        {editable && isHovered && (
                           <div style={{
                             position: 'absolute', top: 2, left: 2,
                             display: 'flex', gap: 2,

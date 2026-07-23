@@ -73,8 +73,21 @@ export default function MainLayout() {
         style={{
           borderRight: `1px solid ${token.colorBorderSecondary}`,
           background: token.colorBgLayout,
+          position: 'relative',
         }}
       >
+        <div style={{
+          position: 'absolute', top: '50%', right: -12,
+          width: 24, height: 48, borderRadius: 12,
+          background: token.colorPrimary,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', zIndex: 10, boxShadow: '0 2px 6px rgba(79,110,247,0.35)',
+          transition: 'all 0.2s',
+        }} onClick={() => setCollapsed(!collapsed)}>
+          {collapsed
+            ? <MenuUnfoldOutlined style={{ color: '#fff', fontSize: 12 }} />
+            : <MenuFoldOutlined style={{ color: '#fff', fontSize: 12 }} />}
+        </div>
         <div style={{
           height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: collapsed ? 14 : 16, fontWeight: 600, color: token.colorPrimary,
