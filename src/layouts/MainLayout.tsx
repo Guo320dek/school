@@ -67,9 +67,9 @@ export default function MainLayout() {
       <Sider
         theme="light"
         width={180}
-        collapsible
+        collapsedWidth={64}
+        trigger={null}
         collapsed={collapsed}
-        onCollapse={setCollapsed}
         style={{
           borderRight: `1px solid ${token.colorBorderSecondary}`,
           background: token.colorBgLayout,
