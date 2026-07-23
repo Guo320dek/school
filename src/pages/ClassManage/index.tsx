@@ -99,10 +99,10 @@ export default function ClassManage() {
         </Row>
       ),
     },
-    {
-      title: '操作', width: 140, fixed: 'right',
-      render: (_, r) => (
-        editable ? <Space size={4}>
+    ...(editable ? [{
+      title: '操作', width: 140, fixed: 'right' as const,
+      render: (_: unknown, r: ClassInfo) => (
+        <Space size={4}>
           <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           {r.status === '在读' && r.grade === '高三' && (
             <Popconfirm title={`确定将 ${r.name} 标记为毕业？`} onConfirm={() => handleGraduate(r)}>
@@ -112,9 +112,9 @@ export default function ClassManage() {
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
             <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
           </Popconfirm>
-        </Space> : null
+        </Space>
       ),
-    },
+    }] : []),
   ];
 
   return (

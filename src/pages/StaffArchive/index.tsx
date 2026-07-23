@@ -129,17 +129,17 @@ export default function StaffArchive() {
         );
       },
     },
-    {
-      title: '操作', width: 100, fixed: 'right',
-      render: (_, r) => (
+    ...(editable ? [{
+      title: '操作', width: 100, fixed: 'right' as const,
+      render: (_: unknown, r: Staff) => (
         <Space size={4}>
-          {editable && <><a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
+          <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
             <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
-          </Popconfirm></>}
+          </Popconfirm>
         </Space>
       ),
-    },
+    }] : []),
   ];
 
   return (
