@@ -72,12 +72,14 @@ export default function MainLayout() {
         onCollapse={setCollapsed}
         trigger={
           <div style={{
-            width: 24, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: token.colorPrimary, color: '#fff', borderRadius: '0 8px 8px 0',
-            cursor: 'pointer', fontSize: 14, position: 'absolute', right: -24, top: '50%',
-            transform: 'translateY(-50%)', boxShadow: '0 2px 6px rgba(79,110,247,0.3)',
-            zIndex: 10,
-          }}>
+            width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: token.colorPrimary, color: '#fff', borderRadius: '50%',
+            cursor: 'pointer', fontSize: 14, position: 'absolute', right: -16, top: 12,
+            boxShadow: '0 2px 8px rgba(79,110,247,0.4)', zIndex: 10, transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          >
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </div>
         }
