@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Space, Tag, Card, Row, Col, Statistic, Typography, message, Progress, Tabs } from 'antd';
 import {
   PlusOutlined, TeamOutlined, HomeOutlined, TrophyOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { mockClasses, mockStaff } from '../../mock/data';
-import type { ClassInfo, GradeLevel, SubjectTrack } from '../../types';
+import { getClasses, createClass, updateClass, deleteClass, getStaff } from '../../api';
+import type { ClassInfo, GradeLevel, SubjectTrack, Staff } from '../../types';
 
 const { Title, Text } = Typography;
 
@@ -13,14 +13,18 @@ const trackOptions: SubjectTrack[] = ['物化生', '物化地', '物生政', '�
 const trackColors: Record<string, string> = { '物化生': '#5B8DEF', '物化地': '#13C2C2', '物生政': '#722ED1', '史地政': '#FA8C16', '史政生': '#EB2F96', '物化政': '#52C41A' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function ClassManage() {
-  const [classes, setClasses] = useState<ClassInfo[]>([...mockClasses]);
+  const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [activeGrade, setActiveGrade] = useState<string>('all');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<ClassInfo | null>(null);
   const [form] = Form.useForm();
+
+  const loadClasses = () => { getClasses().then(setClasses).catch(console.error); };
+  useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(console.error); }, []);
 
   const filtered = useMemo(() => classes.filter((c) => {
     if (activeGrade !== 'all' && c.grade !== activeGrade) return false;
@@ -51,21 +55,18 @@ export default function ClassManage() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ maxStudents: 55 }); setModalOpen(true); }
   function openEdit(r: ClassInfo) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { setClasses((p) => p.filter((c) => c.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteClass(id).then(loadClasses).then(() => message.success('已删除')); }
 
   function handleGraduate(cls: ClassInfo) {
-    setClasses((p) => p.map((c) => c.id === cls.id ? { ...c, status: '毕业' as const, graduateYear: 2026 } : c));
-    message.success(`${cls.name} 已标记为毕业`);
+    updateClass(cls.id, { status: '毕业', graduateYear: 2026 }).then(loadClasses).then(() => message.success(`${cls.name} 已标记为毕业`));
   }
 
   function handleSave() {
     form.validateFields().then((v) => {
       if (editing) {
-        setClasses((p) => p.map((c) => c.id === editing.id ? { ...c, ...v } : c));
-        message.success('已更新');
+        updateClass(editing.id, v).then(loadClasses).then(() => message.success('已更新'));
       } else {
-        setClasses((p) => [{ id: genId(), status: '在读', ...v }, ...p]);
-        message.success('已添加');
+        createClass({ id: newId(), status: '在读', ...v }).then(loadClasses).then(() => message.success('已添加'));
       }
       setModalOpen(false);
     });
@@ -185,7 +186,7 @@ export default function ClassManage() {
               <Select options={trackOptions.map((t) => ({ label: t, value: t }))} /></Form.Item></Col>
             <Col span={8}><Form.Item name="homeroomTeacher" label="班主任" rules={[{ required: true }]}>
               <Select showSearch optionFilterProp="label"
-                options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
+                options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="room" label="教室"><Input placeholder="教学楼3层301" /></Form.Item></Col>

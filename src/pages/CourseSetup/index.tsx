@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, InputNumber, Space, Tag, Card, Row, Col, Typography, message, Progress, Tooltip } from 'antd';
 import { PlusOutlined, BookOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { mockGradeCourses, mockSubjects, mockStaff } from '../../mock/data';
-import type { GradeCourse, GradeLevel } from '../../types';
+import { getCourses, createCourse, updateCourse, deleteCourse, getSubjects, getStaff } from '../../api';
+import type { GradeCourse, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
 
@@ -11,21 +11,26 @@ const catColors: Record<string, string> = { '主科': 'red', '选考': 'blue', '
 const catLabels: Record<string, string> = { '主科': '主科', '选考': '选考科目', '学考': '学考科目', '艺体': '艺体', '其他': '其他' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function CourseSetup() {
-  const [courses, setCourses] = useState<GradeCourse[]>([...mockGradeCourses]);
+  const [courses, setCourses] = useState<GradeCourse[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [filterGrade, setFilterGrade] = useState<GradeLevel>('高一');
   const [activeCat, setActiveCat] = useState<string>('all');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<GradeCourse | null>(null);
   const [form] = Form.useForm();
 
+  const loadCourses = () => { getCourses().then(setCourses).catch(console.error); };
+  useEffect(() => { loadCourses(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+
   const filtered = useMemo(() => {
     return courses.filter((c) => {
       if (c.grade !== filterGrade) return false;
       if (activeCat !== 'all') {
-        const sub = mockSubjects.find((s) => s.id === c.subjectId);
+        const sub = subjects.find((s) => s.id === c.subjectId);
         if (sub?.category !== activeCat) return false;
       }
       return true;
@@ -38,7 +43,7 @@ export default function CourseSetup() {
   const catDistribution = useMemo(() => {
     const dist: Record<string, number> = {};
     filtered.forEach((c) => {
-      const sub = mockSubjects.find((s) => s.id === c.subjectId);
+      const sub = subjects.find((s) => s.id === c.subjectId);
       const cat = sub?.category ?? '其他';
       dist[cat] = (dist[cat] || 0) + c.weeklyHours;
     });
@@ -47,18 +52,16 @@ export default function CourseSetup() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ grade: filterGrade }); setModalOpen(true); }
   function openEdit(r: GradeCourse) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { setCourses((p) => p.filter((c) => c.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteCourse(id).then(loadCourses).then(() => message.success('已删除')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
-      const sub = mockSubjects.find((s) => s.id === v.subjectId);
-      const teacher = mockStaff.find((s) => s.id === v.teacherId);
+      const sub = subjects.find((s) => s.id === v.subjectId);
+      const teacher = allStaff.find((s) => s.id === v.teacherId);
       if (editing) {
-        setCourses((p) => p.map((c) => c.id === editing.id ? { ...c, ...v, subjectName: sub?.name ?? c.subjectName, teacherName: teacher?.name ?? c.teacherName } : c));
-        message.success('已更新');
+        updateCourse(editing.id, { ...v, subjectName: sub?.name ?? editing.subjectName, teacherName: teacher?.name ?? editing.teacherName }).then(loadCourses).then(() => message.success('已更新'));
       } else {
-        setCourses((p) => [{ id: genId(), subjectName: sub?.name ?? '', teacherName: teacher?.name ?? '', ...v }, ...p]);
-        message.success('已添加');
+        createCourse({ id: newId(), subjectName: sub?.name ?? '', teacherName: teacher?.name ?? '', ...v }).then(loadCourses).then(() => message.success('已添加'));
       }
       setModalOpen(false);
     });
@@ -66,7 +69,7 @@ export default function CourseSetup() {
 
   const columns: ColumnsType<GradeCourse> = [
     { title: '科目', dataIndex: 'subjectName', width: 120, render: (v: string, r) => {
-      const sub = mockSubjects.find((s) => s.id === r.subjectId);
+      const sub = subjects.find((s) => s.id === r.subjectId);
       return <Space><Text strong>{v}</Text><Tag color={catColors[sub?.category ?? '其他']} style={{ borderRadius: 4, fontSize: 11 }}>{sub?.category}</Tag></Space>;
     }},
     {
@@ -99,7 +102,7 @@ export default function CourseSetup() {
         <Col span={16}>
           <Card size="small" title={<Space><BookOutlined />科目库</Space>} style={{ borderRadius: 8 }}>
             <Space wrap size={[8, 8]}>
-              {mockSubjects.map((s) => (
+               {subjects.map((s) => (
                 <Tooltip key={s.id} title={`${catLabels[s.category]}`}>
                   <Tag
                     color={activeCat === s.category ? catColors[s.category] : undefined}
@@ -161,14 +164,14 @@ export default function CourseSetup() {
             <Select options={gradeOptions.map((g) => ({ label: g, value: g }))} />
           </Form.Item>
           <Form.Item name="subjectId" label="科目" rules={[{ required: true }]}>
-            <Select options={mockSubjects.map((s) => ({ label: `${s.name} (${s.category})`, value: s.id }))} />
+            <Select options={subjects.map((s) => ({ label: `${s.name} (${s.category})`, value: s.id }))} />
           </Form.Item>
           <Form.Item name="weeklyHours" label="周课时" rules={[{ required: true }]}>
             <InputNumber min={1} max={10} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="teacherId" label="任课教师" rules={[{ required: true }]}>
             <Select showSearch optionFilterProp="label"
-              options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.id }))} />
+              options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.id }))} />
           </Form.Item>
         </Form>
       </Modal>

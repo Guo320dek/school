@@ -1,17 +1,18 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, DatePicker, TimePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Radio, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { mockAttendance, mockStaff } from '../../mock/data';
-import type { AttendanceRecord } from '../../types';
+import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
+import type { AttendanceRecord, Staff } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 const statusColor: Record<string, string> = { '正常': 'green', '迟到': 'orange', '早退': 'gold', '缺勤': 'red', '请假': 'blue' };
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function Attendance() {
-  const [records, setRecords] = useState<AttendanceRecord[]>([...mockAttendance]);
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [searchName, setSearchName] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
@@ -19,6 +20,9 @@ export default function Attendance() {
   const [editing, setEditing] = useState<AttendanceRecord | null>(null);
   const [form] = Form.useForm();
   const today = dayjs().format('YYYY-MM-DD');
+
+  const loadRecords = () => { getAttendance().then(setRecords).catch(console.error); };
+  useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(console.error); }, []);
 
   const filtered = useMemo(() => records.filter((r) => {
     if (searchName && !r.staffName.includes(searchName)) return false;
@@ -39,18 +43,18 @@ export default function Attendance() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ date: dayjs() }); setModalOpen(true); }
   function openEdit(r: AttendanceRecord) { setEditing(r); form.setFieldsValue({ ...r, date: dayjs(r.date), checkIn: r.checkIn ? dayjs(r.checkIn, 'HH:mm') : null, checkOut: r.checkOut ? dayjs(r.checkOut, 'HH:mm') : null }); setModalOpen(true); }
-  function handleDelete(id: string) { setRecords((p) => p.filter((r) => r.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteAttendance(id).then(loadRecords).then(() => message.success('已删除')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
-      const staff = mockStaff.find((st) => st.id === v.staffId);
+      const staff = allStaff.find((st) => st.id === v.staffId);
       const tfmt = (t: Dayjs | null) => (t ? t.format('HH:mm') : null);
-      const record: AttendanceRecord = {
-        id: editing?.id ?? genId(), staffId: v.staffId ?? editing?.staffId, staffName: staff?.name ?? editing?.staffName ?? '',
+      const record = {
+        id: editing?.id ?? newId(), staffId: v.staffId ?? editing?.staffId, staffName: staff?.name ?? editing?.staffName ?? '',
         date: (v.date as Dayjs).format('YYYY-MM-DD'), checkIn: tfmt(v.checkIn), checkOut: tfmt(v.checkOut), status: v.status, remark: v.remark || '',
       };
-      if (editing) { setRecords((p) => p.map((r) => r.id === editing.id ? record : r)); message.success('已更新'); }
-      else { setRecords((p) => [record, ...p]); message.success('已添加'); }
+      if (editing) { updateAttendance(editing.id, record).then(loadRecords).then(() => message.success('已更新')); }
+      else { createAttendance(record).then(loadRecords).then(() => message.success('已添加')); }
       setModalOpen(false);
     });
   }
@@ -99,7 +103,7 @@ export default function Attendance() {
       <Modal title={editing ? '编辑考勤' : '添加考勤'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={480}>
         <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
           {!editing && (<Form.Item name="staffId" label="员工" rules={[{ required: true }]}>
-            <Select showSearch optionFilterProp="label" options={mockStaff.filter((st) => st.status === '在职').map((st) => ({ label: `${st.name} - ${st.department}`, value: st.id }))} /></Form.Item>)}
+            <Select showSearch optionFilterProp="label" options={allStaff.filter((st) => st.status === '在职').map((st) => ({ label: `${st.name} - ${st.department}`, value: st.id }))} /></Form.Item>)}
           <Form.Item name="date" label="日期" rules={[{ required: true }]}><DatePicker style={{ width: '100%' }} /></Form.Item>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="checkIn" label="签到时间"><TimePicker format="HH:mm" style={{ width: '100%' }} /></Form.Item></Col>

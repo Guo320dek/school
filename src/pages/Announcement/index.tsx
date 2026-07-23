@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button, Select, Modal, Form, Popconfirm, Input, DatePicker, Space, Tag, Card, Row, Col, Typography, message, List, Empty, Timeline } from 'antd';
 import { PlusOutlined, NotificationOutlined, ClockCircleOutlined, TeamOutlined } from '@ant-design/icons';
-import { mockAnnouncements } from '../../mock/data';
+import { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '../../api';
 import type { Announcement, AnnounceTarget } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -11,14 +11,17 @@ const priorityColor: Record<string, string> = { '紧急': 'red', '重要': 'oran
 const targetColor: Record<string, string> = { '全体': 'purple', '高一': 'cyan', '高二': 'geekblue', '高三': 'blue' };
 const targetIcon: Record<string, React.ReactNode> = { '全体': <TeamOutlined />, '高一': <span>I</span>, '高二': <span>II</span>, '高三': <span>III</span> };
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function Announcement() {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([...mockAnnouncements]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [filterTarget, setFilterTarget] = useState<string>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [form] = Form.useForm();
+
+  const loadAnnouncements = () => { getAnnouncements().then(setAnnouncements).catch(console.error); };
+  useEffect(() => { loadAnnouncements(); }, []);
 
   const filtered = useMemo(() => {
     return announcements.filter((a) => {
@@ -36,14 +39,14 @@ export default function Announcement() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ date: dayjs(), expireDate: dayjs().add(7, 'day') }); setModalOpen(true); }
   function openEdit(r: Announcement) { setEditing(r); form.setFieldsValue({ ...r, date: dayjs(r.date), expireDate: dayjs(r.expireDate) }); setModalOpen(true); }
-  function handleDelete(id: string) { setAnnouncements((p) => p.filter((a) => a.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteAnnouncement(id).then(loadAnnouncements).then(() => message.success('已删除')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
       const fmt = (d: Dayjs) => d.format('YYYY-MM-DD');
-      const data: Announcement = { id: editing?.id ?? genId(), title: v.title, content: v.content, date: fmt(v.date), priority: v.priority, target: v.target, expireDate: fmt(v.expireDate), isExpired: dayjs().isAfter(v.expireDate) };
-      if (editing) { setAnnouncements((p) => p.map((a) => a.id === editing.id ? data : a)); message.success('已更新'); }
-      else { setAnnouncements((p) => [data, ...p]); message.success('已发布'); }
+      const data = { id: editing?.id ?? newId(), title: v.title, content: v.content, date: fmt(v.date), priority: v.priority, target: v.target, expireDate: fmt(v.expireDate), isExpired: dayjs().isAfter(v.expireDate) };
+      if (editing) { updateAnnouncement(editing.id, data).then(loadAnnouncements).then(() => message.success('已更新')); }
+      else { createAnnouncement(data).then(loadAnnouncements).then(() => message.success('已发布')); }
       setModalOpen(false);
     });
   }

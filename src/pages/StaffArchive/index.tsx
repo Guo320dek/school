@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, Input, Space, Tag, Card, Row, Col, Statistic, Typography, message, Badge, Tooltip, Avatar, List } from 'antd';
 import {
   PlusOutlined, SearchOutlined, UserOutlined, SafetyCertificateOutlined,
@@ -6,7 +6,7 @@ import {
   FilterOutlined, ClearOutlined, PhoneOutlined, CalendarOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { mockStaff } from '../../mock/data';
+import { getStaff, createStaff, updateStaff, deleteStaff } from '../../api';
 import type { Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -21,16 +21,19 @@ const deptMeta: Record<string, { color: string; icon: React.ReactNode; desc: str
   '校办':   { color: '#EB2F96', icon: <BankOutlined />, desc: '行政办公' },
 };
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function StaffArchive() {
-  const [staff, setStaff] = useState<Staff[]>([...mockStaff]);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [search, setSearch] = useState('');
   const [activeDept, setActiveDept] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('在职');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Staff | null>(null);
   const [form] = Form.useForm();
+
+  const loadStaff = () => { getStaff().then(setStaff).catch(console.error); };
+  useEffect(() => { loadStaff(); }, []);
 
   const departments = useMemo(() => [...new Set(staff.map((s) => s.department))].sort(), [staff]);
 
@@ -61,16 +64,14 @@ export default function StaffArchive() {
 
   function openAdd() { setEditing(null); form.resetFields(); setModalOpen(true); }
   function openEdit(r: Staff) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { setStaff((p) => p.filter((s) => s.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteStaff(id).then(loadStaff).then(() => message.success('已删除')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
       if (editing) {
-        setStaff((p) => p.map((s) => s.id === editing.id ? { ...s, ...v } : s));
-        message.success('已更新');
+        updateStaff(editing.id, v).then(loadStaff).then(() => message.success('已更新'));
       } else {
-        setStaff((p) => [{ id: genId(), ...v }, ...p]);
-        message.success('已添加');
+        createStaff({ id: newId(), ...v }).then(loadStaff).then(() => message.success('已添加'));
       }
       setModalOpen(false);
     });

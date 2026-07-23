@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Row, Col, Card, Statistic, List, Tag, Typography, Space, Descriptions, Button, Avatar } from 'antd';
 import {
   TeamOutlined, BookOutlined, DollarOutlined, ClockCircleOutlined,
@@ -5,7 +6,8 @@ import {
   MinusOutlined, RightOutlined, ExclamationCircleOutlined, EnvironmentOutlined, PhoneOutlined, UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { schoolInfo, mockMetrics, mockAnnouncements, mockAttendance } from '../../mock/data';
+import { getSchool, getMetrics, getAnnouncements, getAttendance } from '../../api';
+import type { School, BusinessMetric, Announcement, AttendanceRecord } from '../../types';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -20,9 +22,23 @@ const targetColor: Record<string, string> = { '全体': 'purple', '高一': 'cya
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const active = mockAnnouncements.filter((a) => !a.isExpired);
+  const [schoolInfo, setSchoolInfo] = useState<School | null>(null);
+  const [metrics, setMetrics] = useState<BusinessMetric[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+
+  useEffect(() => {
+    getSchool().then(setSchoolInfo).catch(console.error);
+    getMetrics().then(setMetrics).catch(console.error);
+    getAnnouncements().then(setAnnouncements).catch(console.error);
+    getAttendance().then(setAttendance).catch(console.error);
+  }, []);
+
+  const active = announcements.filter((a) => !a.isExpired);
   const today = dayjs().format('YYYY-MM-DD');
-  const todayAttendance = mockAttendance.filter((a) => a.date === today);
+  const todayAttendance = attendance.filter((a) => a.date === today);
+
+  if (!schoolInfo) return null;
 
   return (
     <>
@@ -76,7 +92,7 @@ export default function Dashboard() {
 
       {/* === 指标卡片 === */}
       <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
-        {mockMetrics.map((m) => (
+        {metrics.map((m) => (
           <Col xs={12} sm={8} lg={4} key={m.title}>
             <Card size="small" hoverable style={{ borderRadius: 10, textAlign: 'center', border: '1px solid #f0f0f0' }}>
               <div style={{ fontSize: 24, color: '#5B8DEF', marginBottom: 8 }}>{iconMap[m.icon]}</div>

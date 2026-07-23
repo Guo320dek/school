@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button, Select, Modal, Form, Popconfirm, Space, Tag, Card, Typography, message, Radio, Tooltip, Empty, Row, Col } from 'antd';
 import {
   EditOutlined, DeleteOutlined, PlusOutlined, ScheduleOutlined,
   UserOutlined, BookOutlined, WarningFilled,
 } from '@ant-design/icons';
-import { mockTimetable, mockClasses, mockSubjects, mockStaff } from '../../mock/data';
-import type { TimetableEntry } from '../../types';
+import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getSubjects, getStaff } from '../../api';
+import type { TimetableEntry, ClassInfo, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
 const DAYS = ['周一', '周二', '周三', '周四', '周五'];
@@ -16,22 +16,28 @@ const PERIODS = [
   { idx: 7, time: '15:50-16:35' },
 ];
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function Timetable() {
-  const [entries, setEntries] = useState<TimetableEntry[]>([...mockTimetable]);
+  const [entries, setEntries] = useState<TimetableEntry[]>([]);
+  const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [viewMode, setViewMode] = useState<'class' | 'teacher'>('class');
-  const [selectedClass, setSelectedClass] = useState<string>('c1');
+  const [selectedClass, setSelectedClass] = useState<string>('c11');
   const [selectedTeacher, setSelectedTeacher] = useState<string>('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<TimetableEntry | null>(null);
   const [form] = Form.useForm();
   const [hoveredCell, setHoveredCell] = useState<string>('');
 
+  const loadEntries = () => { getTimetable().then(setEntries).catch(console.error); };
+  useEffect(() => { loadEntries(); getClasses().then(setClasses).catch(console.error); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+
   const selectedClassName = useMemo(() => {
-    const cls = mockClasses.find((c) => c.id === selectedClass);
+    const cls = classes.find((c) => c.id === selectedClass);
     return cls ? `${cls.name}（${cls.track}）` : '';
-  }, [selectedClass]);
+  }, [selectedClass, classes]);
 
   const grid = useMemo(() => {
     const g: Record<number, Record<number, TimetableEntry | undefined>> = {};
@@ -72,26 +78,24 @@ export default function Timetable() {
   }
 
   function openEdit(e: TimetableEntry) { setEditingEntry(e); form.setFieldsValue(e); setModalOpen(true); }
-  function handleDelete(id: string) { setEntries((p) => p.filter((e) => e.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteTimetableEntry(id).then(loadEntries).then(() => message.success('已删除')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
-      const cls = mockClasses.find((c) => c.id === v.classId);
-      const sub = mockSubjects.find((s) => s.id === v.subjectId);
-      const teacher = mockStaff.find((s) => s.id === v.teacherId);
-      const entry: TimetableEntry = {
-        id: editingEntry?.id ?? genId(),
+      const cls = classes.find((c) => c.id === v.classId);
+      const sub = subjects.find((s) => s.id === v.subjectId);
+      const teacher = allStaff.find((s) => s.id === v.teacherId);
+      const entry = {
+        id: editingEntry?.id ?? newId(),
         classId: v.classId, className: cls?.name ?? '', grade: cls?.grade ?? '高一',
         dayOfWeek: v.dayOfWeek, period: v.period,
         subjectId: v.subjectId, subjectName: sub?.name ?? '',
         teacherId: v.teacherId, teacherName: teacher?.name ?? '',
       };
       if (editingEntry) {
-        setEntries((p) => p.map((e) => e.id === editingEntry.id ? entry : e));
-        message.success('已更新');
+        updateTimetableEntry(editingEntry.id, entry).then(loadEntries).then(() => message.success('已更新'));
       } else {
-        setEntries((p) => [...p, entry]);
-        message.success('已添加');
+        createTimetableEntry(entry).then(loadEntries).then(() => message.success('已添加'));
       }
       setModalOpen(false);
     });
@@ -109,12 +113,12 @@ export default function Timetable() {
           </Radio.Group>
           {viewMode === 'class' ? (
             <Select value={selectedClass} onChange={setSelectedClass} style={{ width: 240 }}
-              options={mockClasses.filter((c) => c.status === '在读').map((c) => ({
+              options={classes.filter((c) => c.status === '在读').map((c) => ({
                 label: `${c.name} - ${c.track} - ${c.homeroomTeacher}`, value: c.id,
               }))} />
           ) : (
             <Select value={selectedTeacher} onChange={setSelectedTeacher} placeholder="选择教师" allowClear style={{ width: 180 }}
-              options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: `${s.name} (${s.department})`, value: s.id }))} />
+              options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: `${s.name} (${s.department})`, value: s.id }))} />
           )}
         </Space>
       </Card>
@@ -227,7 +231,7 @@ export default function Timetable() {
       ) : selectedTeacher ? (
         <Card
           size="small"
-          title={<Space><UserOutlined />{mockStaff.find((s) => s.id === selectedTeacher)?.name} 的课表</Space>}
+           title={<Space><UserOutlined />{allStaff.find((s) => s.id === selectedTeacher)?.name} 的课表</Space>}
           style={{ borderRadius: 8 }}
         >
           {teacherEntries.length === 0 ? (
@@ -270,7 +274,7 @@ export default function Timetable() {
       <Modal title={editingEntry ? '编辑课节' : '添加课节'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={400}>
         <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
           <Form.Item name="classId" label="班级" rules={[{ required: true }]}>
-            <Select options={mockClasses.filter((c) => c.status === '在读').map((c) => ({ label: c.name, value: c.id }))} />
+            <Select options={classes.filter((c) => c.status === '在读').map((c) => ({ label: c.name, value: c.id }))} />
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="dayOfWeek" label="星期" rules={[{ required: true }]}>
@@ -280,10 +284,10 @@ export default function Timetable() {
           </Row>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="subjectId" label="科目" rules={[{ required: true }]}>
-              <Select options={mockSubjects.map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
+              <Select options={subjects.map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
             <Col span={12}><Form.Item name="teacherId" label="教师" rules={[{ required: true }]}>
               <Select showSearch optionFilterProp="label"
-                options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
+                options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
           </Row>
         </Form>
       </Modal>

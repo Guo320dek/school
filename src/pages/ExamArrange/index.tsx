@@ -1,21 +1,23 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Space, Tag, Card, Row, Col, Typography, message, Timeline, Steps } from 'antd';
 import { PlusOutlined, ScheduleOutlined, EnvironmentOutlined, UserOutlined, FlagOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { mockExams, mockExamSessions, mockExamRooms, mockSubjects, mockStaff, mockClasses } from '../../mock/data';
-import type { Exam, ExamSession, ExamRoom, GradeLevel } from '../../types';
+import { getExams, createExam, deleteExam, getExamSessions, createExamSession, deleteExamSession, getExamRooms, createExamRoom, deleteExamRoom, getSubjects, getStaff } from '../../api';
+import type { Exam, ExamSession, ExamRoom, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
 
 const typeColor: Record<string, string> = { '月考': 'blue', '期中': 'orange', '期末': 'red', '一模': 'purple', '二模': 'purple', '三模': 'purple' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function ExamArrange() {
-  const [exams, setExams] = useState<Exam[]>([...mockExams]);
-  const [sessions, setSessions] = useState<ExamSession[]>([...mockExamSessions]);
-  const [rooms, setRooms] = useState<ExamRoom[]>([...mockExamRooms]);
+  const [exams, setExams] = useState<Exam[]>([]);
+  const [sessions, setSessions] = useState<ExamSession[]>([]);
+  const [rooms, setRooms] = useState<ExamRoom[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [selectedExam, setSelectedExam] = useState<string>('e1');
   const [tab, setTab] = useState<'schedule' | 'rooms'>('schedule');
   const [examModal, setExamModal] = useState(false);
@@ -25,6 +27,11 @@ export default function ExamArrange() {
   const [roomForm] = Form.useForm();
   const [examForm] = Form.useForm();
 
+  const loadExams = () => { getExams().then(setExams).catch(console.error); };
+  const loadSessions = () => { getExamSessions().then(setSessions).catch(console.error); };
+  const loadRooms = () => { getExamRooms().then(setRooms).catch(console.error); };
+  useEffect(() => { loadExams(); loadSessions(); loadRooms(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+
   const currentExam = useMemo(() => exams.find((e) => e.id === selectedExam), [exams, selectedExam]);
   const examSessions = useMemo(() => sessions.filter((s) => s.examId === selectedExam), [sessions, selectedExam]);
   const examRooms = useMemo(() => rooms.filter((r) => r.examId === selectedExam), [rooms, selectedExam]);
@@ -32,11 +39,11 @@ export default function ExamArrange() {
   const sortedSessions = useMemo(() => [...examSessions].sort((a, b) => a.date.localeCompare(b.date) || (a.timeSlot === '上午' ? -1 : 1)), [examSessions]);
 
   function addExam() { examForm.resetFields(); setExamModal(true); }
-  function saveExam() { examForm.validateFields().then((v) => { setExams((p) => [{ id: genId(), ...v }, ...p]); setExamModal(false); message.success('考试已创建'); }); }
+  function saveExam() { examForm.validateFields().then((v) => { createExam({ id: newId(), ...v }).then(loadExams).then(() => { setExamModal(false); message.success('考试已创建'); }); }); }
   function addSession() { sessionForm.resetFields(); sessionForm.setFieldsValue({ examId: selectedExam, duration: 120 }); setSessionModal(true); }
-  function saveSession() { sessionForm.validateFields().then((v) => { const sub = mockSubjects.find((s) => s.id === v.subjectId); setSessions((p) => [{ id: genId(), subjectName: sub?.name ?? '', ...v }, ...p]); setSessionModal(false); message.success('科目已添加'); }); }
+  function saveSession() { sessionForm.validateFields().then((v) => { const sub = subjects.find((s) => s.id === v.subjectId); createExamSession({ id: newId(), subjectName: sub?.name ?? '', ...v }).then(loadSessions).then(() => { setSessionModal(false); message.success('科目已添加'); }); }); }
   function addRoom() { roomForm.resetFields(); roomForm.setFieldsValue({ examId: selectedExam, capacity: 30 }); setRoomModal(true); }
-  function saveRoom() { roomForm.validateFields().then((v) => { setRooms((p) => [{ id: genId(), ...v }, ...p]); setRoomModal(false); message.success('考场已添加'); }); }
+  function saveRoom() { roomForm.validateFields().then((v) => { createExamRoom({ id: newId(), ...v }).then(loadRooms).then(() => { setRoomModal(false); message.success('考场已添加'); }); }); }
 
   const allExams = useMemo(() => exams.sort((a, b) => a.startDate.localeCompare(b.startDate)), [exams]);
 
@@ -45,7 +52,7 @@ export default function ExamArrange() {
     { title: '时段', dataIndex: 'timeSlot', width: 60, render: (t: string) => <Tag color={t === '上午' ? 'blue' : 'gold'} bordered={false}>{t}</Tag> },
     { title: '科目', dataIndex: 'subjectName', width: 90, render: (v: string) => <Text strong>{v}</Text> },
     { title: '时长', dataIndex: 'duration', width: 80, render: (v: number) => `${v} 分钟` },
-    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { setSessions((p) => p.filter((s) => s.id !== r.id)); message.success('已删除'); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
+    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { deleteExamSession(r.id).then(loadSessions).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
   ];
 
   const roomCols: ColumnsType<ExamRoom> = [
@@ -53,7 +60,7 @@ export default function ExamArrange() {
     { title: '容量', dataIndex: 'capacity', width: 60 },
     { title: '监考员A', dataIndex: 'invigilator1', width: 85 },
     { title: '监考员B', dataIndex: 'invigilator2', width: 85, render: (v: string) => v || <Text type="secondary">--</Text> },
-    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { setRooms((p) => p.filter((rr) => rr.id !== r.id)); message.success('已删除'); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
+    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { deleteExamRoom(r.id).then(loadRooms).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
   ];
 
   return (
@@ -152,7 +159,7 @@ export default function ExamArrange() {
           </Row>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="subjectId" label="科目" rules={[{ required: true }]}>
-              <Select options={mockSubjects.filter((s) => s.category !== '艺体').map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
+              <Select options={subjects.filter((s) => s.category !== '艺体').map((s) => ({ label: s.name, value: s.id }))} /></Form.Item></Col>
             <Col span={12}><Form.Item name="duration" label="时长(分钟)" rules={[{ required: true }]}><InputNumber min={30} max={300} style={{ width: '100%' }} /></Form.Item></Col>
           </Row>
         </Form>
@@ -165,9 +172,9 @@ export default function ExamArrange() {
           <Form.Item name="capacity" label="容量" rules={[{ required: true }]}><InputNumber min={1} style={{ width: '100%' }} /></Form.Item>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="invigilator1" label="监考员A" rules={[{ required: true }]}>
-              <Select showSearch optionFilterProp="label" options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
+              <Select showSearch optionFilterProp="label" options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
             <Col span={12}><Form.Item name="invigilator2" label="监考员B"><Select showSearch optionFilterProp="label" allowClear
-              options={mockStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
+              options={allStaff.filter((s) => s.status === '在职').map((s) => ({ label: s.name, value: s.name }))} /></Form.Item></Col>
           </Row>
         </Form>
       </Modal>

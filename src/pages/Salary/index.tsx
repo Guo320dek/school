@@ -1,16 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, InputNumber, Space, Tag, Card, Row, Col, Statistic, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { mockSalaries, mockStaff } from '../../mock/data';
-import type { SalaryRecord } from '../../types';
+import { getSalaries, createSalary, updateSalary, deleteSalary, getStaff } from '../../api';
+import type { SalaryRecord, Staff } from '../../types';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
-function genId() { return String(Date.now()) + Math.random().toString(36).slice(2, 6); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 const fmt = (v: number) => `¥ ${v.toLocaleString()}`;
 
 export default function Salary() {
-  const [salaries, setSalaries] = useState<SalaryRecord[]>([...mockSalaries]);
+  const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
+  const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [filterYear, setFilterYear] = useState<number>();
   const [filterMonth, setFilterMonth] = useState<number>();
   const [filterStatus, setFilterStatus] = useState<string>();
@@ -18,6 +19,9 @@ export default function Salary() {
   const [editing, setEditing] = useState<SalaryRecord | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [form] = Form.useForm();
+
+  const loadSalaries = () => { getSalaries().then(setSalaries).catch(console.error); };
+  useEffect(() => { loadSalaries(); getStaff().then(setAllStaff).catch(console.error); }, []);
 
   const filtered = useMemo(() => salaries.filter((s) => {
     if (filterYear && s.year !== filterYear) return false;
@@ -32,7 +36,7 @@ export default function Salary() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ year: dayjs().year(), month: dayjs().month() + 1 }); setModalOpen(true); }
   function openEdit(r: SalaryRecord) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { setSalaries((p) => p.filter((s) => s.id !== id)); message.success('已删除'); }
+  function handleDelete(id: string) { deleteSalary(id).then(loadSalaries).then(() => message.success('已删除')); }
 
   function onFormValuesChange() {
     const base = form.getFieldValue('basePay') || 0;
@@ -44,13 +48,10 @@ export default function Salary() {
   function handleSave() {
     form.validateFields().then((v) => {
       if (editing) {
-        setSalaries((p) => p.map((s) => s.id === editing.id ? { ...s, ...v } : s));
-        message.success('已更新');
+        updateSalary(editing.id, v).then(loadSalaries).then(() => message.success('已更新'));
       } else {
-        const staff = mockStaff.find((st) => st.id === v.staffId);
-        const record: SalaryRecord = { id: genId(), staffId: v.staffId, staffName: staff?.name ?? '', year: v.year, month: v.month, basePay: v.basePay, bonus: v.bonus, deduction: v.deduction, total: v.total, status: '待发放' };
-        setSalaries((p) => [record, ...p]);
-        message.success('已添加');
+        const staff = allStaff.find((st) => st.id === v.staffId);
+        createSalary({ id: newId(), staffId: v.staffId, staffName: staff?.name ?? '', year: v.year, month: v.month, basePay: v.basePay, bonus: v.bonus, deduction: v.deduction, total: v.total, status: '待发放' }).then(loadSalaries).then(() => message.success('已添加'));
       }
       setModalOpen(false);
     });
@@ -58,9 +59,14 @@ export default function Salary() {
 
   function handleBatchPay() {
     if (selectedRowKeys.length === 0) { message.warning('请先选择待发放的工资记录'); return; }
-    setSalaries((p) => p.map((s) => selectedRowKeys.includes(s.id) && s.status === '待发放' ? { ...s, status: '已发放' as const, paidDate: dayjs().format('YYYY-MM-DD') } : s));
-    setSelectedRowKeys([]);
-    message.success(`已批量发放 ${selectedRowKeys.length} 笔工资`);
+    const today = dayjs().format('YYYY-MM-DD');
+    Promise.all(selectedRowKeys.map((id) => {
+      const s = salaries.find((r) => r.id === id);
+      if (s && s.status === '待发放') return updateSalary(String(id), { status: '已发放', paidDate: today });
+    })).then(loadSalaries).then(() => {
+      setSelectedRowKeys([]);
+      message.success(`已批量发放 ${selectedRowKeys.length} 笔工资`);
+    });
   }
 
   const columns: ColumnsType<SalaryRecord> = [
@@ -102,7 +108,7 @@ export default function Salary() {
         <Form form={form} layout="vertical" style={{ marginTop: 12 }} onValuesChange={onFormValuesChange}>
           {!editing && (<>
             <Form.Item name="staffId" label="员工" rules={[{ required: true }]}>
-              <Select showSearch optionFilterProp="label" options={mockStaff.filter((st) => st.status === '在职').map((st) => ({ label: `${st.name} - ${st.department}`, value: st.id }))} /></Form.Item>
+              <Select showSearch optionFilterProp="label" options={allStaff.filter((st) => st.status === '在职').map((st) => ({ label: `${st.name} - ${st.department}`, value: st.id }))} /></Form.Item>
             <Row gutter={16}>
               <Col span={12}><Form.Item name="year" label="年份" rules={[{ required: true }]}><InputNumber min={2020} max={2030} style={{ width: '100%' }} /></Form.Item></Col>
               <Col span={12}><Form.Item name="month" label="月份" rules={[{ required: true }]}><InputNumber min={1} max={12} style={{ width: '100%' }} /></Form.Item></Col>
