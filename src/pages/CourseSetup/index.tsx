@@ -4,6 +4,7 @@ import { PlusOutlined, BookOutlined, ClockCircleOutlined, UserOutlined } from '@
 import type { ColumnsType } from 'antd/es/table';
 import { getCourses, createCourse, updateCourse, deleteCourse, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { GradeCourse, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -27,6 +28,7 @@ export default function CourseSetup() {
   const loadCourses = () => { getCourses().then(setCourses).catch(console.error); };
   useEffect(() => { loadCourses(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
   useRealtime('grade_courses', loadCourses);
+  const { editable } = usePermission();
 
   const filtered = useMemo(() => {
     return courses.filter((c) => {
@@ -83,9 +85,9 @@ export default function CourseSetup() {
       ),
     },
     { title: '任课教师', dataIndex: 'teacherName', width: 100, render: (v: string) => <Space><UserOutlined style={{ color: '#bbb', fontSize: 12 }} />{v}</Space> },
-    {
+    ...(editable ? [{
       title: '操作', width: 100,
-      render: (_, r) => (
+      render: (_: unknown, r: GradeCourse) => (
         <Space size={4}>
           <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
@@ -93,7 +95,7 @@ export default function CourseSetup() {
           </Popconfirm>
         </Space>
       ),
-    },
+    }] : []),
   ];
 
   return (
@@ -155,7 +157,7 @@ export default function CourseSetup() {
             <Text type="secondary" style={{ fontSize: 12 }}>{filtered.length} 门课程</Text>
           </Space>
         </Col>
-        <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>添加课程</Button></Col>
+        {editable && <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>添加课程</Button></Col>}
       </Row>
 
       <Table rowKey="id" columns={columns} dataSource={filtered} pagination={false} size="middle" />

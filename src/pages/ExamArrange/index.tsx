@@ -75,7 +75,7 @@ export default function ExamArrange() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={16}>
-          <Card size="small" title={<Space><FlagOutlined />考试列表</Space>} extra={<Button size="small" onClick={addExam}>新建考试</Button>} style={{ borderRadius: 8 }}>
+          <Card size="small" title={<Space><FlagOutlined />考试列表</Space>} extra={editable ? <Button size="small" onClick={addExam}>新建考试</Button> : null} style={{ borderRadius: 8 }}>
             <Space wrap>
               {allExams.map((e) => (
                 <Card
@@ -121,11 +121,11 @@ export default function ExamArrange() {
           { key: 'rooms', tab: <Space><EnvironmentOutlined />考场分配 ({examRooms.length})</Space> },
         ]}
         activeTabKey={tab} onTabChange={(k) => setTab(k as 'schedule' | 'rooms')}
-        tabBarExtraContent={
+        tabBarExtraContent={editable ? (
           tab === 'schedule'
             ? <Button size="small" type="primary" icon={<PlusOutlined />} onClick={addSession}>添加科目</Button>
             : <Button size="small" type="primary" icon={<PlusOutlined />} onClick={addRoom}>添加考场</Button>
-        }
+        ) : null}
       >
         {tab === 'schedule' ? (
           sortedSessions.length === 0 ? (
