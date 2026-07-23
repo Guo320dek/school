@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Layout, Menu, Tabs, theme, Button, Input, Modal, Space } from 'antd';
+import { Layout, Menu, Tabs, theme, Button, Input, Modal, Drawer, Grid } from 'antd';
 import {
   DashboardOutlined,
   BookOutlined,
@@ -7,6 +7,7 @@ import {
   NotificationOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MenuOutlined,
   LockOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
@@ -46,9 +47,12 @@ export default function MainLayout() {
   const location = useLocation();
   const { token } = theme.useToken();
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { editable, unlock, lock } = usePermission();
   const [pwModal, setPwModal] = useState(false);
   const [pw, setPw] = useState('');
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
 
   function handleUnlock() {
     if (unlock(pw)) { setPwModal(false); setPw(''); }
@@ -62,64 +66,97 @@ export default function MainLayout() {
 
   const subTabs = activeCategory.children;
 
+  const menuItems = categories.map((c) => ({ key: c.key, icon: c.icon, label: c.label }));
+
+  const sidebarMenu = (
+    <>
+      <div style={{
+        height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 16, fontWeight: 600, color: token.colorPrimary,
+        borderBottom: `1px solid ${token.colorBorderSecondary}`,
+      }}>
+        青云高级中学
+      </div>
+      <Menu
+        mode="inline"
+        selectedKeys={[activeCategory.key]}
+        style={{ background: 'transparent', borderRight: 0, marginTop: 8 }}
+        items={menuItems}
+        onClick={({ key }) => {
+          const cat = categories.find((c) => c.key === key);
+          if (cat) { navigate(cat.path); setDrawerOpen(false); }
+        }}
+      />
+    </>
+  );
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        theme="light"
-        width={180}
-        collapsedWidth={64}
-        trigger={null}
-        collapsed={collapsed}
-        style={{
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
-          background: token.colorBgLayout,
-          position: 'relative',
-        }}
-      >
-        <div style={{
-          position: 'absolute', top: '50%', right: -12,
-          width: 24, height: 48, borderRadius: 12,
-          background: token.colorPrimary,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', zIndex: 10, boxShadow: '0 2px 6px rgba(79,110,247,0.35)',
-          transition: 'all 0.2s',
-        }} onClick={() => setCollapsed(!collapsed)}>
-          {collapsed
-            ? <MenuUnfoldOutlined style={{ color: '#fff', fontSize: 12 }} />
-            : <MenuFoldOutlined style={{ color: '#fff', fontSize: 12 }} />}
-        </div>
-        <div style={{
-          height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: collapsed ? 14 : 16, fontWeight: 600, color: token.colorPrimary,
-          borderBottom: `1px solid ${token.colorBorderSecondary}`,
-          overflow: 'hidden', whiteSpace: 'nowrap',
-        }}>
-          {collapsed ? '青云' : '青云高级中学'}
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={[activeCategory.key]}
-          style={{ background: 'transparent', borderRight: 0, marginTop: 8 }}
-          items={categories.map((c) => ({ key: c.key, icon: c.icon, label: c.label }))}
-          onClick={({ key }) => {
-            const cat = categories.find((c) => c.key === key);
-            if (cat) navigate(cat.path);
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <Sider
+          theme="light"
+          width={180}
+          collapsedWidth={64}
+          trigger={null}
+          collapsed={collapsed}
+          style={{
+            borderRight: `1px solid ${token.colorBorderSecondary}`,
+            background: token.colorBgLayout,
           }}
-        />
-      </Sider>
+        >
+          <div style={{
+            height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: collapsed ? 14 : 16, fontWeight: 600, color: token.colorPrimary,
+            borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            overflow: 'hidden', whiteSpace: 'nowrap',
+          }}>
+            {collapsed ? '青云' : '青云高级中学'}
+          </div>
+          <Menu
+            mode="inline"
+            selectedKeys={[activeCategory.key]}
+            style={{ background: 'transparent', borderRight: 0, marginTop: 8 }}
+            items={menuItems}
+            onClick={({ key }) => {
+              const cat = categories.find((c) => c.key === key);
+              if (cat) navigate(cat.path);
+            }}
+          />
+        </Sider>
+      )}
+
+      {/* Mobile Drawer */}
+      <Drawer
+        placement="left"
+        width={200}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        bodyStyle={{ padding: 0 }}
+        headerStyle={{ display: 'none' }}
+        closable={false}
+      >
+        {sidebarMenu}
+      </Drawer>
+
       <Layout>
         <Header style={{
-          height: 56, padding: '0 24px', background: token.colorBgContainer,
+          height: 56, padding: isMobile ? '0 12px' : '0 24px',
+          background: token.colorBgContainer,
           display: 'flex', alignItems: 'center', gap: 12,
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
         }}>
-          <Button
-            shape="circle"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            size="small"
-            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}
-          />
+          {isMobile ? (
+            <Button type="text" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)} />
+          ) : (
+            <Button
+              shape="circle"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              size="small"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}
+            />
+          )}
           <span style={{ fontSize: 15, fontWeight: 500, flex: 1 }}>{activeCategory.label}</span>
           <Button type="text" icon={editable ? <UnlockOutlined style={{ color: '#10B981' }} /> : <LockOutlined style={{ color: '#9CA3AF' }} />}
             onClick={() => editable ? lock() : setPwModal(true)} title={editable ? '点击锁定' : '解锁编辑'} />
@@ -128,20 +165,24 @@ export default function MainLayout() {
           <div style={{
             background: token.colorBgContainer,
             borderBottom: `1px solid ${token.colorBorderSecondary}`,
-            padding: '0 20px',
+            padding: isMobile ? '0 8px' : '0 20px',
+            overflowX: 'auto',
           }}>
             <Tabs
               activeKey={location.pathname}
               onChange={(key) => navigate(key)}
               tabBarStyle={{ marginBottom: 0 }}
-              size="middle"
+              size={isMobile ? 'small' : 'middle'}
               items={subTabs.map((t) => ({ key: t.key, label: t.label }))}
             />
           </div>
         )}
         <Content style={{
-          margin: 20, padding: 24, background: token.colorBgContainer,
-          borderRadius: token.borderRadiusLG, minHeight: 280, overflow: 'auto',
+          margin: isMobile ? 8 : 20,
+          padding: isMobile ? 12 : 24,
+          background: token.colorBgContainer,
+          borderRadius: token.borderRadiusLG,
+          minHeight: 280, overflow: 'auto',
         }}>
           <Outlet />
         </Content>
