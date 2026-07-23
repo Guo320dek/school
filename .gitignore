@@ -5,3 +5,6 @@ dist/
 .codegraph/
 .omo/
 *.db
+*.db-shm
+*.db-wal
+*.tsbuildinfo
