@@ -3,6 +3,7 @@ import { Button, Select, Modal, Form, Popconfirm, Input, DatePicker, Space, Tag,
 import { PlusOutlined, NotificationOutlined, ClockCircleOutlined, TeamOutlined } from '@ant-design/icons';
 import { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { Announcement, AnnounceTarget } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -24,6 +25,7 @@ export default function Announcement() {
   const loadAnnouncements = () => { getAnnouncements().then(setAnnouncements).catch(console.error); };
   useEffect(() => { loadAnnouncements(); }, []);
   useRealtime('announcements', loadAnnouncements);
+  const { editable } = usePermission();
 
   const filtered = useMemo(() => {
     return announcements.filter((a) => {
@@ -67,7 +69,7 @@ export default function Announcement() {
             <Tag color="default">已过期 {expiredList.length}</Tag>
           </Space>
         </Col>
-        <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>发布公告</Button></Col>
+        {editable && <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>发布公告</Button></Col>}
       </Row>
 
       <Row gutter={20}>
@@ -83,12 +85,12 @@ export default function Announcement() {
                 dataSource={activeList}
                 renderItem={(item) => (
                   <List.Item
-                    actions={[
+                    actions={editable ? [
                       <Button key="edit" type="link" size="small" onClick={() => openEdit(item)}>编辑</Button>,
                       <Popconfirm key="del" title="确定删除？" onConfirm={() => handleDelete(item.id)}>
                         <Button type="link" size="small" danger>删除</Button>
                       </Popconfirm>,
-                    ]}
+                    ] : undefined}
                     style={{ padding: '12px 0' }}
                   >
                     <List.Item.Meta

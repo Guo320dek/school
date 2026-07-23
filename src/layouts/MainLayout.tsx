@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Layout, Menu, Tabs, theme, Button } from 'antd';
+import { Layout, Menu, Tabs, theme, Button, Input, Modal, Space } from 'antd';
 import {
   DashboardOutlined,
   BookOutlined,
@@ -7,8 +7,11 @@ import {
   NotificationOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  LockOutlined,
+  UnlockOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { usePermission } from '../contexts/PermissionContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -43,6 +46,14 @@ export default function MainLayout() {
   const location = useLocation();
   const { token } = theme.useToken();
   const [collapsed, setCollapsed] = useState(false);
+  const { editable, unlock, lock } = usePermission();
+  const [pwModal, setPwModal] = useState(false);
+  const [pw, setPw] = useState('');
+
+  function handleUnlock() {
+    if (unlock(pw)) { setPwModal(false); setPw(''); }
+    else { setPw(''); }
+  }
 
   const activeCategory = useMemo(() => {
     if (location.pathname === '/') return categories[0];
@@ -86,10 +97,14 @@ export default function MainLayout() {
       <Layout>
         <Header style={{
           height: 56, padding: '0 24px', background: token.colorBgContainer,
-          display: 'flex', alignItems: 'center',
+          display: 'flex', alignItems: 'center', gap: 12,
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
         }}>
-          <span style={{ fontSize: 15, fontWeight: 500 }}>{activeCategory.label}</span>
+          <Button type="text" icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)} style={{ fontSize: 16, width: 40, height: 40 }} />
+          <span style={{ fontSize: 15, fontWeight: 500, flex: 1 }}>{activeCategory.label}</span>
+          <Button type="text" icon={editable ? <UnlockOutlined style={{ color: '#10B981' }} /> : <LockOutlined style={{ color: '#9CA3AF' }} />}
+            onClick={() => editable ? lock() : setPwModal(true)} title={editable ? '点击锁定' : '解锁编辑'} />
         </Header>
         {subTabs && (
           <div style={{
@@ -113,6 +128,9 @@ export default function MainLayout() {
           <Outlet />
         </Content>
       </Layout>
+      <Modal title="解锁编辑" open={pwModal} onOk={handleUnlock} onCancel={() => setPwModal(false)} width={300}>
+        <Input.Password placeholder="请输入管理密码" value={pw} onChange={(e) => setPw(e.target.value)} onPressEnter={handleUnlock} />
+      </Modal>
     </Layout>
   );
 }
