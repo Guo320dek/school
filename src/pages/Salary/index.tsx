@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, InputNumber, Space, Tag, Card, Row, Col, Statistic, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getSalaries, createSalary, updateSalary, deleteSalary, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { SalaryRecord, Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -22,6 +23,7 @@ export default function Salary() {
 
   const loadSalaries = () => { getSalaries().then(setSalaries).catch(console.error); };
   useEffect(() => { loadSalaries(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useRealtime('salary_records', loadSalaries);
 
   const filtered = useMemo(() => salaries.filter((s) => {
     if (filterYear && s.year !== filterYear) return false;

@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { getClasses, createClass, updateClass, deleteClass, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { ClassInfo, GradeLevel, SubjectTrack, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -25,6 +26,7 @@ export default function ClassManage() {
 
   const loadClasses = () => { getClasses().then(setClasses).catch(console.error); };
   useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useRealtime('classes', loadClasses);
 
   const filtered = useMemo(() => classes.filter((c) => {
     if (activeGrade !== 'all' && c.grade !== activeGrade) return false;

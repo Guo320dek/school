@@ -2,10 +2,21 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { WebSocketServer } = require('ws');
 const { getDb, ensureDb } = require('./db.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const httpServer = http.createServer(app);
+const wss = new WebSocketServer({ server: httpServer });
+const wsClients = new Set();
+wss.on('connection', (ws) => { wsClients.add(ws); ws.on('close', () => wsClients.delete(ws)); });
+function broadcast(table) {
+  const msg = JSON.stringify({ type: 'change', table });
+  for (const ws of wsClients) { try { ws.send(msg); } catch {} }
+}
 
 const distPath = path.join(__dirname, '..', 'dist');
 
@@ -53,6 +64,7 @@ function crud(table, idField = 'id') {
         const vals = Object.values(req.body);
         const placeholders = keys.map(() => '?').join(',');
         db.prepare(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${placeholders})`).run(...vals);
+        broadcast(table);
         res.status(201).json(req.body);
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
@@ -63,6 +75,7 @@ function crud(table, idField = 'id') {
         const vals = Object.values(req.body);
         const sets = keys.map(k => `${k} = ?`).join(',');
         db.prepare(`UPDATE ${table} SET ${sets} WHERE ${idField} = ?`).run(...vals, req.params.id);
+        broadcast(table);
         res.json({ id: req.params.id, ...req.body });
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
@@ -70,6 +83,7 @@ function crud(table, idField = 'id') {
       try {
         const db = getDb();
         db.prepare(`DELETE FROM ${table} WHERE ${idField} = ?`).run(req.params.id);
+        broadcast(table);
         res.json({ success: true });
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
@@ -252,11 +266,10 @@ ensureDb().then(() => {
     console.error('Database init failed:', e.message);
   }
 
-  const server = app.listen(PORT, () => {
+  const srv = httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-
-  server.on('error', (err) => {
+  srv.on('error', (err) => {
     console.error('Server failed to start:', err);
     process.exit(1);
   });

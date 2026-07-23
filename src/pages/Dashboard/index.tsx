@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { getSchool, getMetrics, getAnnouncements, getAttendance } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { School, BusinessMetric, Announcement, AttendanceRecord } from '../../types';
 import dayjs from 'dayjs';
 
@@ -33,6 +34,8 @@ export default function Dashboard() {
     getAnnouncements().then(setAnnouncements).catch(console.error);
     getAttendance().then(setAttendance).catch(console.error);
   }, []);
+  useRealtime('announcements', () => { getAnnouncements().then(setAnnouncements).catch(console.error); });
+  useRealtime('attendance_records', () => { getAttendance().then(setAttendance).catch(console.error); });
 
   const active = announcements.filter((a) => !a.isExpired);
   const today = dayjs().format('YYYY-MM-DD');

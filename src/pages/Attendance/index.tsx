@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, DatePicker, TimePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Radio, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { AttendanceRecord, Staff } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -23,6 +24,7 @@ export default function Attendance() {
 
   const loadRecords = () => { getAttendance().then(setRecords).catch(console.error); };
   useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useRealtime('attendance_records', loadRecords);
 
   const filtered = useMemo(() => records.filter((r) => {
     if (searchName && !r.staffName.includes(searchName)) return false;

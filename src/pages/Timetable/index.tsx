@@ -5,6 +5,7 @@ import {
   UserOutlined, BookOutlined, WarningFilled,
 } from '@ant-design/icons';
 import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getSubjects, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { TimetableEntry, ClassInfo, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -32,7 +33,8 @@ export default function Timetable() {
   const [hoveredCell, setHoveredCell] = useState<string>('');
 
   const loadEntries = () => { getTimetable().then(setEntries).catch(console.error); };
-  useEffect(() => { loadEntries(); getClasses().then(setClasses).catch(console.error); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useEffect(() => { loadEntries(); getClasses().then(setClasses).catch(console.error); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error);   }, []);
+  useRealtime('timetable_entries', loadEntries);
 
   const selectedClassName = useMemo(() => {
     const cls = classes.find((c) => c.id === selectedClass);

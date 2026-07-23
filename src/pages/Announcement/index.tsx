@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Button, Select, Modal, Form, Popconfirm, Input, DatePicker, Space, Tag, Card, Row, Col, Typography, message, List, Empty, Timeline } from 'antd';
 import { PlusOutlined, NotificationOutlined, ClockCircleOutlined, TeamOutlined } from '@ant-design/icons';
 import { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { Announcement, AnnounceTarget } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -22,6 +23,7 @@ export default function Announcement() {
 
   const loadAnnouncements = () => { getAnnouncements().then(setAnnouncements).catch(console.error); };
   useEffect(() => { loadAnnouncements(); }, []);
+  useRealtime('announcements', loadAnnouncements);
 
   const filtered = useMemo(() => {
     return announcements.filter((a) => {

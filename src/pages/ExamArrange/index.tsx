@@ -3,6 +3,7 @@ import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Spa
 import { PlusOutlined, ScheduleOutlined, EnvironmentOutlined, UserOutlined, FlagOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { getExams, createExam, deleteExam, getExamSessions, createExamSession, deleteExamSession, getExamRooms, createExamRoom, deleteExamRoom, getSubjects, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { Exam, ExamSession, ExamRoom, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -30,7 +31,10 @@ export default function ExamArrange() {
   const loadExams = () => { getExams().then(setExams).catch(console.error); };
   const loadSessions = () => { getExamSessions().then(setSessions).catch(console.error); };
   const loadRooms = () => { getExamRooms().then(setRooms).catch(console.error); };
-  useEffect(() => { loadExams(); loadSessions(); loadRooms(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useEffect(() => { loadExams(); loadSessions(); loadRooms(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error);   }, []);
+  useRealtime('exams', loadExams);
+  useRealtime('exam_sessions', loadSessions);
+  useRealtime('exam_rooms', loadRooms);
 
   const currentExam = useMemo(() => exams.find((e) => e.id === selectedExam), [exams, selectedExam]);
   const examSessions = useMemo(() => sessions.filter((s) => s.examId === selectedExam), [sessions, selectedExam]);

@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { getStaff, createStaff, updateStaff, deleteStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -34,6 +35,7 @@ export default function StaffArchive() {
 
   const loadStaff = () => { getStaff().then(setStaff).catch(console.error); };
   useEffect(() => { loadStaff(); }, []);
+  useRealtime('staff', loadStaff);
 
   const departments = useMemo(() => [...new Set(staff.map((s) => s.department))].sort(), [staff]);
 

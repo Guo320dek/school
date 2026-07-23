@@ -3,6 +3,7 @@ import { Table, Button, Select, Modal, Form, Popconfirm, InputNumber, Space, Tag
 import { PlusOutlined, BookOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { getCourses, createCourse, updateCourse, deleteCourse, getSubjects, getStaff } from '../../api';
+import { useRealtime } from '../../hooks/useRealtime';
 import type { GradeCourse, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -25,6 +26,7 @@ export default function CourseSetup() {
 
   const loadCourses = () => { getCourses().then(setCourses).catch(console.error); };
   useEffect(() => { loadCourses(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error); }, []);
+  useRealtime('grade_courses', loadCourses);
 
   const filtered = useMemo(() => {
     return courses.filter((c) => {
