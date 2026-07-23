@@ -82,9 +82,10 @@ export default function Salary() {
     { title: '实发合计', dataIndex: 'total', width: 120, sorter: (a, b) => a.total - b.total, render: (v: number) => <strong>{fmt(v)}</strong> },
     { title: '状态', dataIndex: 'status', width: 90, render: (s: string) => <Tag color={s === '已发放' ? 'green' : 'orange'}>{s}</Tag> },
     { title: '发放日期', dataIndex: 'paidDate', width: 110, render: (v: string | undefined) => v || '--' },
-    { title: '操作', width: 120, fixed: 'right', render: (_, r) => 
-      editable ? <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space> : null
-    },
+    ...(editable ? [{
+      title: '操作', width: 120, fixed: 'right' as const, render: (_: unknown, r: SalaryRecord) => 
+        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
+    }] : []),
   ];
 
   return (

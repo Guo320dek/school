@@ -4,6 +4,7 @@ import { PlusOutlined, ScheduleOutlined, EnvironmentOutlined, UserOutlined, Flag
 import type { ColumnsType } from 'antd/es/table';
 import { getExams, createExam, deleteExam, getExamSessions, createExamSession, deleteExamSession, getExamRooms, createExamRoom, deleteExamRoom, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { usePermission } from '../../contexts/PermissionContext';
 import type { Exam, ExamSession, ExamRoom, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -35,6 +36,7 @@ export default function ExamArrange() {
   useRealtime('exams', loadExams);
   useRealtime('exam_sessions', loadSessions);
   useRealtime('exam_rooms', loadRooms);
+  const { editable } = usePermission();
 
   const currentExam = useMemo(() => exams.find((e) => e.id === selectedExam), [exams, selectedExam]);
   const examSessions = useMemo(() => sessions.filter((s) => s.examId === selectedExam), [sessions, selectedExam]);
@@ -56,7 +58,7 @@ export default function ExamArrange() {
     { title: '时段', dataIndex: 'timeSlot', width: 60, render: (t: string) => <Tag color={t === '上午' ? 'blue' : 'gold'} bordered={false}>{t}</Tag> },
     { title: '科目', dataIndex: 'subjectName', width: 90, render: (v: string) => <Text strong>{v}</Text> },
     { title: '时长', dataIndex: 'duration', width: 80, render: (v: number) => `${v} 分钟` },
-    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { deleteExamSession(r.id).then(loadSessions).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
+    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamSession) => <Popconfirm title="删除？" onConfirm={() => { deleteExamSession(r.id).then(loadSessions).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
   ];
 
   const roomCols: ColumnsType<ExamRoom> = [
@@ -64,7 +66,7 @@ export default function ExamArrange() {
     { title: '容量', dataIndex: 'capacity', width: 60 },
     { title: '监考员A', dataIndex: 'invigilator1', width: 85 },
     { title: '监考员B', dataIndex: 'invigilator2', width: 85, render: (v: string) => v || <Text type="secondary">--</Text> },
-    { title: '操作', width: 60, render: (_, r) => <Popconfirm title="删除？" onConfirm={() => { deleteExamRoom(r.id).then(loadRooms).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> },
+    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamRoom) => <Popconfirm title="删除？" onConfirm={() => { deleteExamRoom(r.id).then(loadRooms).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
   ];
 
   return (

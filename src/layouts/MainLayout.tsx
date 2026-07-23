@@ -171,8 +171,9 @@ export default function MainLayout() {
             <Tabs
               activeKey={location.pathname}
               onChange={(key) => navigate(key)}
-              tabBarStyle={{ marginBottom: 0 }}
+              tabBarStyle={{ marginBottom: 0, whiteSpace: 'nowrap' }}
               size={isMobile ? 'small' : 'middle'}
+              tabBarGutter={isMobile ? 12 : 24}
               items={subTabs.map((t) => ({ key: t.key, label: t.label }))}
             />
           </div>

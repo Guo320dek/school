@@ -70,9 +70,10 @@ export default function Attendance() {
     { title: '签退', dataIndex: 'checkOut', width: 90, render: (v: string | null) => v ?? <span style={{ color: '#ccc' }}>--</span> },
     { title: '状态', dataIndex: 'status', width: 80, render: (s: string) => <Tag color={statusColor[s]}>{s}</Tag> },
     { title: '备注', dataIndex: 'remark', ellipsis: true },
-    { title: '操作', width: 120, fixed: 'right', render: (_, r) => 
-      editable ? <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space> : null
-    },
+    ...(editable ? [{
+      title: '操作', width: 120, fixed: 'right' as const, render: (_: unknown, r: AttendanceRecord) => 
+        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
+    }] : []),
   ];
 
   return (
