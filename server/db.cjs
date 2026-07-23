@@ -65,7 +65,12 @@ async function initDb() {
 
     close() { this._save(); raw.close(); },
 
-    _markDirty() { this._dirty = true; },
+    _markDirty() {
+      this._dirty = true;
+      // Auto-save after 500ms debounce
+      clearTimeout(this._saveTimer);
+      this._saveTimer = setTimeout(() => this._save(), 500);
+    },
 
     _save() {
       if (!this._dirty) return;
