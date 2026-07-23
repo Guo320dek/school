@@ -1,17 +1,92 @@
-const Database = require('better-sqlite3');
+const initSqlJs = require('sql.js');
 const path = require('path');
+const fs = require('fs');
 
 const DB_PATH = path.join(__dirname, 'data.db');
 
 let db;
 
+async function initDb() {
+  const SQL = await initSqlJs();
+
+  let buffer = null;
+  try { buffer = fs.readFileSync(DB_PATH); } catch {}
+
+  const raw = new SQL.Database(buffer);
+
+  db = {
+    _raw: raw,
+    _dirty: false,
+
+    exec(sql) {
+      raw.run(sql);
+      this._markDirty();
+    },
+
+    prepare(sql) {
+      const stmt = raw.prepare(sql);
+      return {
+        run(...params) {
+          if (params.length) stmt.bind(params);
+          stmt.step();
+          stmt.reset();
+          db._markDirty();
+          return { changes: raw.getRowsModified() };
+        },
+        get(...params) {
+          if (params.length) stmt.bind(params);
+          let result;
+          if (stmt.step()) result = stmt.getAsObject();
+          else result = undefined;
+          stmt.free();
+          return result;
+        },
+        all(...params) {
+          if (params.length) stmt.bind(params);
+          const rows = [];
+          while (stmt.step()) rows.push(stmt.getAsObject());
+          stmt.free();
+          return rows;
+        },
+      };
+    },
+
+    pragma() { /* WAL not supported in sql.js, no-op */ },
+
+    transaction(fn) {
+      raw.run('BEGIN');
+      try { fn(); raw.run('COMMIT'); this._markDirty(); }
+      catch (e) { raw.run('ROLLBACK'); throw e; }
+    },
+
+    close() { this._save(); raw.close(); },
+
+    _markDirty() { this._dirty = true; },
+
+    _save() {
+      if (!this._dirty) return;
+      const data = raw.export();
+      fs.writeFileSync(DB_PATH, Buffer.from(data));
+      this._dirty = false;
+    },
+  };
+
+  return db;
+}
+
+let dbReady = false;
+
 function getDb() {
-  if (!db) {
-    db = new Database(DB_PATH);
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
-    initSchema();
-  }
+  if (!dbReady) throw new Error('DB not ready - call ensureDb first');
+  return db;
+}
+
+async function ensureDb() {
+  if (dbReady) return db;
+  db = await initDb();
+  initSchema();
+  dbReady = true;
+  db._save(); // persist initial data
   return db;
 }
 
@@ -28,14 +103,13 @@ function initSchema() {
       id TEXT PRIMARY KEY, staffId TEXT, staffName TEXT,
       year INTEGER, month INTEGER, basePay REAL, bonus REAL,
       deduction REAL, total REAL, status TEXT DEFAULT '待发放',
-      paidDate TEXT, FOREIGN KEY(staffId) REFERENCES staff(id)
+      paidDate TEXT
     );
 
     CREATE TABLE IF NOT EXISTS attendance_records (
       id TEXT PRIMARY KEY, staffId TEXT, staffName TEXT,
       date TEXT, checkIn TEXT, checkOut TEXT,
-      status TEXT DEFAULT '正常', remark TEXT DEFAULT '',
-      FOREIGN KEY(staffId) REFERENCES staff(id)
+      status TEXT DEFAULT '正常', remark TEXT DEFAULT ''
     );
 
     CREATE TABLE IF NOT EXISTS classes (
@@ -51,18 +125,13 @@ function initSchema() {
 
     CREATE TABLE IF NOT EXISTS grade_courses (
       id TEXT PRIMARY KEY, grade TEXT, subjectId TEXT, subjectName TEXT,
-      weeklyHours INTEGER, teacherId TEXT, teacherName TEXT,
-      FOREIGN KEY(subjectId) REFERENCES subjects(id),
-      FOREIGN KEY(teacherId) REFERENCES staff(id)
+      weeklyHours INTEGER, teacherId TEXT, teacherName TEXT
     );
 
     CREATE TABLE IF NOT EXISTS timetable_entries (
       id TEXT PRIMARY KEY, classId TEXT, className TEXT, grade TEXT,
       dayOfWeek INTEGER, period INTEGER, subjectId TEXT, subjectName TEXT,
-      teacherId TEXT, teacherName TEXT,
-      FOREIGN KEY(classId) REFERENCES classes(id),
-      FOREIGN KEY(subjectId) REFERENCES subjects(id),
-      FOREIGN KEY(teacherId) REFERENCES staff(id)
+      teacherId TEXT, teacherName TEXT
     );
 
     CREATE TABLE IF NOT EXISTS exams (
@@ -72,14 +141,12 @@ function initSchema() {
 
     CREATE TABLE IF NOT EXISTS exam_sessions (
       id TEXT PRIMARY KEY, examId TEXT, date TEXT,
-      timeSlot TEXT, subjectId TEXT, subjectName TEXT, duration INTEGER,
-      FOREIGN KEY(examId) REFERENCES exams(id)
+      timeSlot TEXT, subjectId TEXT, subjectName TEXT, duration INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS exam_rooms (
       id TEXT PRIMARY KEY, examId TEXT, room TEXT, capacity INTEGER,
-      invigilator1 TEXT, invigilator2 TEXT,
-      FOREIGN KEY(examId) REFERENCES exams(id)
+      invigilator1 TEXT, invigilator2 TEXT
     );
 
     CREATE TABLE IF NOT EXISTS announcements (
@@ -88,25 +155,12 @@ function initSchema() {
     );
   `);
 
-  // Seed if empty
   const count = db.prepare('SELECT COUNT(*) as c FROM staff').get();
-  if (count.c === 0) seed();
+  if (!count || count.c === 0) seed();
 }
 
 function seed() {
-  const insertStaff = db.prepare(`INSERT INTO staff VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
-  const insertSalary = db.prepare(`INSERT INTO salary_records VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
-  const insertAttendance = db.prepare(`INSERT INTO attendance_records VALUES (?,?,?,?,?,?,?,?)`);
-  const insertClass = db.prepare(`INSERT INTO classes VALUES (?,?,?,?,?,?,?,?,?,?)`);
-  const insertSubject = db.prepare(`INSERT INTO subjects VALUES (?,?,?)`);
-  const insertCourse = db.prepare(`INSERT INTO grade_courses VALUES (?,?,?,?,?,?,?)`);
-  const insertTimetable = db.prepare(`INSERT INTO timetable_entries VALUES (?,?,?,?,?,?,?,?,?,?)`);
-  const insertExam = db.prepare(`INSERT INTO exams VALUES (?,?,?,?,?,?)`);
-  const insertExamSession = db.prepare(`INSERT INTO exam_sessions VALUES (?,?,?,?,?,?,?)`);
-  const insertExamRoom = db.prepare(`INSERT INTO exam_rooms VALUES (?,?,?,?,?,?)`);
-  const insertAnnouncement = db.prepare(`INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?)`);
-
-  const tx = db.transaction(() => {
+  db.transaction(() => {
     // Staff
     const staff = [
       ['s01','郭建国','T2015001','教务处','教务主任','高级教师','硕士','教育管理','13801010001','2010-09-01','2024-09-01','2027-08-31','在职',''],
@@ -143,65 +197,8 @@ function seed() {
       ['s71','梁师傅','L2020071','后勤处','维修工','','中专','电工','13803070002','2020-06-01','2026-06-01','2029-05-31','在职',''],
       ['s99','杨秀丽','T2005099','年级组','历史教师','高级教师','硕士','中国史','13802050006','2005-09-01','2024-09-01','2025-08-31','退休','2025年退休'],
     ];
-    for (const s of staff) insertStaff.run(...s);
-
-    // Salary records
-    const makeSalary = (id, sid, name, base, bonus, ded, month, status) => {
-      const total = base + bonus - ded;
-      const paidDate = status === '已发放' ? `2026-0${month}-15` : null;
-      return [id, sid, name, 2026, month, base, bonus, ded, total, status, paidDate];
-    };
-    const salaries = [
-      makeSalary('sa01','s01','郭建国',12000,3000,800,6,'已发放'),
-      makeSalary('sa02','s02','林晓燕',7000,1500,400,6,'已发放'),
-      makeSalary('sa03','s03','刘志强',9500,2000,500,6,'已发放'),
-      makeSalary('sa04','s04','何静',6500,1200,350,6,'已发放'),
-      makeSalary('sa05','s10','孙晓红',15000,4000,1000,6,'已发放'),
-      makeSalary('sa06','s11','赵雅文',9500,2200,550,6,'已发放'),
-      makeSalary('sa07','s12','钱思远',8000,1800,400,6,'已发放'),
-      makeSalary('sa08','s13','周晓雯',7000,1500,350,6,'已发放'),
-      makeSalary('sa09','s20','赵德明',10000,2500,450,6,'已发放'),
-      makeSalary('sa10','s21','陈丽华',11000,2800,700,6,'已发放'),
-      makeSalary('sa11','s22','李志鹏',9000,2000,500,6,'已发放'),
-      makeSalary('sa12','s23','吴桐',6500,1400,350,6,'已发放'),
-      makeSalary('sa13','s30','王美玲',10500,2500,600,6,'已发放'),
-      makeSalary('sa14','s31','郑晓明',9500,2200,500,6,'已发放'),
-      makeSalary('sa15','s32','冯露',8000,1800,400,6,'已发放'),
-      makeSalary('sa16','s33','韩梅梅',6500,1300,350,6,'已发放'),
-      makeSalary('sa17','s40','周明辉',13000,3500,900,6,'已发放'),
-      makeSalary('sa18','s41','马超',7500,1600,400,6,'已发放'),
-      makeSalary('sa19','s42','吴秀英',9500,2200,550,6,'已发放'),
-      makeSalary('sa20','s43','朱明',7500,1600,400,6,'已发放'),
-      makeSalary('sa21','s44','郑文博',8500,2000,450,6,'已发放'),
-      makeSalary('sa22','s45','沈洁',6500,1400,350,6,'已发放'),
-      makeSalary('sa23','s70','许国栋',7000,1500,350,6,'已发放'),
-      makeSalary('sa24','s71','梁师傅',5500,1000,300,6,'已发放'),
-      makeSalary('sa25','s01','郭建国',12000,3500,800,7,'待发放'),
-      makeSalary('sa26','s02','林晓燕',7000,1800,400,7,'待发放'),
-      makeSalary('sa27','s03','刘志强',9500,2500,500,7,'待发放'),
-      makeSalary('sa28','s04','何静',6500,1500,350,7,'待发放'),
-      makeSalary('sa29','s10','孙晓红',15000,4500,1000,7,'待发放'),
-      makeSalary('sa30','s11','赵雅文',9500,2500,550,7,'待发放'),
-      makeSalary('sa31','s12','钱思远',8000,2000,400,7,'待发放'),
-      makeSalary('sa32','s13','周晓雯',7000,1800,350,7,'待发放'),
-      makeSalary('sa33','s20','赵德明',10000,2800,450,7,'待发放'),
-      makeSalary('sa34','s21','陈丽华',11000,3200,700,7,'待发放'),
-      makeSalary('sa35','s22','李志鹏',9000,2400,500,7,'待发放'),
-      makeSalary('sa36','s23','吴桐',6500,1700,350,7,'待发放'),
-      makeSalary('sa37','s30','王美玲',10500,2800,600,7,'待发放'),
-      makeSalary('sa38','s31','郑晓明',9500,2500,500,7,'待发放'),
-      makeSalary('sa39','s32','冯露',8000,2000,400,7,'待发放'),
-      makeSalary('sa40','s33','韩梅梅',6500,1600,350,7,'待发放'),
-      makeSalary('sa41','s40','周明辉',13000,3800,900,7,'待发放'),
-      makeSalary('sa42','s41','马超',7500,1900,400,7,'待发放'),
-      makeSalary('sa43','s42','吴秀英',9500,2500,550,7,'待发放'),
-      makeSalary('sa44','s43','朱明',7500,1900,400,7,'待发放'),
-      makeSalary('sa45','s44','郑文博',8500,2200,450,7,'待发放'),
-      makeSalary('sa46','s45','沈洁',6500,1700,350,7,'待发放'),
-      makeSalary('sa47','s70','许国栋',7000,1800,350,7,'待发放'),
-      makeSalary('sa48','s71','梁师傅',5500,1200,300,7,'待发放'),
-    ];
-    for (const s of salaries) insertSalary.run(...s);
+    const insS = db.prepare('INSERT INTO staff VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    for (const s of staff) insS.run(...s);
 
     // Subjects
     const subjects = [
@@ -210,7 +207,8 @@ function seed() {
       ['sub7','历史','选考'],['sub8','地理','选考'],['sub9','政治','选考'],
       ['sub10','体育','艺体'],['sub11','美术','艺体'],['sub12','信息技术','其他'],
     ];
-    for (const s of subjects) insertSubject.run(...s);
+    const insSub = db.prepare('INSERT INTO subjects VALUES (?,?,?)');
+    for (const s of subjects) insSub.run(...s);
 
     // Classes
     const classes = [
@@ -233,7 +231,8 @@ function seed() {
       ['c35','高三','高三(5)班','物化地','周晓雯','教学楼5层505',50,55,'在读',null],
       ['c36','高三','高三(6)班','史地政','沈洁','教学楼5层506',48,55,'在读',null],
     ];
-    for (const c of classes) insertClass.run(...c);
+    const insC = db.prepare('INSERT INTO classes VALUES (?,?,?,?,?,?,?,?,?,?)');
+    for (const c of classes) insC.run(...c);
 
     // Grade courses
     const courses = [
@@ -253,10 +252,11 @@ function seed() {
       ['g27','高三','sub7','历史',4,'s50','黄丽萍'],['g28','高三','sub8','地理',3,'s52','陈晓宇'],
       ['g29','高三','sub9','政治',3,'s54','高洁'],
     ];
-    for (const c of courses) insertCourse.run(...c);
+    const insG = db.prepare('INSERT INTO grade_courses VALUES (?,?,?,?,?,?,?)');
+    for (const c of courses) insG.run(...c);
 
-    // Timetable (class c11 example)
-    const timetable = [
+    // Timetable
+    const tt = [
       ['t1','c11','高一(1)班','高一',1,1,'sub2','数学','s20','赵德明'],
       ['t2','c11','高一(1)班','高一',1,2,'sub2','数学','s20','赵德明'],
       ['t3','c11','高一(1)班','高一',1,3,'sub1','语文','s10','孙晓红'],
@@ -278,14 +278,16 @@ function seed() {
       ['t19','c11','高一(1)班','高一',3,5,'sub4','物理','s40','周明辉'],
       ['t20','c11','高一(1)班','高一',3,6,'sub9','政治','s54','高洁'],
     ];
-    for (const t of timetable) insertTimetable.run(...t);
+    const insT = db.prepare('INSERT INTO timetable_entries VALUES (?,?,?,?,?,?,?,?,?,?)');
+    for (const t of tt) insT.run(...t);
 
     // Exams
     const exams = [
       ['e1','2026年7月期末考试','期末','高一','2026-07-10','2026-07-12'],
       ['e2','2026年7月期末考试','期末','高二','2026-07-10','2026-07-12'],
     ];
-    for (const e of exams) insertExam.run(...e);
+    const insE = db.prepare('INSERT INTO exams VALUES (?,?,?,?,?,?)');
+    for (const e of exams) insE.run(...e);
 
     const examSessions = [
       ['es1','e1','2026-07-10','上午','sub1','语文',150],
@@ -295,7 +297,8 @@ function seed() {
       ['es5','e1','2026-07-12','上午','sub5','化学',90],
       ['es6','e1','2026-07-12','下午','sub6','生物',90],
     ];
-    for (const s of examSessions) insertExamSession.run(...s);
+    const insEs = db.prepare('INSERT INTO exam_sessions VALUES (?,?,?,?,?,?,?)');
+    for (const s of examSessions) insEs.run(...s);
 
     const examRooms = [
       ['er1','e1','教学楼3层301',30,'赵德明','吴秀英'],
@@ -305,10 +308,45 @@ function seed() {
       ['er5','e1','教学楼3层305',30,'李志鹏','冯露'],
       ['er6','e1','教学楼3层306',30,'赵雅文','马超'],
     ];
-    for (const r of examRooms) insertExamRoom.run(...r);
+    const insEr = db.prepare('INSERT INTO exam_rooms VALUES (?,?,?,?,?,?)');
+    for (const r of examRooms) insEr.run(...r);
+
+    // Salary
+    const mk = (id, sid, name, base, bonus, ded, month, status) => {
+      const total = base + bonus - ded;
+      return [id, sid, name, 2026, month, base, bonus, ded, total, status, status === '已发放' ? `2026-0${month}-15` : null];
+    };
+    const salaries = [
+      mk('sa01','s01','郭建国',12000,3000,800,6,'已发放'),mk('sa02','s02','林晓燕',7000,1500,400,6,'已发放'),
+      mk('sa03','s03','刘志强',9500,2000,500,6,'已发放'),mk('sa04','s04','何静',6500,1200,350,6,'已发放'),
+      mk('sa05','s10','孙晓红',15000,4000,1000,6,'已发放'),mk('sa06','s11','赵雅文',9500,2200,550,6,'已发放'),
+      mk('sa07','s12','钱思远',8000,1800,400,6,'已发放'),mk('sa08','s13','周晓雯',7000,1500,350,6,'已发放'),
+      mk('sa09','s20','赵德明',10000,2500,450,6,'已发放'),mk('sa10','s21','陈丽华',11000,2800,700,6,'已发放'),
+      mk('sa11','s22','李志鹏',9000,2000,500,6,'已发放'),mk('sa12','s23','吴桐',6500,1400,350,6,'已发放'),
+      mk('sa13','s30','王美玲',10500,2500,600,6,'已发放'),mk('sa14','s31','郑晓明',9500,2200,500,6,'已发放'),
+      mk('sa15','s32','冯露',8000,1800,400,6,'已发放'),mk('sa16','s33','韩梅梅',6500,1300,350,6,'已发放'),
+      mk('sa17','s40','周明辉',13000,3500,900,6,'已发放'),mk('sa18','s41','马超',7500,1600,400,6,'已发放'),
+      mk('sa19','s42','吴秀英',9500,2200,550,6,'已发放'),mk('sa20','s43','朱明',7500,1600,400,6,'已发放'),
+      mk('sa21','s44','郑文博',8500,2000,450,6,'已发放'),mk('sa22','s45','沈洁',6500,1400,350,6,'已发放'),
+      mk('sa23','s70','许国栋',7000,1500,350,6,'已发放'),mk('sa24','s71','梁师傅',5500,1000,300,6,'已发放'),
+      mk('sa25','s01','郭建国',12000,3500,800,7,'待发放'),mk('sa26','s02','林晓燕',7000,1800,400,7,'待发放'),
+      mk('sa27','s03','刘志强',9500,2500,500,7,'待发放'),mk('sa28','s04','何静',6500,1500,350,7,'待发放'),
+      mk('sa29','s10','孙晓红',15000,4500,1000,7,'待发放'),mk('sa30','s11','赵雅文',9500,2500,550,7,'待发放'),
+      mk('sa31','s12','钱思远',8000,2000,400,7,'待发放'),mk('sa32','s13','周晓雯',7000,1800,350,7,'待发放'),
+      mk('sa33','s20','赵德明',10000,2800,450,7,'待发放'),mk('sa34','s21','陈丽华',11000,3200,700,7,'待发放'),
+      mk('sa35','s22','李志鹏',9000,2400,500,7,'待发放'),mk('sa36','s23','吴桐',6500,1700,350,7,'待发放'),
+      mk('sa37','s30','王美玲',10500,2800,600,7,'待发放'),mk('sa38','s31','郑晓明',9500,2500,500,7,'待发放'),
+      mk('sa39','s32','冯露',8000,2000,400,7,'待发放'),mk('sa40','s33','韩梅梅',6500,1600,350,7,'待发放'),
+      mk('sa41','s40','周明辉',13000,3800,900,7,'待发放'),mk('sa42','s41','马超',7500,1900,400,7,'待发放'),
+      mk('sa43','s42','吴秀英',9500,2500,550,7,'待发放'),mk('sa44','s43','朱明',7500,1900,400,7,'待发放'),
+      mk('sa45','s44','郑文博',8500,2200,450,7,'待发放'),mk('sa46','s45','沈洁',6500,1700,350,7,'待发放'),
+      mk('sa47','s70','许国栋',7000,1800,350,7,'待发放'),mk('sa48','s71','梁师傅',5500,1200,300,7,'待发放'),
+    ];
+    const insSa = db.prepare('INSERT INTO salary_records VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+    for (const s of salaries) insSa.run(...s);
 
     // Attendance
-    const attendance = [
+    const att = [
       ['a1','s01','郭建国','2026-07-20','07:55','17:05','正常',''],
       ['a2','s01','郭建国','2026-07-21','08:30','17:00','迟到','交通拥堵'],
       ['a3','s01','郭建国','2026-07-22','07:50','17:10','正常',''],
@@ -322,20 +360,20 @@ function seed() {
       ['a11','s21','陈丽华','2026-07-22',null,null,'请假','事假'],
       ['a12','s70','许国栋','2026-07-20',null,null,'缺勤','未打卡'],
     ];
-    for (const a of attendance) insertAttendance.run(...a);
+    const insAt = db.prepare('INSERT INTO attendance_records VALUES (?,?,?,?,?,?,?,?)');
+    for (const a of att) insAt.run(...a);
 
     // Announcements
-    const announcements = [
+    const ann = [
       ['n1','关于开展暑期教师培训的通知','请高一、高二年级全体教师于8月20日前完成线上暑期培训课程。','2026-07-20','重要','高一','2026-08-25',0],
       ['n2','关于加强校园安全管理的紧急通知','接上级通知，近期需全面排查校园安全隐患。','2026-07-19','紧急','全体','2026-07-26',0],
       ['n3','高三年级毕业典礼安排','2026届高三毕业典礼定于7月25日上午9:00在学校礼堂举行。','2026-07-18','重要','高三','2026-07-25',0],
       ['n4','7月份工资发放时间调整通知','因银行系统维护，7月份工资将推迟至7月18日发放。','2026-07-15','普通','全体','2026-07-20',1],
       ['n5','高一年级家长会通知','定于7月28日下午2:30在各班教室召开高一年级期末家长会。','2026-07-16','普通','高一','2026-07-28',0],
     ];
-    for (const a of announcements) insertAnnouncement.run(...a);
+    const insAn = db.prepare('INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?)');
+    for (const a of ann) insAn.run(...a);
   });
-
-  tx();
 }
 
-module.exports = { getDb };
+module.exports = { getDb, ensureDb };

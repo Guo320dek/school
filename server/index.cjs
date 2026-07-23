@@ -2,24 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { getDb } = require('./db.cjs');
+const { getDb, ensureDb } = require('./db.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Startup diagnostics
 const distPath = path.join(__dirname, '..', 'dist');
-console.log('dist path:', distPath);
-console.log('dist exists:', fs.existsSync(distPath));
-console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
-
-try {
-  const db = getDb();
-  const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
-  console.log('Database OK - staff count:', staffCount.c);
-} catch (e) {
-  console.error('Database init failed:', e.message);
-}
 
 app.use(cors());
 app.use(express.json());
@@ -40,20 +28,18 @@ app.use(express.static(distPath));
 
 // ===== UTILITY =====
 function crud(table, idField = 'id') {
-  const db = getDb();
   return {
     list: (req, res) => {
       try {
+        const db = getDb();
         const rows = db.prepare(`SELECT * FROM ${table}`).all();
-        // Convert isExpired from 0/1 to boolean
-        if (table === 'announcements') {
-          rows.forEach(r => r.isExpired = !!r.isExpired);
-        }
+        if (table === 'announcements') rows.forEach(r => r.isExpired = !!r.isExpired);
         res.json(rows);
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
     get: (req, res) => {
       try {
+        const db = getDb();
         const row = db.prepare(`SELECT * FROM ${table} WHERE ${idField} = ?`).get(req.params.id);
         if (!row) return res.status(404).json({ error: 'Not found' });
         if (table === 'announcements') row.isExpired = !!row.isExpired;
@@ -62,26 +48,27 @@ function crud(table, idField = 'id') {
     },
     create: (req, res) => {
       try {
+        const db = getDb();
         const keys = Object.keys(req.body);
         const vals = Object.values(req.body);
         const placeholders = keys.map(() => '?').join(',');
-        const stmt = db.prepare(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${placeholders})`);
-        stmt.run(...vals);
+        db.prepare(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${placeholders})`).run(...vals);
         res.status(201).json(req.body);
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
     update: (req, res) => {
       try {
+        const db = getDb();
         const keys = Object.keys(req.body);
         const vals = Object.values(req.body);
         const sets = keys.map(k => `${k} = ?`).join(',');
-        const stmt = db.prepare(`UPDATE ${table} SET ${sets} WHERE ${idField} = ?`);
-        stmt.run(...vals, req.params.id);
+        db.prepare(`UPDATE ${table} SET ${sets} WHERE ${idField} = ?`).run(...vals, req.params.id);
         res.json({ id: req.params.id, ...req.body });
       } catch (e) { res.status(500).json({ error: e.message }); }
     },
     delete: (req, res) => {
       try {
+        const db = getDb();
         db.prepare(`DELETE FROM ${table} WHERE ${idField} = ?`).run(req.params.id);
         res.json({ success: true });
       } catch (e) { res.status(500).json({ error: e.message }); }
@@ -250,11 +237,30 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Wait for DB then start
+ensureDb().then(() => {
+  // Startup diagnostics
+  console.log('dist path:', distPath);
+  console.log('dist exists:', fs.existsSync(distPath));
+  console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
 
-server.on('error', (err) => {
-  console.error('Server failed to start:', err);
+  try {
+    const db = getDb();
+    const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
+    console.log('Database OK - staff count:', staffCount.c);
+  } catch (e) {
+    console.error('Database init failed:', e.message);
+  }
+
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+
+  server.on('error', (err) => {
+    console.error('Server failed to start:', err);
+    process.exit(1);
+  });
+}).catch((err) => {
+  console.error('Failed to initialize database:', err);
   process.exit(1);
 });
