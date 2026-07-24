@@ -8,3 +8,6 @@ dist/
 *.db-shm
 *.db-wal
 *.tsbuildinfo
+.env
+.env.local
+.env.*.local
