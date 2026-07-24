@@ -84,7 +84,7 @@ export default function Salary() {
     { title: '发放日期', dataIndex: 'paidDate', width: 110, render: (v: string | undefined) => v || '--' },
     ...(editable ? [{
       title: '操作', width: 120, fixed: 'right' as const, render: (_: unknown, r: SalaryRecord) => 
-        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
+        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#DC2626' }}>删除</a></Popconfirm></Space>
     }] : []),
   ];
 
@@ -92,10 +92,10 @@ export default function Salary() {
     <>
       <Title level={4} style={{ marginBottom: 20, fontWeight: 600 }}>工资管理</Title>
       <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={6}><Card size="small"><Statistic title="应发总额" value={totalPayable} prefix="¥" valueStyle={{ color: '#5B8DEF' }} /></Card></Col>
-        <Col span={6}><Card size="small"><Statistic title="已发放" value={paidCount} suffix="笔" valueStyle={{ color: '#3f8600' }} /></Card></Col>
-        <Col span={6}><Card size="small"><Statistic title="待发放" value={pendingCount} suffix="笔" valueStyle={{ color: '#faad14' }} /></Card></Col>
-        <Col span={6}><Card size="small"><Statistic title="总记录" value={filtered.length} suffix="条" /></Card></Col>
+        <Col span={6}><Card size="small" className="card-flat"><Statistic title="应发总额" value={totalPayable} prefix="¥" valueStyle={{ color: '#5B6CF0' }} /></Card></Col>
+        <Col span={6}><Card size="small" className="card-flat"><Statistic title="已发放" value={paidCount} suffix="笔" valueStyle={{ color: '#059669' }} /></Card></Col>
+        <Col span={6}><Card size="small" className="card-flat"><Statistic title="待发放" value={pendingCount} suffix="笔" valueStyle={{ color: '#faad14' }} /></Card></Col>
+        <Col span={6}><Card size="small" className="card-flat"><Statistic title="总记录" value={filtered.length} suffix="条" /></Card></Col>
       </Row>
       <Row gutter={16} style={{ marginBottom: 16 }} align="middle">
         <Col flex="auto">

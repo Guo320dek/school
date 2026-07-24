@@ -1,0 +1,7 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e3]
+  - generic [ref=e4]:
+    - banner "Workspace tabs" [ref=e5]:
+      - tablist "Open workspaces" [ref=e6]
+    - main "欢迎使用 Open Design" [ref=e18]:
+      - region "欢迎使用 Open Design" [ref=e19]

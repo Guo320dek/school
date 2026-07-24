@@ -1,0 +1,382 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e2]: MENU
+  - navigation [ref=f8e7]:
+    - list [ref=f8e8]:
+      - listitem [ref=f8e9]:
+        - link "個別説明会予約" [ref=f8e10] [cursor=pointer]:
+          - /url: https://7-kou.jp/taiken/
+      - listitem [ref=f8e11]:
+        - link "お問合せ・資料請求" [ref=f8e12] [cursor=pointer]:
+          - /url: https://7-kou.jp/contact/
+  - generic [ref=f8e13]:
+    - banner [ref=f8e14]:
+      - link [ref=f8e16] [cursor=pointer]:
+        - /url: https://7-kou.jp/
+        - img "七色高等学院" [ref=f8e17]
+    - main [ref=f8e18]:
+      - article [ref=f8e19]:
+        - generic [ref=f8e21]:
+          - generic [ref=f8e22]:
+            - generic [ref=f8e23]:
+              - img "通信制高校の進学校・七色高等学院" [ref=f8e24]
+              - paragraph [ref=f8e25]: Connecting people and the environment with seven colors
+            - generic [ref=f8e26]: 大学受験だけに集中できる「新しい学校」
+            - heading "通信制高校サポート高・七色高等学院" [level=1] [ref=f8e27]
+            - link "合格実績" [ref=f8e29] [cursor=pointer]:
+              - /url: https://7-kou.jp/pass_record
+            - link "入学前学校一覧" [ref=f8e31] [cursor=pointer]:
+              - /url: https://7-kou.jp/news/school_list/
+            - link [ref=f8e33] [cursor=pointer]:
+              - /url: https://line.me/ti/p/%40303qqynk
+              - img "Lineバナー" [ref=f8e34]
+          - img "学生のイラスト" [ref=f8e36]
+          - link [ref=f8e38] [cursor=pointer]:
+            - /url: "#about"
+            - img "scroll" [ref=f8e39]
+      - article [ref=f8e40]:
+        - generic [ref=f8e41]:
+          - generic [ref=f8e42]:
+            - generic [ref=f8e43]:
+              - generic [ref=f8e44]: News
+              - heading "お知らせ" [level=2] [ref=f8e45]
+            - paragraph [ref=f8e46]: 七色高等学院の最新の情報をご紹介します。
+            - link "View More" [ref=f8e48] [cursor=pointer]:
+              - /url: https://7-kou.jp/news/
+          - list [ref=f8e49]:
+            - listitem [ref=f8e50]:
+              - link "2026-05-29令和８年度 入試日程（７月入学）のお知らせ" [ref=f8e51] [cursor=pointer]:
+                - /url: https://7-kou.jp/news/%e4%bb%a4%e5%92%8c%ef%bc%98%e5%b9%b4%e5%ba%a6%e3%80%80%e5%85%a5%e8%a9%a6%e6%97%a5%e7%a8%8b%ef%bc%88%ef%bc%97%e6%9c%88%e5%85%a5%e5%ad%a6%ef%bc%89%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b
+            - listitem [ref=f8e54]:
+              - link "2026-05-06名門会Onlineと七色高等学院が提携しました" [ref=f8e55] [cursor=pointer]:
+                - /url: https://7-kou.jp/news/%e5%90%8d%e9%96%80%e4%bc%9aonline%e3%81%a8%e4%b8%83%e8%89%b2%e9%ab%98%e7%ad%89%e5%ad%a6%e9%99%a2%e3%81%8c%e6%8f%90%e6%90%ba%e3%81%97%e3%81%be%e3%81%97%e3%81%9f
+            - listitem [ref=f8e58]:
+              - link "2026-05-02個別説明会 2026年 ５月日程のお知らせ" [ref=f8e59] [cursor=pointer]:
+                - /url: https://7-kou.jp/news/%e5%80%8b%e5%88%a5%e8%aa%ac%e6%98%8e%e4%bc%9a%e3%80%802026%e5%b9%b4%e3%80%80%ef%bc%95%e6%9c%88%e6%97%a5%e7%a8%8b%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b
+            - listitem [ref=f8e62]:
+              - link "2026-03-222026年度 大学合格実績" [ref=f8e63] [cursor=pointer]:
+                - /url: https://7-kou.jp/news/2026_acceptance_record
+      - article [ref=f8e67]:
+        - generic [ref=f8e68]:
+          - generic [ref=f8e69]:
+            - generic [ref=f8e70]: Manabi
+            - heading "学びの実例" [level=2] [ref=f8e71]
+          - generic [ref=f8e72]:
+            - link "5年間、学びが止まっていた状態から早稲田大学合格へ 5年間、学びが止まっていた状態から 早稲田大学合格へ Manabi CASE-01 入学前の状況：中学1年生の冬から高校2年生の9月まで、約5年間学びが止まっていた状態" [ref=f8e74] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-01/
+              - img "5年間、学びが止まっていた状態から早稲田大学合格へ" [ref=f8e76]
+              - generic [ref=f8e77]:
+                - heading "5年間、学びが止まっていた状態から 早稲田大学合格へ" [level=3] [ref=f8e80]
+                - generic [ref=f8e81]: Manabi CASE-01
+                - paragraph [ref=f8e82]: 入学前の状況：中学1年生の冬から高校2年生の9月まで、約5年間学びが止まっていた状態
+            - link "英語偏差値30・学年順位234人中230位から、関西学院大学へ進学 英語偏差値30・学年順位234人中230位から、 関西学院大学へ進学 Manabi CASE-02 入学前の状況：全日制高校時代、英語偏差値30、学年順位234人中230位" [ref=f8e84] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-02/
+              - img "英語偏差値30・学年順位234人中230位から、関西学院大学へ進学" [ref=f8e86]
+              - generic [ref=f8e87]:
+                - heading "英語偏差値30・学年順位234人中230位から、 関西学院大学へ進学" [level=3] [ref=f8e90]
+                - generic [ref=f8e91]: Manabi CASE-02
+                - paragraph [ref=f8e92]: 入学前の状況：全日制高校時代、英語偏差値30、学年順位234人中230位
+            - link "学びを止めた1年から、名古屋大学合格へ 学びを止めた1年から、 名古屋大学合格へ Manabi CASE-03 入学前の状況：高校中退後、約1年間学びを止めていた状態。前籍高校が非進学校で、大学受験に向けた十分な学習ができていない状態からのスタート" [ref=f8e94] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-03/
+              - img "学びを止めた1年から、名古屋大学合格へ" [ref=f8e96]
+              - generic [ref=f8e97]:
+                - heading "学びを止めた1年から、 名古屋大学合格へ" [level=3] [ref=f8e100]
+                - generic [ref=f8e101]: Manabi CASE-03
+                - paragraph [ref=f8e102]: 入学前の状況：高校中退後、約1年間学びを止めていた状態。前籍高校が非進学校で、大学受験に向けた十分な学習ができていない状態からのスタート
+            - link "自信を失っていた状態から、もう一度大学受験へ 自信を失っていた状態から、 もう一度大学受験へ Manabi CASE-04 入学前の状況：別の通信制高校のサポート校に通っていたものの、大学受験を本格的に考えて七色に転入。一般入試と総合型選抜の両方を視野に入れながらの再出発" [ref=f8e104] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-04/
+              - img "自信を失っていた状態から、もう一度大学受験へ" [ref=f8e106]
+              - generic [ref=f8e107]:
+                - heading "自信を失っていた状態から、 もう一度大学受験へ" [level=3] [ref=f8e110]
+                - generic [ref=f8e111]: Manabi CASE-04
+                - paragraph [ref=f8e112]: 入学前の状況：別の通信制高校のサポート校に通っていたものの、大学受験を本格的に考えて七色に転入。一般入試と総合型選抜の両方を視野に入れながらの再出発
+            - link "得意な英語を生かして、国際基督教大学へ 得意な英語を生かして、 国際基督教大学へ Manabi CASE-05 入学前の状況：県内トップ進学校に通うも学校に馴染めず、高校2年生より七色高等学院に転入" [ref=f8e114] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-05/
+              - img "得意な英語を生かして、国際基督教大学へ" [ref=f8e116]
+              - generic [ref=f8e117]:
+                - heading "得意な英語を生かして、 国際基督教大学へ" [level=3] [ref=f8e120]
+                - generic [ref=f8e121]: Manabi CASE-05
+                - paragraph [ref=f8e122]: 入学前の状況：県内トップ進学校に通うも学校に馴染めず、高校2年生より七色高等学院に転入
+            - link "好きなことをきっかけに、大学受験へ 好きなことをきっかけに、大学受験へ Manabi CASE-06 入学前の状況：前籍校で人間関係に悩み、高校3年生の後期から七色高等学院に転入。短期間で大学受験に挑戦するため、一般入試と総合型選抜の両方を視野に入れて学習を開始" [ref=f8e124] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-06/
+              - img "好きなことをきっかけに、大学受験へ" [ref=f8e126]
+              - generic [ref=f8e127]:
+                - heading "好きなことをきっかけに、大学受験へ" [level=3] [ref=f8e130]
+                - generic [ref=f8e131]: Manabi CASE-06
+                - paragraph [ref=f8e132]: 入学前の状況：前籍校で人間関係に悩み、高校3年生の後期から七色高等学院に転入。短期間で大学受験に挑戦するため、一般入試と総合型選抜の両方を視野に入れて学習を開始
+            - link "自分に合う環境で、心理学を学ぶ未来へ 自分に合う環境で、心理学を学ぶ未来へ Manabi CASE-07 入学前の状況：前籍の高校に馴染めず、高校2年生の6月に七色高等学院へ転入" [ref=f8e134] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-07/
+              - img "自分に合う環境で、心理学を学ぶ未来へ" [ref=f8e136]
+              - generic [ref=f8e137]:
+                - heading "自分に合う環境で、心理学を学ぶ未来へ" [level=3] [ref=f8e140]
+                - generic [ref=f8e141]: Manabi CASE-07
+                - paragraph [ref=f8e142]: 入学前の状況：前籍の高校に馴染めず、高校2年生の6月に七色高等学院へ転入
+            - link "不安を、未来の研究テーマへ。自動運転への興味から、近畿大学合格へ 不安を、未来の研究テーマへ。 自動運転への興味から、近畿大学合格へ Manabi CASE-08 入学前の状況：人間関係の悩みや、現在の学校では大学受験に向けた環境を作りにくいという不安から、七色高等学院へ転入。中学時代に学校に通えていない時期もあり、特に物理は中学内容から復習が必要な状態" [ref=f8e144] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-08/
+              - img "不安を、未来の研究テーマへ。自動運転への興味から、近畿大学合格へ" [ref=f8e146]
+              - generic [ref=f8e147]:
+                - heading "不安を、未来の研究テーマへ。 自動運転への興味から、近畿大学合格へ" [level=3] [ref=f8e150]
+                - generic [ref=f8e151]: Manabi CASE-08
+                - paragraph [ref=f8e152]: 入学前の状況：人間関係の悩みや、現在の学校では大学受験に向けた環境を作りにくいという不安から、七色高等学院へ転入。中学時代に学校に通えていない時期もあり、特に物理は中学内容から復習が必要な状態
+            - link "自分のペースで、好きな日本史を圧倒的な強みへ。一般入試も見据えながら、中京大学合格へ。 自分のペースで、好きな日本史を圧倒的な強みへ。 一般入試も見据えながら、中京大学合格へ。 Manabi CASE-09 入学前の状況：進学校の課題の多さや授業スピードに馴染めず、七色高等学院へ転入。日本史が好きで、その興味を大学での学びにつなげたいと考えていた" [ref=f8e154] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-09/
+              - img "自分のペースで、好きな日本史を圧倒的な強みへ。一般入試も見据えながら、中京大学合格へ。" [ref=f8e156]
+              - generic [ref=f8e157]:
+                - heading "自分のペースで、好きな日本史を圧倒的な強みへ。 一般入試も見据えながら、中京大学合格へ。" [level=3] [ref=f8e160]
+                - generic [ref=f8e161]: Manabi CASE-09
+                - paragraph [ref=f8e162]: 入学前の状況：進学校の課題の多さや授業スピードに馴染めず、七色高等学院へ転入。日本史が好きで、その興味を大学での学びにつなげたいと考えていた
+            - link "体調への不安を抱えながら、音楽の道へ。国立音楽大学 演奏・創作学科 ジャズ専修 合格 体調への不安を抱えながら、音楽の道へ。 国立音楽大学 演奏・創作学科 ジャズ専修 合格 Manabi CASE-10 入学前の状況：起立性の体調不良により、学校に通うことが難しい時期が続いていた" [ref=f8e164] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-10/
+              - img "体調への不安を抱えながら、音楽の道へ。国立音楽大学 演奏・創作学科 ジャズ専修 合格" [ref=f8e166]
+              - generic [ref=f8e167]:
+                - heading "体調への不安を抱えながら、音楽の道へ。 国立音楽大学 演奏・創作学科 ジャズ専修 合格" [level=3] [ref=f8e170]
+                - generic [ref=f8e171]: Manabi CASE-10
+                - paragraph [ref=f8e172]: 入学前の状況：起立性の体調不良により、学校に通うことが難しい時期が続いていた
+            - link "自分に合う環境で、医療の道へ作業療法士を目指し、中部大学 生命健康科学部合格へ 自分に合う環境で、医療の道へ作業療法士を目指し、 中部大学 生命健康科学部合格へ Manabi CASE-11 入学前の状況：前籍の高校に馴染めず、高校2年生の7月に七色高等学院へ転入" [ref=f8e174] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-11/
+              - img "自分に合う環境で、医療の道へ作業療法士を目指し、中部大学 生命健康科学部合格へ" [ref=f8e176]
+              - generic [ref=f8e177]:
+                - heading "自分に合う環境で、医療の道へ作業療法士を目指し、 中部大学 生命健康科学部合格へ" [level=3] [ref=f8e180]
+                - generic [ref=f8e181]: Manabi CASE-11
+                - paragraph [ref=f8e182]: 入学前の状況：前籍の高校に馴染めず、高校2年生の7月に七色高等学院へ転入
+            - link "自分に合う学び方で、医療技術の道へ。放射線技師を目指し、岐阜医療科学大学合格へ 自分に合う学び方で、医療技術の道へ。 放射線技師を目指し、岐阜医療科学大学合格へ Manabi CASE-12 入学前の状況：前籍の高校での課題量や学校の方向性に馴染めず、高校2年生の8月に七色高等学院へ転入" [ref=f8e184] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-12/
+              - img "自分に合う学び方で、医療技術の道へ。放射線技師を目指し、岐阜医療科学大学合格へ" [ref=f8e186]
+              - generic [ref=f8e187]:
+                - heading "自分に合う学び方で、医療技術の道へ。 放射線技師を目指し、岐阜医療科学大学合格へ" [level=3] [ref=f8e190]
+                - generic [ref=f8e191]: Manabi CASE-12
+                - paragraph [ref=f8e192]: 入学前の状況：前籍の高校での課題量や学校の方向性に馴染めず、高校2年生の8月に七色高等学院へ転入
+            - link "心身が落ち着かない日々から、生命を学ぶ道へ。生物への関心を軸に、名城大学 農学部合格へ。 心身が落ち着かない日々から、生命を学ぶ道へ。 生物への関心を軸に、名城大学 農学部合格へ。 Manabi CASE-13 入学前の状況：前籍の高校での課題や学校の方向性に馴染めず、心身ともに落ち着かない日々が続いていた" [ref=f8e194] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-13/
+              - img "心身が落ち着かない日々から、生命を学ぶ道へ。生物への関心を軸に、名城大学 農学部合格へ。" [ref=f8e196]
+              - generic [ref=f8e197]:
+                - heading "心身が落ち着かない日々から、生命を学ぶ道へ。 生物への関心を軸に、名城大学 農学部合格へ。" [level=3] [ref=f8e200]
+                - generic [ref=f8e201]: Manabi CASE-13
+                - paragraph [ref=f8e202]: 入学前の状況：前籍の高校での課題や学校の方向性に馴染めず、心身ともに落ち着かない日々が続いていた
+            - link "野球で培った精神力で、ゼロから明治大学へ。学力の土台づくりから始め、明治大学 政治経済学部合格へ 野球で培った精神力で、ゼロから明治大学へ。 学力の土台づくりから始め、 明治大学 政治経済学部合格へ Manabi CASE-14 入学前の状況：幼い頃から野球中心の生活を送り、大学受験に必要な学力の土台が十分にない状態。前籍の高校の方向性にも馴染めず、心身ともに落ち着かない日々が続いていた" [ref=f8e204] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/manabi_case-14/
+              - img "野球で培った精神力で、ゼロから明治大学へ。学力の土台づくりから始め、明治大学 政治経済学部合格へ" [ref=f8e206]
+              - generic [ref=f8e207]:
+                - heading "野球で培った精神力で、ゼロから明治大学へ。 学力の土台づくりから始め、 明治大学 政治経済学部合格へ" [level=3] [ref=f8e210]
+                - generic [ref=f8e211]: Manabi CASE-14
+                - paragraph [ref=f8e212]: 入学前の状況：幼い頃から野球中心の生活を送り、大学受験に必要な学力の土台が十分にない状態。前籍の高校の方向性にも馴染めず、心身ともに落ち着かない日々が続いていた
+      - article [ref=f8e215]:
+        - text: Get to know Nanairo High School
+        - generic [ref=f8e216]:
+          - generic [ref=f8e217]:
+            - generic [ref=f8e218]:
+              - generic [ref=f8e219]:
+                - generic [ref=f8e220]: About Us
+                - heading "七色高等学院を知る" [level=2] [ref=f8e221]
+              - heading "七色高等学院は、 中京高等学校と連携し、 大学受験に特化した指導を 受けられる教育機関です。" [level=3] [ref=f8e222]: 七色高等学院は、中京高等学校と連携し、大学受験に特化した指導を受けられる教育機関です。
+              - paragraph [ref=f8e223]: 高卒資格は「中京高等学校 通信制課程」で取得。大学受験に必要な指導は、七色高等学院が全面サポート。大学受験に必要な内容だけを効率的に指導を受けられます。
+              - link "View More" [ref=f8e225] [cursor=pointer]:
+                - /url: https://7-kou.jp/about/at-first/
+              - img "学生のイラスト" [ref=f8e227]
+            - generic [ref=f8e228]: About Us
+          - generic [ref=f8e230]:
+            - link "5つのメリット 5つのメリット" [ref=f8e232] [cursor=pointer]:
+              - /url: https://7-kou.jp/about/merit/
+              - img "5つのメリット" [ref=f8e234]
+              - heading "5つのメリット" [level=4] [ref=f8e238]
+            - link "ご挨拶 ご挨拶" [ref=f8e240] [cursor=pointer]:
+              - /url: https://7-kou.jp/about/greeting/
+              - img "ご挨拶" [ref=f8e242]
+              - heading "ご挨拶" [level=4] [ref=f8e246]
+            - link "キャンパス紹介 キャンパス紹介" [ref=f8e248] [cursor=pointer]:
+              - /url: https://7-kou.jp/about/campus/
+              - img "キャンパス紹介" [ref=f8e250]
+              - heading "キャンパス紹介" [level=4] [ref=f8e254]
+            - link "七色高等学院の1日 七色高等学院の1日" [ref=f8e256] [cursor=pointer]:
+              - /url: https://7-kou.jp/about/1days/
+              - img "七色高等学院の1日" [ref=f8e258]
+              - heading "七色高等学院の1日" [level=4] [ref=f8e262]
+      - article [ref=f8e263]:
+        - generic [ref=f8e265]:
+          - generic [ref=f8e266]:
+            - generic [ref=f8e267]:
+              - generic [ref=f8e268]: Faq
+              - heading "よくあるご質問" [level=2] [ref=f8e269]
+            - paragraph [ref=f8e270]: よくお問い合わせをいただく質問と回答をまとめました。記載のない質問と回答については「お問い合わせフォーム」よりお問い合わせください。
+          - link "View More" [ref=f8e272] [cursor=pointer]:
+            - /url: https://7-kou.jp/faq/
+      - article [ref=f8e276]:
+        - generic [ref=f8e277]:
+          - generic [ref=f8e278]:
+            - generic [ref=f8e279]: YouTube
+            - heading "YouTubeチャンネル" [level=2] [ref=f8e280]
+          - generic [ref=f8e281]:
+            - generic [ref=f8e282]:
+              - group "1 / 6" [ref=f8e283] [cursor=pointer]:
+                - generic [ref=f8e285]:
+                  - heading "【5年間不登校で英語ゼロ】そこから早稲田に受かった生徒に学習させた参考書を全公開" [level=3] [ref=f8e288]
+                  - time [ref=f8e289]: 2026-06-05
+              - group "2 / 6" [ref=f8e290] [cursor=pointer]:
+                - generic [ref=f8e292]:
+                  - heading "通信制高校に行くのはやめろ。 本当に知ってほしいデメリット。" [level=3] [ref=f8e295]
+                  - time [ref=f8e296]: 2026-05-29
+              - group "3 / 6" [ref=f8e297] [cursor=pointer]:
+                - generic [ref=f8e299]:
+                  - heading "【通信制高校から早稲田大学合格】中学1年生内容から約3年かけて学び直した実話。" [level=3] [ref=f8e302]
+                  - time [ref=f8e303]: 2026-05-29
+              - group "4 / 6" [ref=f8e304] [cursor=pointer]:
+                - generic [ref=f8e306]:
+                  - heading "GW明けに学校へ行けない高校生へ｜通信制高校から大学受験を目指す道があります" [level=3] [ref=f8e309]
+                  - time [ref=f8e310]: 2026-05-29
+              - group "5 / 6" [ref=f8e311] [cursor=pointer]:
+                - generic [ref=f8e313]:
+                  - heading "【通信制高校からの大学受験】通信制高校から難関大学に行くためには、必要なものがあります。必要なのは5つです。" [level=3] [ref=f8e316]
+                  - time [ref=f8e317]: 2026-05-10
+              - group "6 / 6" [ref=f8e318] [cursor=pointer]:
+                - generic [ref=f8e320]:
+                  - heading "【通信制高校から大学受験】通信制高校から名古屋大学・早稲田大学へ。大学受験で未来を変えたい人に向けて話します。" [level=3] [ref=f8e323]
+                  - time [ref=f8e324]: 2026-05-10
+            - generic [ref=f8e325]:
+              - button "Go to slide 1" [ref=f8e326] [cursor=pointer]
+              - button "Go to slide 2" [ref=f8e327] [cursor=pointer]
+              - button "Go to slide 3" [ref=f8e328] [cursor=pointer]
+              - button "Go to slide 4" [ref=f8e329] [cursor=pointer]
+          - link "View More" [ref=f8e331] [cursor=pointer]:
+            - /url: https://7-kou.jp/youtube/
+      - article [ref=f8e334]:
+        - generic [ref=f8e335]:
+          - generic [ref=f8e336]:
+            - generic [ref=f8e337]: Blog
+            - heading "ブログ" [level=2] [ref=f8e338]
+          - generic [ref=f8e339]:
+            - generic [ref=f8e340]:
+              - group "1 / 6" [ref=f8e341] [cursor=pointer]:
+                - generic [ref=f8e343]:
+                  - heading "絶望の中にいた高校生が、通信制高校から関西学院大学へ進学するまで" [level=3] [ref=f8e346]
+                  - time [ref=f8e347]: 2026-06-14
+              - group "2 / 6" [ref=f8e348] [cursor=pointer]:
+                - generic [ref=f8e350]:
+                  - generic [ref=f8e353]: 情報発信
+                  - heading "旧帝大は短期逆転できるのか｜高1・高2から積み上げないと間に合わない理由" [level=3] [ref=f8e354]
+                  - time [ref=f8e355]: 2026-06-13
+              - group "3 / 6" [ref=f8e356] [cursor=pointer]:
+                - generic [ref=f8e358]:
+                  - generic [ref=f8e361]: 情報発信
+                  - heading "不登校やメンタルの不調があっても、通信制高校から大学受験を目指せるのか" [level=3] [ref=f8e362]
+                  - time [ref=f8e363]: 2026-06-07
+              - group "4 / 6" [ref=f8e364] [cursor=pointer]:
+                - generic [ref=f8e366]:
+                  - generic [ref=f8e369]: 情報発信
+                  - heading "今の高校が苦しいなら、7 月入学は大きなチャンスです。七色高等学院 7 月入学生募集のお知らせ" [level=3] [ref=f8e370]
+                  - time [ref=f8e371]: 2026-06-06
+              - group "5 / 6" [ref=f8e372] [cursor=pointer]:
+                - generic [ref=f8e374]:
+                  - generic [ref=f8e377]: 情報発信
+                  - heading "進学校で苦しくなった子が、通信制高校に転校してもいい理由" [level=3] [ref=f8e378]
+                  - time [ref=f8e379]: 2026-05-31
+              - group "6 / 6" [ref=f8e380] [cursor=pointer]:
+                - generic [ref=f8e382]:
+                  - generic [ref=f8e385]: 情報発信
+                  - heading "通信制高校に行くデメリットとは？知らずに選ぶと後悔する注意点と、大学受験につなげるための対策" [level=3] [ref=f8e386]
+                  - time [ref=f8e387]: 2026-05-30
+            - generic [ref=f8e388]:
+              - button "Go to slide 1" [ref=f8e389] [cursor=pointer]
+              - button "Go to slide 2" [ref=f8e390] [cursor=pointer]
+              - button "Go to slide 3" [ref=f8e391] [cursor=pointer]
+              - button "Go to slide 4" [ref=f8e392] [cursor=pointer]
+          - link "View More" [ref=f8e394] [cursor=pointer]:
+            - /url: https://7-kou.jp/blog/
+      - article [ref=f8e395]:
+        - generic [ref=f8e396]:
+          - generic [ref=f8e397]:
+            - generic [ref=f8e398]: Student Voice
+            - heading "生徒の声" [level=2] [ref=f8e399]
+          - generic [ref=f8e400]:
+            - list [ref=f8e401]:
+              - listitem [ref=f8e402] [cursor=pointer]: 在校生インタビュー
+              - listitem [ref=f8e403] [cursor=pointer]: 卒業生インタビュー
+            - generic [ref=f8e406]:
+              - generic [ref=f8e407]:
+                - group "1 / 5" [ref=f8e408] [cursor=pointer]:
+                  - generic [ref=f8e410]:
+                    - heading "七色高等学院なら、もっとレベルの高い大学を目指せる" [level=3] [ref=f8e413]
+                    - generic [ref=f8e414]: I.Y
+                - group "2 / 5" [ref=f8e416] [cursor=pointer]:
+                  - generic [ref=f8e418]:
+                    - heading "本当の意味で勉強をするってことを教えてもらった" [level=3] [ref=f8e421]
+                    - generic [ref=f8e422]: H.S
+                - group "3 / 5" [ref=f8e424] [cursor=pointer]:
+                  - generic [ref=f8e426]:
+                    - heading "無理なくやれることが良いかなと思っています。" [level=3] [ref=f8e429]
+                    - generic [ref=f8e430]: D.T
+                - group "4 / 5" [ref=f8e432] [cursor=pointer]:
+                  - generic [ref=f8e434]:
+                    - heading "自分のペースでやれることが一番かなと思います。" [level=3] [ref=f8e437]
+                    - generic [ref=f8e438]: R.K
+                - group "5 / 5" [ref=f8e440] [cursor=pointer]:
+                  - generic [ref=f8e442]:
+                    - heading "わからないことがあるとすぐに先生に聞ける" [level=3] [ref=f8e445]
+                    - generic [ref=f8e446]: T.K
+              - generic [ref=f8e448]:
+                - button "Go to slide 1" [ref=f8e449] [cursor=pointer]
+                - button "Go to slide 2" [ref=f8e450] [cursor=pointer]
+            - link "View More" [ref=f8e452] [cursor=pointer]:
+              - /url: https://7-kou.jp/voice/
+    - article [ref=f8e454]:
+      - list [ref=f8e456]:
+        - listitem [ref=f8e457]:
+          - link "個別説明会予約 Experience Enrollment" [ref=f8e458] [cursor=pointer]:
+            - /url: https://7-kou.jp/taiken/
+            - generic [ref=f8e459]:
+              - heading "個別説明会予約" [level=2] [ref=f8e460]
+              - paragraph [ref=f8e461]: Experience Enrollment
+        - listitem [ref=f8e464]:
+          - link "お問合せ・資料請求 Contact & Request" [ref=f8e465] [cursor=pointer]:
+            - /url: https://7-kou.jp/contact/
+            - generic [ref=f8e466]:
+              - heading "お問合せ・資料請求" [level=2] [ref=f8e467]
+              - paragraph [ref=f8e468]: Contact & Request
+    - contentinfo [ref=f8e471]:
+      - generic [ref=f8e472]:
+        - link [ref=f8e474] [cursor=pointer]:
+          - /url: "#"
+          - img "pagetop" [ref=f8e475]
+        - link [ref=f8e477] [cursor=pointer]:
+          - /url: https://7-kou.jp/
+          - img "七色高等学院" [ref=f8e478]
+        - generic [ref=f8e479]:
+          - list [ref=f8e480]:
+            - listitem [ref=f8e481]:
+              - link "個別説明会予約" [ref=f8e482] [cursor=pointer]:
+                - /url: https://7-kou.jp/taiken/
+            - listitem [ref=f8e483]:
+              - link "お問合せ・資料請求" [ref=f8e484] [cursor=pointer]:
+                - /url: https://7-kou.jp/contact/
+          - link [ref=f8e486] [cursor=pointer]:
+            - /url: https://line.me/ti/p/%40303qqynk
+            - img "Lineバナー" [ref=f8e487]
+          - generic [ref=f8e488]:
+            - link [ref=f8e489] [cursor=pointer]:
+              - /url: tel:0120-716-150
+              - img "0120-716-150" [ref=f8e490]
+            - text: 受付時間：10：00～18：00（土・日・祝日・弊社休日を除く）
+        - list [ref=f8e491]:
+          - listitem [ref=f8e492]:
+            - link "七色高等学院を知る" [ref=f8e493] [cursor=pointer]:
+              - /url: https://7-kou.jp/about/
+          - listitem [ref=f8e494]:
+            - link "合格実績" [ref=f8e495] [cursor=pointer]:
+              - /url: https://7-kou.jp/pass_record/
+          - listitem [ref=f8e496]:
+            - link "七色で実現した学びの事例" [ref=f8e497] [cursor=pointer]:
+              - /url: https://7-kou.jp/course/
+          - listitem [ref=f8e498]:
+            - link "生徒の声" [ref=f8e499] [cursor=pointer]:
+              - /url: https://7-kou.jp/voice/
+          - listitem [ref=f8e500]:
+            - link "YouTubeチャンネル" [ref=f8e501] [cursor=pointer]:
+              - /url: https://7-kou.jp/youtube/
+          - listitem [ref=f8e502]:
+            - link "お知らせ" [ref=f8e503] [cursor=pointer]:
+              - /url: https://7-kou.jp/news/
+          - listitem [ref=f8e504]:
+            - link "よくあるご質問" [ref=f8e505] [cursor=pointer]:
+              - /url: https://7-kou.jp/faq/
+          - listitem [ref=f8e506]:
+            - link "プライバシーポリシー" [ref=f8e507] [cursor=pointer]:
+              - /url: https://7-kou.jp/privacy/
+        - paragraph [ref=f8e508]: © SYLVANBREEZE Inc. All Rights Reserved.

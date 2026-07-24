@@ -19,33 +19,41 @@ export default function App() {
       locale={zhCN}
       theme={{
         token: {
-          colorPrimary: '#4F6EF7',
-          colorSuccess: '#10B981',
+          colorPrimary: '#4062BB',
+          colorInfo: '#4062BB',
+          colorSuccess: '#128068',
           colorWarning: '#F59E0B',
           colorError: '#EF4444',
-          borderRadius: 10,
+          borderRadius: 30,
           borderRadiusLG: 12,
-          colorBgLayout: '#F0F2F5',
-          colorBgContainer: '#FFFFFF',
-          colorBorderSecondary: '#E5E7EB',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-          boxShadowSecondary: '0 2px 8px rgba(0,0,0,0.08)',
+          colorBgLayout: '#FCFAF8',
+          colorBgContainer: '#ffffff',
+          colorBorderSecondary: '#E8E2DC',
+          boxShadow: 'none',
+          boxShadowSecondary: 'none',
+          colorText: '#333333',
+          colorTextSecondary: '#64748b',
         },
         components: {
-          Card: {
-            borderRadiusLG: 14,
-            paddingLG: 24,
-          },
-          Tag: {
-            borderRadiusSM: 6,
-          },
+          Card: { borderRadiusLG: 8, paddingLG: 24 },
+          Tag: { borderRadiusSM: 30 },
           Menu: {
-            itemBorderRadius: 8,
+            itemBorderRadius: 30, itemMarginInline: 4,
+            itemSelectedBg: 'rgba(64,98,187,0.08)',
+            itemActiveBg: 'rgba(64,98,187,0.04)',
+            itemColor: '#555', itemSelectedColor: '#4062BB',
           },
           Button: {
-            borderRadius: 8,
-            controlHeight: 34,
+            borderRadius: 30, controlHeight: 36, controlHeightSM: 30,
+            defaultBorderColor: '#E8E2DC',
+          },
+          Tabs: {
+            inkBarColor: '#4062BB',
+            itemActiveColor: '#4062BB', itemHoverColor: '#4062BB', itemSelectedColor: '#4062BB',
+          },
+          Table: {
+            headerBg: '#FCFAF8', headerColor: '#64748b',
+            borderColor: '#E8E2DC', rowHoverBg: '#FFFDFB',
           },
         },
       }}

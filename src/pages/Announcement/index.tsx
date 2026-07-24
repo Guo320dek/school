@@ -76,7 +76,7 @@ export default function Announcement() {
         <Col xs={24} lg={16}>
           <Card
             title={<Space><NotificationOutlined />有效公告</Space>}
-            size="small" style={{ borderRadius: 8 }}
+            size="small" className="card-flat"
           >
             {activeList.length === 0 ? (
               <Empty description="暂无有效公告" />
@@ -102,7 +102,7 @@ export default function Announcement() {
                             priorityColor[item.priority] === 'orange' ? '#FFF7E6' : '#F0F5FF',
                           fontSize: 18,
                         }}>
-                          <NotificationOutlined style={{ color: priorityColor[item.priority] === 'red' ? '#ff4d4f' : priorityColor[item.priority] === 'orange' ? '#faad14' : '#5B8DEF' }} />
+                          <NotificationOutlined style={{ color: priorityColor[item.priority] === 'red' ? '#DC2626' : priorityColor[item.priority] === 'orange' ? '#faad14' : '#5B6CF0' }} />
                         </div>
                       }
                       title={
@@ -135,7 +135,7 @@ export default function Announcement() {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="已过期公告" size="small" style={{ borderRadius: 8 }}>
+          <Card title="已过期公告" size="small" className="card-flat">
             {expiredList.length === 0 ? (
               <Empty description="暂无" image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : (

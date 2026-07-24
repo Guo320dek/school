@@ -1,0 +1,326 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link [ref=e4] [cursor=pointer]:
+        - /url: https://www.shigaku-tokyo.or.jp
+        - img "公益財団法人 東京都私学財団 Metropolitan Foundation for Private Schools" [ref=e5]
+      - generic [ref=e6]:
+        - list [ref=e8]:
+          - listitem:
+            - link "都民・ 保護者":
+              - /url: https://www.shigaku-tokyo.or.jp
+          - listitem [ref=e9]:
+            - link "私学 関係者" [ref=e10] [cursor=pointer]:
+              - /url: https://www.shigaku-tokyo.or.jp/school_index/
+        - button [ref=e11] [cursor=pointer]
+        - navigation:
+          - generic:
+            - generic:
+              - list:
+                - listitem:
+                  - link:
+                    - /url: https://www.shigaku-tokyo.or.jp
+                    - text: 都民・ 保護者
+                - listitem:
+                  - link:
+                    - /url: https://www.shigaku-tokyo.or.jp/school_index/
+                    - text: 私学 関係者
+              - generic:
+                - generic:
+                  - group:
+                    - generic:
+                      - heading [level=3]: 学費の負担額が減る
+                  - group:
+                    - generic:
+                      - heading [level=3]: 学費を借りる
+                  - group:
+                    - generic:
+                      - heading [level=3]: 保護者向け情報
+                  - group:
+                    - generic:
+                      - heading [level=3]: 私学財団について
+                  - group:
+                    - generic:
+                      - heading [level=3]: 私学情報
+                  - group:
+                    - generic:
+                      - heading [level=3]: 活動内容/各種資料
+                  - group:
+                    - generic:
+                      - heading [level=3]: お問い合わせ
+                - generic:
+                  - generic:
+                    - button: ふりがなON
+                    - generic:
+                      - combobox
+                  - generic:
+                    - search:
+                      - generic:
+                        - group:
+                          - textbox:
+                            - /placeholder: キーワードを入力して検索する
+                          - button
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - heading [level=1]
+      - link "学費負担軽減事業パンフレット・動画" [ref=e18] [cursor=pointer]:
+        - /url: https://www.shigaku-tokyo.or.jp/others/brochure/
+      - img "メインビジュアル画像" [ref=e20]
+      - generic [ref=e21]:
+        - link "重要なお知らせ ホームページリニューアルのお知らせ" [ref=e22] [cursor=pointer]:
+          - /url: https://www.shigaku-tokyo.or.jp/info/%e3%83%9b%e3%83%bc%e3%83%a0%e3%83%9a%e3%83%bc%e3%82%b8%e3%83%aa%e3%83%8b%e3%83%a5%e3%83%bc%e3%82%a2%e3%83%ab%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b/
+          - generic [ref=e24]:
+            - generic [ref=e25]: 重要なお知らせ
+            - paragraph [ref=e26]: ホームページリニューアルのお知らせ
+        - img "Scroll down" [ref=e30]
+    - link "私学関係者はこちら":
+      - /url: https://www.shigaku-tokyo.or.jp/school_index/
+      - generic:
+        - generic:
+          - img "私学関係者はこちら"
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - heading "News お知らせ" [level=2] [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]: News
+            - generic [ref=e38]: お知らせ
+        - link "一覧へ" [ref=e39] [cursor=pointer]:
+          - /url: https://www.shigaku-tokyo.or.jp/info/
+      - list [ref=e41]:
+        - listitem [ref=e42]:
+          - link "2026.06.18 保護者 令和８年度私立高等学校等授業料軽減助成金の申請受付開始のお知らせ" [ref=e43] [cursor=pointer]:
+            - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_jugyoryo/
+            - generic [ref=e44]:
+              - time [ref=e45]: 2026.06.18
+              - generic [ref=e46]: 保護者
+            - paragraph [ref=e49]: 令和８年度私立高等学校等授業料軽減助成金の申請受付開始のお知らせ
+        - listitem [ref=e52]:
+          - link "2026.06.18 保護者 令和８年度私立高等学校等奨学給付金の申請受付開始のお知らせ" [ref=e53] [cursor=pointer]:
+            - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_shougaku/
+            - generic [ref=e54]:
+              - time [ref=e55]: 2026.06.18
+              - generic [ref=e56]: 保護者
+            - paragraph [ref=e59]: 令和８年度私立高等学校等奨学給付金の申請受付開始のお知らせ
+        - listitem [ref=e62]:
+          - link "2026.06.01 重要 お知らせ 保護者 私学 令和８年度東京都育英資金の募集は終了しました" [ref=e63] [cursor=pointer]:
+            - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_ikuei/kashi-kibou/#heading-3
+            - generic [ref=e64]:
+              - time [ref=e65]: 2026.06.01
+              - generic [ref=e66]:
+                - generic [ref=e67]: 重要
+                - generic [ref=e68]: お知らせ
+                - generic [ref=e69]: 保護者
+                - generic [ref=e70]: 私学
+            - paragraph [ref=e72]: 令和８年度東京都育英資金の募集は終了しました
+        - listitem [ref=e75]:
+          - link "2026.05.20 重要 お知らせ 保護者 私学 東京都育英資金奨学生の予約募集を行います" [ref=e76] [cursor=pointer]:
+            - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_ikuei/kashi-kibou/#yoyakuboshu
+            - generic [ref=e77]:
+              - time [ref=e78]: 2026.05.20
+              - generic [ref=e79]:
+                - generic [ref=e80]: 重要
+                - generic [ref=e81]: お知らせ
+                - generic [ref=e82]: 保護者
+                - generic [ref=e83]: 私学
+            - paragraph [ref=e85]: 東京都育英資金奨学生の予約募集を行います
+    - generic [ref=e88]:
+      - generic [ref=e91]:
+        - heading "Parent Programs 保護者向けの制度について" [level=2] [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: Parent Programs
+            - generic [ref=e95]: 保護者向けの制度について
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - img "Reduce" [ref=e99]
+            - heading "返還不要 学費の負担額を減らす制度" [level=4] [ref=e101]:
+              - generic [ref=e102]: 返還不要
+              - text: 学費の負担額を減らす制度
+            - paragraph [ref=e103]: 返還の必要ない制度で授業料の負担軽減を図っています。
+          - generic [ref=e104]:
+            - img "Loan" [ref=e106]
+            - heading "返還必要 学費を借りられる制度" [level=4] [ref=e108]:
+              - generic [ref=e109]: 返還必要
+              - text: 学費を借りられる制度
+            - paragraph [ref=e110]: 返還の必要はありますが、入学金や学費に関してのサポートを行っております。
+      - generic [ref=e113]:
+        - heading "Reduce 学費の負担額が減る" [level=2] [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]: Reduce
+            - generic [ref=e117]: 学費の負担額が減る
+        - generic [ref=e118]:
+          - heading "授業料に対する助成" [level=3] [ref=e119]
+          - paragraph [ref=e121]: 授業料の負担軽減を図ります。
+          - generic [ref=e122]:
+            - generic [ref=e123]:
+              - heading "私立高等学校等向け" [level=4] [ref=e124]
+              - list [ref=e125]:
+                - listitem [ref=e126]:
+                  - link "私立高等学校等授業料軽減助成金（都の制度）" [ref=e127] [cursor=pointer]:
+                    - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_jugyoryo/
+                - listitem [ref=e130]:
+                  - link "授業料助成金等 シミュレーション" [ref=e131] [cursor=pointer]:
+                    - /url: https://shigaku-tokyo.net/school/simulation/
+                - listitem [ref=e134]:
+                  - link "私立高等学校等就学支援金（国の制度）" [ref=e135] [cursor=pointer]:
+                    - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_syugaku/
+                - listitem [ref=e138]:
+                  - link "私立都認可外通信制高等学校在学生授業料助成金（都の制度）" [ref=e139] [cursor=pointer]:
+                    - /url: https://www.seikatubunka.metro.tokyo.lg.jp/shigaku/hogosha/seido/highschool/0000001563
+            - generic [ref=e142]:
+              - heading "私立中学校等向け" [level=4] [ref=e143]
+              - list [ref=e144]:
+                - listitem [ref=e145]:
+                  - link "私立中学校等授業料軽減助成金（都の制度）" [ref=e146] [cursor=pointer]:
+                    - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_jugyoryo_chugaku/
+        - generic [ref=e149]:
+          - heading "授業料以外に対する助成" [level=3] [ref=e150]
+          - paragraph [ref=e152]: 授業料以外の教育費の負担軽減を図ります。
+          - generic [ref=e154]:
+            - heading "私立高等学校等向け" [level=4] [ref=e155]
+            - list [ref=e156]:
+              - listitem [ref=e157]:
+                - link "私立高等学校等奨学給付金（都の制度）" [ref=e158] [cursor=pointer]:
+                  - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_shougaku/
+      - generic [ref=e163]:
+        - heading "Loan 学費を借りる" [level=2] [ref=e164]:
+          - generic [ref=e165]:
+            - generic [ref=e166]: Loan
+            - generic [ref=e167]: 学費を借りる
+        - generic [ref=e169]:
+          - generic [ref=e170]:
+            - heading "入学金等に対する貸付" [level=4] [ref=e171]
+            - paragraph [ref=e172]: 入学時に必要な費用をサポートします。
+            - list [ref=e173]:
+              - listitem [ref=e174]:
+                - link "入学支度金 入学支度金貸付制度がある都内私立高等学校等が、入学金等の一部をお貸しします。（制度の有無は学校によって異なります）" [ref=e175] [cursor=pointer]:
+                  - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_nyugaku/
+                  - generic [ref=e176]:
+                    - generic [ref=e177]: 入学支度金
+                    - generic [ref=e178]: 入学支度金貸付制度がある都内私立高等学校等が、入学金等の一部をお貸しします。（制度の有無は学校によって異なります）
+          - generic [ref=e181]:
+            - heading "学費全般に対する貸付" [level=4] [ref=e182]
+            - paragraph [ref=e183]: 学費全般をサポートします。
+            - list [ref=e184]:
+              - listitem [ref=e185]:
+                - link "育英資金 経済的理由により修学が困難な方に対し、奨学金をお貸しします。" [ref=e186] [cursor=pointer]:
+                  - /url: https://www.shigaku-tokyo.or.jp/parents_index/pa_ikuei/
+                  - generic [ref=e187]:
+                    - generic [ref=e188]: 育英資金
+                    - generic [ref=e189]: 経済的理由により修学が困難な方に対し、奨学金をお貸しします。
+    - generic [ref=e198]:
+      - heading "私学で育てる、 ひとりひとりの可能性" [level=2] [ref=e199]: 私学で育てる、ひとりひとりの可能性
+      - paragraph [ref=e200]: 私学財団は、都内の私立学校の教育の充実及び振興のため、様々な支援事業を行い、東京の教育文化の高揚に寄与しています。
+      - link "私学財団について" [ref=e202] [cursor=pointer]:
+        - /url: https://www.shigaku-tokyo.or.jp/guide/
+    - generic [ref=e204]:
+      - heading "Information 私学情報" [level=2] [ref=e205]:
+        - generic [ref=e206]:
+          - generic [ref=e207]: Information
+          - generic [ref=e208]: 私学情報
+      - generic [ref=e209]:
+        - link "私学関連情報 私学に関連する情報を掲載しています" [ref=e210] [cursor=pointer]:
+          - /url: https://www.shigaku-tokyo.or.jp/school
+          - generic [ref=e213]:
+            - heading "私学関連情報" [level=4] [ref=e214]
+            - generic [ref=e215]: 私学に関連する情報を掲載しています
+        - link "私立学校一覧 東京都の私立学校一覧についての情報を掲載しています" [ref=e218] [cursor=pointer]:
+          - /url: https://www.shigaku-tokyo.or.jp/school/#school-list
+          - generic [ref=e221]:
+            - heading "私立学校一覧" [level=4] [ref=e222]
+            - generic [ref=e223]: 東京都の私立学校一覧についての情報を掲載しています
+    - generic [ref=e227]:
+      - heading "Other programs 他機関制度一覧" [level=2] [ref=e228]:
+        - generic [ref=e229]:
+          - generic [ref=e230]: Other programs
+          - generic [ref=e231]: 他機関制度一覧
+      - group [ref=e232]:
+        - heading "東京都" [level=3] [ref=e234]
+        - list [ref=e235]:
+          - listitem [ref=e236]:
+            - link "母子福祉資金" [ref=e237] [cursor=pointer]:
+              - /url: http://www.fukushihoken.metro.tokyo.jp/kodomo/hitorioya_shien/keizai/boshi.html
+          - listitem [ref=e240]:
+            - link "父子福祉資金" [ref=e241] [cursor=pointer]:
+              - /url: http://www.fukushihoken.metro.tokyo.jp/kodomo/hitorioya_shien/keizai/boshi.html
+          - listitem [ref=e244]:
+            - link "女性福祉資金" [ref=e245] [cursor=pointer]:
+              - /url: http://www.fukushihoken.metro.tokyo.jp/kodomo/hitorioya_shien/keizai/zyosei.html
+          - listitem [ref=e248]:
+            - link "看護師等修学資金" [ref=e249] [cursor=pointer]:
+              - /url: https://www.hokeniryo.metro.tokyo.lg.jp/iryo/shikaku/syugaku
+          - listitem [ref=e252]:
+            - link "生活福祉資金" [ref=e253] [cursor=pointer]:
+              - /url: https://www.tcsw.tvac.or.jp/shikin/kasituke.html
+      - group [ref=e256]:
+        - heading "その他の団体" [level=3] [ref=e258]
+  - contentinfo [ref=e259]:
+    - generic [ref=e260]:
+      - generic [ref=e261]:
+        - img "東京の教育を私学のちからでデザインする" [ref=e264]
+        - generic [ref=e265]:
+          - generic [ref=e266]: 東京都新宿区神楽河岸1-1 セントラルプラザ11階
+          - link "Google MAP" [ref=e267] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/9UpGUfz7wMD5iP8S6
+        - button "Page TOP" [ref=e270] [cursor=pointer]
+      - generic [ref=e273]:
+        - generic [ref=e274]:
+          - list [ref=e275]:
+            - listitem [ref=e276]:
+              - link "私学情報" [ref=e277] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/school/
+            - listitem [ref=e278]:
+              - link "都民・保護者の皆様へ" [ref=e279] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp
+            - listitem [ref=e280]:
+              - link "私学の皆様へ" [ref=e281] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/school_index/
+            - listitem [ref=e282]:
+              - link "私学財団について" [ref=e283] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/guide/
+          - list [ref=e284]:
+            - listitem [ref=e285]:
+              - link "プライバシーポリシー" [ref=e286] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/privacypolicy/
+            - listitem [ref=e287]:
+              - link "サイトポリシー" [ref=e288] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/sitepolicy/
+            - listitem [ref=e289]:
+              - link "サイトマップ" [ref=e290] [cursor=pointer]:
+                - /url: https://www.shigaku-tokyo.or.jp/sitemap/
+        - generic [ref=e291]:
+          - link [ref=e292] [cursor=pointer]:
+            - /url: https://www.shigaku-tokyo.or.jp/contact_all/
+            - heading "Contact お問い合わせ" [level=4] [ref=e293]:
+              - generic [ref=e294]: Contact
+              - generic [ref=e295]: お問い合わせ
+            - paragraph [ref=e296]: まずはどうぞお気軽にお声がけください。
+          - link [ref=e299] [cursor=pointer]:
+            - /url: https://lin.ee/N69sjDF
+            - heading "Official LINE LINE公式アカウント" [level=4] [ref=e300]:
+              - generic [ref=e301]: Official LINE
+              - generic [ref=e302]: LINE公式アカウント
+            - paragraph [ref=e303]: 都民・保護者の皆様に大切な情報をLINEでお届けします。
+          - button "LINE通知メッセージについて" [ref=e306] [cursor=pointer]
+          - dialog "LINE通知メッセージについて":
+            - generic:
+              - button "モーダルを閉じる":
+                - generic: ×
+              - generic:
+                - heading "LINE通知メッセージについて" [level=3]
+                - generic:
+                  - paragraph: 東京都私学財団のLINE公式アカウントから、申請内容の不備対応に関する通知メッセージが配信される場合があります。
+                  - paragraph: ＜対象事業＞（令和8年4月1日現在）私立中学校等授業料軽減助成金事業
+                  - heading "LINE通知メッセージとは" [level=4]
+                  - paragraph:
+                    - text: LINEヤフー株式会社が提供する、企業からの利便性の⾼い通知を企業のLINE公式アカウントから受け取ることができる機能です。本機能に同意することで、個別のアカウントを友だち追加することなく、簡単に通知メッセージを受け取ることが可能になります。対象は当社がユーザーにとって有⽤かつ適切であると判断したものに限定され、広告⽬的のものは配信されません。 「LINE通知メッセージ」に関して詳しく確認したい場合は、
+                    - link "こちら":
+                      - /url: https://help.line.me/line?contentId=20011417
+                    - text: をご参照ください。 「LINE通知メッセージ」の受信設定を確認・変更したい場合は、
+                    - link "こちら":
+                      - /url: https://help.line.me/line/?contentId=20011418
+                    - text: （ヘルプセンターへのリンク）をご参照ください。
+                  - heading "通知される条件" [level=4]
+                  - paragraph: オンライン申請時に登録した電話番号と、LINEに登録されている電話番号が一致した方に配信されます。
+    - generic [ref=e311]:
+      - img "公益財団法人 東京都私学財団 Metropolitan Foundation for Private Schools" [ref=e313]
+      - paragraph [ref=e314]: ©2025 公益財団法人 東京都私学財団

@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
-const statusColor: Record<string, string> = { '正常': 'green', '迟到': 'orange', '早退': 'gold', '缺勤': 'red', '请假': 'blue' };
+const statusColor: Record<string, string> = { '正常': '#059669', '迟到': '#D97706', '早退': '#D97706', '缺勤': '#DC2626', '请假': '#5B6CF0' };
 function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 export default function Attendance() {
@@ -72,26 +72,26 @@ export default function Attendance() {
     { title: '备注', dataIndex: 'remark', ellipsis: true },
     ...(editable ? [{
       title: '操作', width: 120, fixed: 'right' as const, render: (_: unknown, r: AttendanceRecord) => 
-        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#ff4d4f' }}>删除</a></Popconfirm></Space>
+        <Space><a onClick={() => openEdit(r)}>编辑</a><Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}><a style={{ color: '#DC2626' }}>删除</a></Popconfirm></Space>
     }] : []),
   ];
 
   return (
     <>
       <Title level={4} style={{ marginBottom: 20, fontWeight: 600 }}>考勤系统</Title>
-      <Card title={`今日打卡概况（${today}）`} size="small" style={{ marginBottom: 16, borderRadius: 8 }}>
+      <Card title={`今日打卡概况（${today}）`} size="small" className="card-flat" style={{ marginBottom: 16 }}>
         <Row gutter={16}>
           {(['正常', '迟到', '早退', '缺勤', '请假'] as const).map((s) => (
             <Col span={4} key={s}><Statistic title={s} value={todayCounts[s]} suffix="人次"
-              valueStyle={{ color: statusColor[s] === 'green' ? '#3f8600' : statusColor[s] === 'red' ? '#cf1322' : '#faad14', fontSize: 20 }} /></Col>
+              valueStyle={{ color: statusColor[s], fontSize: 20 }} /></Col>
           ))}
         </Row>
       </Card>
       <Row gutter={16} style={{ marginBottom: 16 }}>
         {(['正常', '迟到', '早退', '缺勤', '请假'] as const).map((s) => (
-          <Col key={s}><Card size="small" style={{ minWidth: 90 }}><Statistic title={s} value={counts[s]} valueStyle={{ fontSize: 22, color: statusColor[s] }} /></Card></Col>
+          <Col key={s}><Card size="small" className="card-flat" style={{ minWidth: 90 }}><Statistic title={s} value={counts[s]} valueStyle={{ fontSize: 22, color: statusColor[s] }} /></Card></Col>
         ))}
-        <Col flex="auto" /><Col><Card size="small" style={{ minWidth: 100 }}><Statistic title="总计" value={filtered.length} valueStyle={{ fontSize: 22 }} /></Card></Col>
+        <Col flex="auto" /><Col><Card size="small" className="card-flat" style={{ minWidth: 100 }}><Statistic title="总计" value={filtered.length} valueStyle={{ fontSize: 22 }} /></Card></Col>
       </Row>
       <Row gutter={16} style={{ marginBottom: 16 }} align="middle">
         <Col flex="auto">

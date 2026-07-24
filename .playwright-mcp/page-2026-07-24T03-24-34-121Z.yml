@@ -1,0 +1,25 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 青云高级中学
+      - menu [ref=e7]:
+        - menuitem "dashboard 业务版面" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]
+          - generic [ref=e12]: 业务版面
+        - menuitem "book 教学管理" [ref=e13] [cursor=pointer]:
+          - img "book" [ref=e14]
+          - generic [ref=e17]: 教学管理
+        - menuitem "team 行政人事" [ref=e18] [cursor=pointer]:
+          - img "team" [ref=e19]
+          - generic [ref=e22]: 行政人事
+        - menuitem "notification 家校沟通" [ref=e23] [cursor=pointer]:
+          - img "notification" [ref=e24]
+          - generic [ref=e27]: 家校沟通
+  - generic [ref=e28]:
+    - banner [ref=e29]:
+      - button [ref=e30] [cursor=pointer]:
+        - img "menu-fold" [ref=e32]
+      - generic [ref=e35]: 业务版面
+      - button [ref=e36] [cursor=pointer]:
+        - img "lock" [ref=e38]
+    - main [ref=e41]

@@ -12,7 +12,7 @@ import type { ClassInfo, GradeLevel, SubjectTrack, Staff } from '../../types';
 const { Title, Text } = Typography;
 
 const trackOptions: SubjectTrack[] = ['物化生', '物化地', '物生政', '史地政', '史政生', '物化政'];
-const trackColors: Record<string, string> = { '物化生': '#5B8DEF', '物化地': '#13C2C2', '物生政': '#722ED1', '史地政': '#FA8C16', '史政生': '#EB2F96', '物化政': '#52C41A' };
+const trackColors: Record<string, string> = { '物化生': '#5B6CF0', '物化地': '#13C2C2', '物生政': '#7C3AED', '史地政': '#D97706', '史政生': '#EB2F96', '物化政': '#10B981' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
 function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -92,7 +92,7 @@ export default function ClassManage() {
         <Row align="middle" gutter={8}>
           <Col flex="auto">
             <Progress percent={Math.round((r.studentCount / r.maxStudents) * 100)} size="small"
-              strokeColor={r.studentCount >= r.maxStudents ? '#ff4d4f' : r.studentCount >= r.maxStudents * 0.9 ? '#faad14' : '#5B8DEF'}
+              strokeColor={r.studentCount >= r.maxStudents ? '#DC2626' : r.studentCount >= r.maxStudents * 0.9 ? '#faad14' : '#5B6CF0'}
               format={() => ''} style={{ marginBottom: 0 }} />
           </Col>
           <Col><Text style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{r.studentCount}/{r.maxStudents}</Text></Col>
@@ -110,7 +110,7 @@ export default function ClassManage() {
             </Popconfirm>
           )}
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
-            <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
+            <a style={{ color: '#DC2626', fontSize: 13 }}>删除</a>
           </Popconfirm>
         </Space>
       ),
@@ -126,11 +126,7 @@ export default function ClassManage() {
           <Col xs={8} md={6} lg={5} key={gs.grade}>
             <Card
               size="small" hoverable
-              style={{
-                borderRadius: 8, cursor: 'pointer',
-                borderColor: activeGrade === gs.grade ? '#5B8DEF' : undefined,
-                borderWidth: activeGrade === gs.grade ? 2 : 1,
-              }}
+              className="card-flat"
               onClick={() => setActiveGrade(activeGrade === gs.grade ? 'all' : gs.grade)}
             >
               <Statistic
@@ -139,12 +135,12 @@ export default function ClassManage() {
                 suffix={`个班 · ${gs.students}人`}
                 valueStyle={{ fontSize: 24, fontWeight: 600 }}
               />
-              <Progress percent={gs.fullness} size="small" strokeColor={gs.fullness >= 95 ? '#ff4d4f' : '#5B8DEF'} style={{ marginTop: 4 }} />
+              <Progress percent={gs.fullness} size="small" strokeColor={gs.fullness >= 95 ? '#DC2626' : '#5B6CF0'} style={{ marginTop: 4 }} />
             </Card>
           </Col>
         ))}
         <Col xs={8} md={6} lg={4}>
-          <Card size="small" style={{ borderRadius: 8, textAlign: 'center' }}>
+          <Card size="small" className="card-flat" style={{ textAlign: 'center' }}>
             <TrophyOutlined style={{ fontSize: 24, color: '#bbb', marginBottom: 8 }} />
             <div><Text type="secondary" style={{ fontSize: 12 }}>已毕业班级</Text></div>
             <Text style={{ fontSize: 22, fontWeight: 600 }}>{classes.filter((c) => c.status === '毕业').length}</Text>
@@ -154,7 +150,7 @@ export default function ClassManage() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={24}>
-          <Card size="small" title={<Space><HomeOutlined />选科组合分布</Space>} style={{ borderRadius: 8 }}>
+          <Card size="small" title={<Space><HomeOutlined />选科组合分布</Space>} className="card-flat">
             <Space wrap>
               {trackStats.map((ts) => (
                 <Tag key={ts.track} color={trackColors[ts.track]} style={{ padding: '4px 12px', fontSize: 13, borderRadius: 6 }}>

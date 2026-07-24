@@ -1,0 +1,20 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e3]
+  - generic [ref=e4]:
+    - banner "Workspace tabs" [ref=e5]:
+      - tablist "Open workspaces" [ref=e6]:
+        - tab [selected] [ref=e7]:
+          - button "欢迎使用 Open Design" [ref=e8]
+        - button "New tab" [disabled] [ref=e13]
+    - main "欢迎使用 Open Design" [ref=e18]:
+      - region "欢迎使用 Open Design" [ref=e19]:
+        - generic [ref=e20]:
+          - button "简体中文" [ref=e22] [cursor=pointer]
+          - button "深色" [ref=e27] [cursor=pointer]
+        - generic [ref=e31]:
+          - img "Open Design" [ref=e32]
+          - heading "登录 Open Design" [level=1] [ref=e33]
+          - paragraph [ref=e34]: 登录后可直接用云端 AI 开始设计，无需任何复杂配置。
+          - button "登录 Open Design 云端" [ref=e35] [cursor=pointer]
+          - generic [ref=e41]
+        - generic [ref=e45]: © 2026 Open Design · 保留所有权利。

@@ -58,7 +58,7 @@ export default function ExamArrange() {
     { title: '时段', dataIndex: 'timeSlot', width: 60, render: (t: string) => <Tag color={t === '上午' ? 'blue' : 'gold'} bordered={false}>{t}</Tag> },
     { title: '科目', dataIndex: 'subjectName', width: 90, render: (v: string) => <Text strong>{v}</Text> },
     { title: '时长', dataIndex: 'duration', width: 80, render: (v: number) => `${v} 分钟` },
-    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamSession) => <Popconfirm title="删除？" onConfirm={() => { deleteExamSession(r.id).then(loadSessions).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
+    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamSession) => <Popconfirm title="删除？" onConfirm={() => { deleteExamSession(r.id).then(loadSessions).then(() => message.success('已删除')); }}><a style={{ color: '#DC2626', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
   ];
 
   const roomCols: ColumnsType<ExamRoom> = [
@@ -66,7 +66,7 @@ export default function ExamArrange() {
     { title: '容量', dataIndex: 'capacity', width: 60 },
     { title: '监考员A', dataIndex: 'invigilator1', width: 85 },
     { title: '监考员B', dataIndex: 'invigilator2', width: 85, render: (v: string) => v || <Text type="secondary">--</Text> },
-    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamRoom) => <Popconfirm title="删除？" onConfirm={() => { deleteExamRoom(r.id).then(loadRooms).then(() => message.success('已删除')); }}><a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
+    ...(editable ? [{ title: '操作', width: 60, render: (_: unknown, r: ExamRoom) => <Popconfirm title="删除？" onConfirm={() => { deleteExamRoom(r.id).then(loadRooms).then(() => message.success('已删除')); }}><a style={{ color: '#DC2626', fontSize: 13 }}>删除</a></Popconfirm> }] : []),
   ];
 
   return (
@@ -75,14 +75,14 @@ export default function ExamArrange() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={16}>
-          <Card size="small" title={<Space><FlagOutlined />考试列表</Space>} extra={editable ? <Button size="small" onClick={addExam}>新建考试</Button> : null} style={{ borderRadius: 8 }}>
+          <Card size="small" title={<Space><FlagOutlined />考试列表</Space>} extra={editable ? <Button size="small" onClick={addExam}>新建考试</Button> : null} className="card-flat">
             <Space wrap>
               {allExams.map((e) => (
                 <Card
                   key={e.id} size="small" hoverable
                   style={{
                     width: 220, borderRadius: 8, cursor: 'pointer',
-                    borderColor: selectedExam === e.id ? '#5B8DEF' : undefined,
+                    borderColor: selectedExam === e.id ? '#5B6CF0' : undefined,
                     borderWidth: selectedExam === e.id ? 2 : 1,
                   }}
                   onClick={() => setSelectedExam(e.id)}
@@ -100,7 +100,7 @@ export default function ExamArrange() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small" title="当前考试概览" style={{ borderRadius: 8 }}>
+          <Card size="small" title="当前考试概览" className="card-flat">
             {currentExam ? (
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div><Text type="secondary" style={{ fontSize: 12 }}>考试名称</Text><br /><Text strong>{currentExam.name}</Text></div>
@@ -115,7 +115,7 @@ export default function ExamArrange() {
       </Row>
 
       <Card
-        size="small" style={{ borderRadius: 8 }}
+        size="small" className="card-flat"
         tabList={[
           { key: 'schedule', tab: <Space><ScheduleOutlined />考试日程 ({examSessions.length})</Space> },
           { key: 'rooms', tab: <Space><EnvironmentOutlined />考场分配 ({examRooms.length})</Space> },

@@ -1,0 +1,94 @@
+- generic [ref=f7e3]:
+  - complementary [ref=f7e4]:
+    - generic [ref=f7e5]:
+      - generic [ref=f7e6]: 青云高级中学
+      - menu [ref=f7e7]:
+        - menuitem "dashboard 业务版面" [ref=f7e8] [cursor=pointer]:
+          - img "dashboard" [ref=f7e9]
+          - generic [ref=f7e12]: 业务版面
+        - menuitem "book 教学管理" [ref=f7e13] [cursor=pointer]:
+          - img "book" [ref=f7e14]
+          - generic [ref=f7e17]: 教学管理
+        - menuitem "team 行政人事" [ref=f7e18] [cursor=pointer]:
+          - img "team" [ref=f7e19]
+          - generic [ref=f7e22]: 行政人事
+        - menuitem "notification 家校沟通" [ref=f7e23] [cursor=pointer]:
+          - img "notification" [ref=f7e24]
+          - generic [ref=f7e27]: 家校沟通
+  - generic [ref=f7e28]:
+    - banner [ref=f7e29]:
+      - button [ref=f7e30] [cursor=pointer]:
+        - img "menu-fold" [ref=f7e32]
+      - generic [ref=f7e35]: 教学管理
+      - button [ref=f7e36] [cursor=pointer]:
+        - img "lock" [ref=f7e38]
+    - generic [ref=f7e42]:
+      - tablist [ref=f7e43]:
+        - generic [ref=f7e45]:
+          - tab "班级管理" [selected] [ref=f7e47] [cursor=pointer]
+          - tab "课程设置" [ref=f7e49] [cursor=pointer]
+          - tab "课表管理" [ref=f7e51] [cursor=pointer]
+          - tab "考试安排" [ref=f7e53] [cursor=pointer]
+      - generic:
+        - generic:
+          - tabpanel "班级管理"
+    - main [ref=f7e54]:
+      - heading "班级管理" [level=4] [ref=f7e55]
+      - generic [ref=f7e56]:
+        - generic [ref=f7e59] [cursor=pointer]:
+          - generic [ref=f7e60]:
+            - generic [ref=f7e62]:
+              - img "team" [ref=f7e64]
+              - generic [ref=f7e67]: 高一
+            - generic [ref=f7e68]:
+              - generic [ref=f7e69]: "0"
+              - generic [ref=f7e70]: 个班 · 0人
+          - progressbar [ref=f7e71]:
+            - generic "0%" [ref=f7e74]
+        - generic [ref=f7e77] [cursor=pointer]:
+          - generic [ref=f7e78]:
+            - generic [ref=f7e80]:
+              - img "team" [ref=f7e82]
+              - generic [ref=f7e85]: 高二
+            - generic [ref=f7e86]:
+              - generic [ref=f7e87]: "0"
+              - generic [ref=f7e88]: 个班 · 0人
+          - progressbar [ref=f7e89]:
+            - generic "0%" [ref=f7e92]
+        - generic [ref=f7e95] [cursor=pointer]:
+          - generic [ref=f7e96]:
+            - generic [ref=f7e98]:
+              - img "team" [ref=f7e100]
+              - generic [ref=f7e103]: 高三
+            - generic [ref=f7e104]:
+              - generic [ref=f7e105]: "0"
+              - generic [ref=f7e106]: 个班 · 0人
+          - progressbar [ref=f7e107]:
+            - generic "0%" [ref=f7e110]
+        - generic [ref=f7e113]:
+          - img "trophy" [ref=f7e114]
+          - generic [ref=f7e117]: 已毕业班级
+          - text: "0"
+      - generic [ref=f7e124]:
+        - img "home" [ref=f7e126]
+        - generic [ref=f7e129]: 选科组合分布
+      - generic [ref=f7e133]:
+        - generic [ref=f7e137] [cursor=pointer]:
+          - combobox [ref=f7e139]
+          - generic "全部年级" [ref=f7e140]
+        - generic [ref=f7e141]: 共 0 个班级
+      - table [ref=f7e149]:
+        - rowgroup [ref=f7e157]:
+          - row [ref=f7e158]:
+            - columnheader "班级" [ref=f7e159]
+            - columnheader "年级" [ref=f7e160]
+            - columnheader "选科" [ref=f7e161]
+            - columnheader "班主任" [ref=f7e162]
+            - columnheader "教室" [ref=f7e163]
+            - columnheader "人数" [ref=f7e164]
+        - rowgroup [ref=f7e165]:
+          - row [ref=f7e166]:
+            - cell "暂无数据 暂无数据" [ref=f7e167]:
+              - generic [ref=f7e169]:
+                - img "暂无数据" [ref=f7e171]
+                - generic [ref=f7e177]: 暂无数据

@@ -16,8 +16,8 @@ const { Title, Text } = Typography;
 
 const statusColor: Record<string, string> = { '在职': 'green', '离职': 'orange', '退休': 'blue' };
 const deptMeta: Record<string, { color: string; icon: React.ReactNode; desc: string }> = {
-  '教务处': { color: '#5B8DEF', icon: <SafetyCertificateOutlined />, desc: '教务管理' },
-  '德育处': { color: '#722ED1', icon: <UserOutlined />, desc: '学生德育' },
+  '教务处': { color: '#5B6CF0', icon: <SafetyCertificateOutlined />, desc: '教务管理' },
+  '德育处': { color: '#7C3AED', icon: <UserOutlined />, desc: '学生德育' },
   '年级组': { color: '#13C2C2', icon: <TeamOutlined />, desc: '一线教师' },
   '后勤处': { color: '#FAAD14', icon: <EnvironmentOutlined />, desc: '后勤保障' },
   '校办':   { color: '#EB2F96', icon: <BankOutlined />, desc: '行政办公' },
@@ -86,7 +86,7 @@ export default function StaffArchive() {
       title: '姓名', dataIndex: 'name', width: 100, fixed: 'left',
       render: (name: string, r) => (
         <Space size={8}>
-          <Avatar size={30} style={{ background: r.status === '在职' ? deptMeta[r.department]?.color ?? '#5B8DEF' : '#d9d9d9', fontSize: 13 }}>
+          <Avatar size={30} style={{ background: r.status === '在职' ? deptMeta[r.department]?.color ?? '#5B6CF0' : '#d9d9d9', fontSize: 13 }}>
             {name[0]}
           </Avatar>
           <div>
@@ -135,7 +135,7 @@ export default function StaffArchive() {
         <Space size={4}>
           <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
-            <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
+            <a style={{ color: '#DC2626', fontSize: 13 }}>删除</a>
           </Popconfirm>
         </Space>
       ),
@@ -150,13 +150,7 @@ export default function StaffArchive() {
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         <Col xs={12} sm={8} md={6} lg={4}>
           <Card
-            size="small" hoverable
-            style={{
-              borderRadius: 10, textAlign: 'center', cursor: 'pointer',
-              borderColor: activeDept === 'all' ? '#5B8DEF' : '#f0f0f0',
-              borderWidth: activeDept === 'all' ? 2 : 1,
-              background: activeDept === 'all' ? '#F0F5FF' : '#fff',
-            }}
+            size="small" hoverable className="card-flat"
             onClick={() => { setActiveDept('all'); }}
           >
             <Statistic
@@ -170,12 +164,7 @@ export default function StaffArchive() {
         {deptStats.map((ds) => (
           <Col xs={12} sm={8} md={6} lg={4} key={ds.dept}>
             <Card
-              size="small" hoverable
-              style={{
-                borderRadius: 10, textAlign: 'center', cursor: 'pointer',
-                borderColor: activeDept === ds.dept ? deptMeta[ds.dept]?.color : '#f0f0f0',
-                borderWidth: activeDept === ds.dept ? 2 : 1,
-              }}
+              size="small" hoverable className="card-flat"
               onClick={() => setActiveDept(activeDept === ds.dept ? 'all' : ds.dept)}
             >
               <div style={{ fontSize: 22, color: deptMeta[ds.dept]?.color, marginBottom: 4 }}>
@@ -190,7 +179,7 @@ export default function StaffArchive() {
       </Row>
 
       {/* 搜索栏 */}
-      <Card size="small" style={{ marginBottom: 16, borderRadius: 10, background: '#FAFBFC' }}>
+      <Card size="small" className="card-flat" style={{ marginBottom: 16 }}>
         <Row gutter={[12, 12]} align="middle">
           <Col flex="auto">
             <Input

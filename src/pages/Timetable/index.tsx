@@ -109,7 +109,7 @@ export default function Timetable() {
     <>
       <Title level={4} style={{ marginBottom: 20, fontWeight: 600 }}>课表管理</Title>
 
-      <Card size="small" style={{ marginBottom: 16, borderRadius: 8 }}>
+      <Card size="small" className="card-flat" style={{ marginBottom: 16 }}>
         <Space wrap>
           <Radio.Group value={viewMode} onChange={(e) => setViewMode(e.target.value)} buttonStyle="solid" size="small">
             <Radio.Button value="class"><BookOutlined /> 班级课表</Radio.Button>
@@ -131,7 +131,8 @@ export default function Timetable() {
         <Card
           size="small"
           title={<Space><ScheduleOutlined />{selectedClassName}</Space>}
-          style={{ borderRadius: 8, overflow: 'auto' }}
+          className="card-flat"
+          style={{ overflow: 'auto' }}
           extra={<Text type="secondary" style={{ fontSize: 12 }}>点击课节编辑，点空白格子添加</Text>}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: 13, minWidth: 700 }}>
@@ -191,7 +192,7 @@ export default function Timetable() {
                         onMouseLeave={() => setHoveredCell('')}
                          onClick={() => editable && openEdit(entry)}
                       >
-                        <div style={{ fontWeight: 600, color: '#5B8DEF', fontSize: 13, marginBottom: 2 }}>
+                        <div style={{ fontWeight: 600, color: '#5B6CF0', fontSize: 13, marginBottom: 2 }}>
                           {entry.subjectName}
                         </div>
                         <div style={{ fontSize: 11, color: '#888' }}>
@@ -200,7 +201,7 @@ export default function Timetable() {
                         {hasConflict && (
                           <Tooltip title={`与 ${conflictMap[entry.id]?.join('、')} 冲突`}>
                             <WarningFilled style={{
-                              color: '#ff4d4f', fontSize: 12,
+                              color: '#DC2626', fontSize: 12,
                               position: 'absolute', top: 3, right: 3,
                             }} />
                           </Tooltip>
@@ -236,7 +237,7 @@ export default function Timetable() {
         <Card
           size="small"
            title={<Space><UserOutlined />{allStaff.find((s) => s.id === selectedTeacher)?.name} 的课表</Space>}
-          style={{ borderRadius: 8 }}
+          className="card-flat"
         >
           {teacherEntries.length === 0 ? (
             <Empty description="该教师暂无排课" />
@@ -259,7 +260,7 @@ export default function Timetable() {
                     <td style={{ padding: 8, border: '1px solid #E8ECF1', fontSize: 11, color: '#888' }}>
                       {PERIODS.find((p) => p.idx === e.period)?.time}
                     </td>
-                    <td style={{ padding: 8, border: '1px solid #E8ECF1', fontWeight: 500, color: '#5B8DEF' }}>
+                    <td style={{ padding: 8, border: '1px solid #E8ECF1', fontWeight: 500, color: '#5B6CF0' }}>
                       {e.subjectName}
                     </td>
                     <td style={{ padding: 8, border: '1px solid #E8ECF1' }}>{e.className}</td>
@@ -270,7 +271,7 @@ export default function Timetable() {
           )}
         </Card>
       ) : (
-        <Card size="small" style={{ borderRadius: 8 }}>
+        <Card size="small" className="card-flat">
           <Empty description="请选择一位教师查看课表" />
         </Card>
       )}

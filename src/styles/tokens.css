@@ -1,0 +1,20 @@
+/* Synthesized from shigaku-tokyo.or.jp + 7-kou.jp */
+:root {
+  --bg: #FCFAF8;
+  --section-warm: #FFFDFB;
+  --surface: #ffffff;
+  --text: #333333;
+  --text-muted: #64748b;
+  --accent: #4062BB;
+  --accent-light: #84B1EA;
+  --accent-teal: #128068;
+  --border: #E8E2DC;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-pill: 30px;
+  /* Animation timing */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+}

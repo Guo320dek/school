@@ -1,3 +1,4 @@
+// 青云高级中学 — 管理系统
 import { useMemo, useState } from 'react';
 import { Layout, Menu, Tabs, theme, Button, Input, Modal, Drawer, Grid } from 'antd';
 import {
@@ -42,6 +43,30 @@ const categories: Category[] = [
   ]},
 ];
 
+// Sidebar brand illustration SVG
+const SidebarBrandIllustration = ({ visible }: { visible: boolean }) => (
+  <div style={{
+    padding: '20px 12px 16px', marginTop: 'auto',
+    opacity: 0.5, transition: 'opacity 0.2s',
+    textAlign: 'center',
+  }}
+    onMouseEnter={e => { e.currentTarget.style.opacity = '0.8'; }}
+    onMouseLeave={e => { e.currentTarget.style.opacity = '0.5'; }}
+  >
+    <svg viewBox="0 0 140 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: visible ? 130 : 48, transition: 'width 0.2s' }}>
+      <rect x="20" y="18" width="55" height="52" rx="4" stroke="#4062BB" strokeWidth="1.2" opacity="0.4"/>
+      <rect x="28" y="26" width="16" height="16" rx="2" stroke="#4062BB" strokeWidth="1" opacity="0.25"/>
+      <rect x="50" y="26" width="16" height="16" rx="2" stroke="#4062BB" strokeWidth="1" opacity="0.25"/>
+      <rect x="28" y="46" width="38" height="16" rx="2" stroke="#4062BB" strokeWidth="1" opacity="0.25"/>
+      <rect x="95" y="28" width="4" height="42" rx="2" fill="#4062BB" opacity="0.15"/>
+      <circle cx="97" cy="22" r="7" stroke="#4062BB" strokeWidth="1.1" opacity="0.2"/>
+      <circle cx="94" cy="19" r="2.5" fill="#4062BB" opacity="0.18"/>
+      <circle cx="100" cy="21" r="2" fill="#4062BB" opacity="0.14"/>
+      <circle cx="97" cy="25" r="1.5" fill="#4062BB" opacity="0.16"/>
+    </svg>
+  </div>
+);
+
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -73,7 +98,7 @@ export default function MainLayout() {
       <div style={{
         height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 16, fontWeight: 600, color: token.colorPrimary,
-        borderBottom: `1px solid ${token.colorBorderSecondary}`,
+        borderBottom: '1px solid #E8E2DC',
       }}>
         青云高级中学
       </div>
@@ -87,6 +112,7 @@ export default function MainLayout() {
           if (cat) { navigate(cat.path); setDrawerOpen(false); }
         }}
       />
+      <SidebarBrandIllustration visible />
     </>
   );
 
@@ -101,14 +127,14 @@ export default function MainLayout() {
           trigger={null}
           collapsed={collapsed}
           style={{
-            borderRight: `1px solid ${token.colorBorderSecondary}`,
-            background: token.colorBgLayout,
+            borderRight: '1px solid #E8E2DC',
+            background: '#FCFAF8',
           }}
         >
           <div style={{
-            height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: collapsed ? 14 : 16, fontWeight: 600, color: token.colorPrimary,
-            borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: collapsed ? 16 : 17, fontWeight: 600, color: token.colorPrimary,
+            borderBottom: '1px solid #E8E2DC',
             overflow: 'hidden', whiteSpace: 'nowrap',
           }}>
             {collapsed ? '青云' : '青云高级中学'}
@@ -123,6 +149,7 @@ export default function MainLayout() {
               if (cat) navigate(cat.path);
             }}
           />
+          <SidebarBrandIllustration visible={!collapsed} />
         </Sider>
       )}
 
@@ -141,10 +168,10 @@ export default function MainLayout() {
 
       <Layout>
         <Header style={{
-          height: 56, padding: isMobile ? '0 12px' : '0 24px',
-          background: token.colorBgContainer,
+          height: 60, padding: isMobile ? '0 12px' : '0 24px',
+          background: '#fff',
           display: 'flex', alignItems: 'center', gap: 12,
-          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+          borderBottom: '1px solid #E8E2DC',
         }}>
           {isMobile ? (
             <Button type="text" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)} />
@@ -154,17 +181,17 @@ export default function MainLayout() {
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               size="small"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}
+              style={{ border: '1px solid #E8E2DC', color: '#64748b' }}
             />
           )}
-          <span style={{ fontSize: 15, fontWeight: 500, flex: 1 }}>{activeCategory.label}</span>
+          <span style={{ fontSize: 15, fontWeight: 600, flex: 1, color: '#333' }}>{activeCategory.label}</span>
           <Button type="text" icon={editable ? <UnlockOutlined style={{ color: '#10B981' }} /> : <LockOutlined style={{ color: '#9CA3AF' }} />}
             onClick={() => editable ? lock() : setPwModal(true)} title={editable ? '点击锁定' : '解锁编辑'} />
         </Header>
         {subTabs && (
           <div style={{
-            background: token.colorBgContainer,
-            borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            background: '#FCFAF8',
+            borderBottom: '1px solid #E8E2DC',
             padding: isMobile ? '0 8px' : '0 20px',
             overflowX: 'auto',
           }}>
@@ -179,10 +206,10 @@ export default function MainLayout() {
           </div>
         )}
         <Content style={{
-          margin: isMobile ? 8 : 20,
+          margin: isMobile ? 8 : 24,
           padding: isMobile ? 12 : 24,
           background: token.colorBgContainer,
-          borderRadius: token.borderRadiusLG,
+          borderRadius: 8,
           minHeight: 280, overflow: 'auto',
         }}>
           <Outlet />

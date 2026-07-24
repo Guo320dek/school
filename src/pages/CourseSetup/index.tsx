@@ -80,7 +80,7 @@ export default function CourseSetup() {
       title: '周课时', dataIndex: 'weeklyHours', width: 140,
       render: (v: number) => (
         <Tooltip title={`${v} 节 / 周`}>
-          <Progress percent={Math.round((v / 6) * 100)} size="small" strokeColor="#5B8DEF" format={() => `${v} 节`} style={{ marginBottom: 0 }} />
+          <Progress percent={Math.round((v / 6) * 100)} size="small" strokeColor="#5B6CF0" format={() => `${v} 节`} style={{ marginBottom: 0 }} />
         </Tooltip>
       ),
     },
@@ -91,7 +91,7 @@ export default function CourseSetup() {
         <Space size={4}>
           <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
           <Popconfirm title="确定删除？" onConfirm={() => handleDelete(r.id)}>
-            <a style={{ color: '#ff4d4f', fontSize: 13 }}>删除</a>
+            <a style={{ color: '#DC2626', fontSize: 13 }}>删除</a>
           </Popconfirm>
         </Space>
       ),
@@ -104,7 +104,7 @@ export default function CourseSetup() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={16}>
-          <Card size="small" title={<Space><BookOutlined />科目库</Space>} style={{ borderRadius: 8 }}>
+          <Card size="small" title={<Space><BookOutlined />科目库</Space>} className="card-flat">
             <Space wrap size={[8, 8]}>
                {subjects.map((s) => (
                 <Tooltip key={s.id} title={`${catLabels[s.category]}`}>
@@ -125,7 +125,7 @@ export default function CourseSetup() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card size="small" title={<Space><ClockCircleOutlined />课时分布</Space>} style={{ borderRadius: 8 }}>
+          <Card size="small" title={<Space><ClockCircleOutlined />课时分布</Space>} className="card-flat">
             {Object.entries(catDistribution).map(([cat, hours]) => (
               <Row key={cat} align="middle" style={{ marginBottom: 6 }}>
                 <Col span={8}><Text style={{ fontSize: 12 }}>{catLabels[cat] || cat}</Text></Col>
@@ -137,7 +137,7 @@ export default function CourseSetup() {
             ))}
             <div style={{ marginTop: 8, textAlign: 'center' }}>
               <Text type="secondary">
-                合计 <Text strong style={{ color: weeklyTotal >= maxWeekly ? '#ff4d4f' : '#5B8DEF' }}>{weeklyTotal}</Text> / {maxWeekly} 节
+                合计 <Text strong style={{ color: weeklyTotal >= maxWeekly ? '#DC2626' : '#5B6CF0' }}>{weeklyTotal}</Text> / {maxWeekly} 节
               </Text>
             </div>
           </Card>

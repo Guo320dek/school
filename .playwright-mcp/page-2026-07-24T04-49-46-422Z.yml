@@ -1,0 +1,34 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - generic [ref=f2e4]:
+      - button
+      - button
+    - generic:
+      - generic:
+        - generic:
+          - link "Open book":
+            - /url: "#page-1"
+          - paragraph:
+            - text: "To:"
+            - generic: Kiri, Ama, and Naya
+            - text: May you grow up in a world that’s tolerant and equal.
+            - generic: Love, Kamron & Andreas
+            - text: Proud dads of kids of color
+          - paragraph: Loading...
+  - generic: How to Talk to White Kids about Racism
+  - link "HTWKR by Hello Monday" [ref=f2e5] [cursor=pointer]:
+    - /url: https://www.hellomonday.com/
+  - generic [ref=f2e6]:
+    - generic [ref=f2e7]:
+      - text: Share
+      - link "Facebook" [ref=f2e8] [cursor=pointer]:
+        - /url: https://www.facebook.com/sharer/sharer.php?u=https://howtotalktowhitekidsaboutracism.com/
+      - link "Twitter" [ref=f2e9] [cursor=pointer]:
+        - /url: https://twitter.com/home?status=https://HowToTalkToWhiteKidsAboutRacism.com - Learn How to Talk to White Kids about Racism
+    - generic [ref=f2e10]:
+      - text: Typeface
+      - link "Canela" [ref=f2e11] [cursor=pointer]:
+        - /url: https://commercialtype.com/catalog/canela
+      - text: by
+      - link "Commercial type" [ref=f2e12] [cursor=pointer]:
+        - /url: https://commercialtype.com/
