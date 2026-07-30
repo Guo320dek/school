@@ -3,7 +3,7 @@
   buildCommand = "echo 'Build skipped - dist committed'"
 
 [deploy]
-  startCommand = "node server/index.cjs"
+  startCommand = "node server/debug.cjs"
 
 [service]
   [service.volume]
