@@ -4,7 +4,18 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { WebSocketServer } = require('ws');
-const { getDb, ensureDb } = require('./db.cjs');
+
+let getDb, ensureDb;
+try {
+  const db = require('./db.cjs');
+  getDb = db.getDb;
+  ensureDb = db.ensureDb;
+} catch (e) {
+  console.error('Failed to load db.cjs:', e.stack || e.message);
+  // Start minimal server anyway for debugging
+  getDb = () => { throw new Error('DB not available'); };
+  ensureDb = async () => { throw e; };
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
