@@ -23,16 +23,9 @@ const distPath = path.join(__dirname, '..', 'dist');
 app.use(cors());
 app.use(express.json());
 
-// Health check
+// Health check (no DB dependency for Railway)
 app.get('/api/health', (_req, res) => {
-  try {
-    const db = getDb();
-    db.prepare('SELECT 1').get();
-    const { DB_PATH } = require('./db.cjs');
-    res.json({ status: 'ok', db: 'connected', dbPath: DB_PATH });
-  } catch (e) {
-    res.status(500).json({ status: 'error', db: e.message });
-  }
+  res.json({ status: 'ok' });
 });
 
 // Serve static frontend in production
@@ -338,11 +331,21 @@ app.use((err, req, res, _next) => {
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught exception:', err);
+  console.error('Uncaught exception:', err.stack || err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+  process.exit(1);
 });
 
 // Wait for DB then start
+console.log('Starting server...');
+console.log('Node version:', process.version);
+console.log('CWD:', process.cwd());
+console.log('PORT env:', process.env.PORT);
 ensureDb().then(() => {
+  console.log('DB initialized successfully');
   // Startup diagnostics
   console.log('dist path:', distPath);
   console.log('dist exists:', fs.existsSync(distPath));
