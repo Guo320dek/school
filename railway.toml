@@ -1,6 +1,6 @@
 [build]
   builder = "nixpacks"
-  buildCommand = "npm run build"
+  buildCommand = "npx vite build"
 
 [deploy]
   startCommand = "node server/index.cjs"
