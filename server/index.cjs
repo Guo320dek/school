@@ -280,12 +280,16 @@ app.delete('/api/students/:id', (req, res, next) => {
 app.get('/api/metrics', (req, res) => {
   try {
     const db = getDb();
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    const monthStart = `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`;
     const classes = db.prepare("SELECT COUNT(*) as c FROM classes WHERE status = '在读'").get();
     const staff = db.prepare("SELECT COUNT(*) as c FROM staff WHERE status = '在职'").get();
     const students = db.prepare('SELECT SUM(studentCount) as c FROM classes WHERE status = ?').get('在读');
-    const pending = db.prepare("SELECT COUNT(*) as c FROM salary_records WHERE status = '待发放' AND month = 7").get();
-    const late = db.prepare("SELECT COUNT(*) as c FROM attendance_records WHERE status = '迟到' AND date >= '2026-07-01'").get();
-    const absent = db.prepare("SELECT COUNT(*) as c FROM attendance_records WHERE status = '缺勤' AND date >= '2026-07-01'").get();
+    const pending = db.prepare("SELECT COUNT(*) as c FROM salary_records WHERE status = '待发放' AND month = ?").get(currentMonth);
+    const late = db.prepare("SELECT COUNT(*) as c FROM attendance_records WHERE status = '迟到' AND date >= ?").get(monthStart);
+    const absent = db.prepare("SELECT COUNT(*) as c FROM attendance_records WHERE status = '缺勤' AND date >= ?").get(monthStart);
 
     res.json([
       { title: '在读班级', value: classes.c, unit: '个', trend: 'stable', icon: 'book' },
