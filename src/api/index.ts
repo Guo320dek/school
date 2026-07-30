@@ -5,6 +5,7 @@ import type {
   Student,
 } from '../types';
 import type { CreateInput, UpdateInput } from '../types/api';
+import type { CalendarEvent } from '../types';
 
 const BASE = '/api';
 
@@ -95,6 +96,12 @@ export const getStudents = () => request<Student[]>('/students');
 export const createStudent = (data: CreateInput<Student>) => request<Student>('/students', { method: 'POST', body: JSON.stringify(data) });
 export const updateStudent = (id: string, data: UpdateInput<Student>) => request<Student>(`/students/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteStudent = (id: string) => request<{ success: boolean }>(`/students/${id}`, { method: 'DELETE' });
+
+// ===== Calendar =====
+export const getCalendarEvents = () => request<CalendarEvent[]>('/calendar');
+export const createCalendarEvent = (data: CreateInput<CalendarEvent>) => request<CalendarEvent>('/calendar', { method: 'POST', body: JSON.stringify(data) });
+export const updateCalendarEvent = (id: string, data: UpdateInput<CalendarEvent>) => request<CalendarEvent>(`/calendar/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteCalendarEvent = (id: string) => request<{ success: boolean }>(`/calendar/${id}`, { method: 'DELETE' });
 
 // ===== Metrics =====
 export const getMetrics = () => request<BusinessMetric[]>('/metrics');

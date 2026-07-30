@@ -1,14 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Space, Tag, Card, Row, Col, Statistic, Typography, message, Progress, Tabs } from 'antd';
+import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, DatePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Progress, Tabs } from 'antd';
 import {
   PlusOutlined, TeamOutlined, HomeOutlined, TrophyOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { getClasses, createClass, updateClass, deleteClass, getStaff } from '../../api';
+import { getClasses, createClass, updateClass, deleteClass, getStaff, getAnnouncements, createAnnouncement, deleteAnnouncement } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
-import type { ClassInfo, GradeLevel, SubjectTrack, Staff } from '../../types';
+import type { ClassInfo, GradeLevel, SubjectTrack, Staff, Announcement } from '../../types';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -25,8 +26,14 @@ export default function ClassManage() {
   const [editing, setEditing] = useState<ClassInfo | null>(null);
   const [form] = Form.useForm();
 
+  // Class bulletin board
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [bulletinClass, setBulletinClass] = useState<ClassInfo | null>(null);
+  const [bulletinOpen, setBulletinOpen] = useState(false);
+  const [bulletinForm] = Form.useForm();
+
   const loadClasses = () => { setLoading(true); getClasses().then(setClasses).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
-  useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
+  useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
   useRealtime('classes', loadClasses);
   const { editable } = usePermission();
 
@@ -63,6 +70,33 @@ export default function ClassManage() {
 
   function handleGraduate(cls: ClassInfo) {
     updateClass(cls.id, { status: '毕业', graduateYear: 2026 }).then(loadClasses).then(() => message.success(`${cls.name} 已标记为毕业`));
+  }
+
+  function openBulletin(cls: ClassInfo) {
+    setBulletinClass(cls);
+    bulletinForm.resetFields();
+    setBulletinOpen(true);
+  }
+  function postBulletin() {
+    bulletinForm.validateFields().then((v) => {
+      if (!bulletinClass) return;
+      createAnnouncement({
+        id: newId(),
+        title: v.title,
+        content: v.content,
+        date: new Date().toISOString().slice(0, 10),
+        priority: v.priority || '普通',
+        target: bulletinClass.grade as any,
+        expireDate: v.expireDate ? (v.expireDate as any).format('YYYY-MM-DD') : '',
+        isExpired: false,
+        classId: bulletinClass.id,
+        className: bulletinClass.name,
+      }).then(() => {
+        getAnnouncements().then(setAnnouncements);
+        message.success('公告已发布');
+        bulletinForm.resetFields();
+      }).catch(() => message.error('发布失败'));
+    });
   }
 
   function handleSave() {
@@ -104,6 +138,7 @@ export default function ClassManage() {
       render: (_: unknown, r: ClassInfo) => (
         <Space size={4}>
           <a onClick={() => openEdit(r)} style={{ fontSize: 13 }}>编辑</a>
+          <a onClick={() => openBulletin(r)} style={{ fontSize: 13 }}>公告</a>
           {r.status === '在读' && r.grade === '高三' && (
             <Popconfirm title={`确定将 ${r.name} 标记为毕业？`} onConfirm={() => handleGraduate(r)}>
               <a style={{ color: '#faad14', fontSize: 13 }}>毕业</a>
@@ -194,6 +229,55 @@ export default function ClassManage() {
             <Col span={6}><Form.Item name="maxStudents" label="上限"><InputNumber min={1} style={{ width: '100%' }} /></Form.Item></Col>
           </Row>
         </Form>
+      </Modal>
+
+      {/* Class Bulletin Board Modal */}
+      <Modal
+        title={`${bulletinClass?.name ?? ''} 班级公告栏`}
+        open={bulletinOpen}
+        onCancel={() => setBulletinOpen(false)}
+        footer={null}
+        width={600}
+      >
+        {editable && (
+          <div style={{ marginBottom: 16, padding: 12, background: '#FAFAFA', borderRadius: 8 }}>
+            <Form form={bulletinForm} layout="inline" style={{ flexWrap: 'wrap', gap: 8 }}>
+              <Form.Item name="title" rules={[{ required: true }]} style={{ flex: '1 1 200px' }}>
+                <Input placeholder="公告标题" />
+              </Form.Item>
+              <Form.Item name="priority" style={{ width: 100 }}>
+                <Select placeholder="优先级" options={[{ label: '普通', value: '普通' }, { label: '重要', value: '重要' }, { label: '紧急', value: '紧急' }]} />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" onClick={postBulletin}>发布</Button>
+              </Form.Item>
+            </Form>
+            <Form.Item name="content" rules={[{ required: true }]} style={{ marginTop: 8, marginBottom: 0 }}>
+              <Input.TextArea rows={2} placeholder="公告内容..." />
+            </Form.Item>
+            <Form.Item name="expireDate" style={{ marginTop: 8, marginBottom: 0 }}>
+              <DatePicker placeholder="有效期至（可选）" style={{ width: 200 }} />
+            </Form.Item>
+          </div>
+        )}
+        <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+          {announcements.filter((a) => a.classId === bulletinClass?.id).length === 0 ? (
+            <Text type="secondary" style={{ display: 'block', textAlign: 'center', padding: 24 }}>暂无班级公告</Text>
+          ) : (
+            announcements.filter((a) => a.classId === bulletinClass?.id).map((a) => (
+              <Card key={a.id} size="small" style={{ marginBottom: 8 }} title={
+                <Space>
+                  <Tag color={a.priority === '紧急' ? 'red' : a.priority === '重要' ? 'orange' : 'blue'}>{a.priority}</Tag>
+                  <Text strong>{a.title}</Text>
+                  <Text type="secondary" style={{ fontSize: 11 }}>{a.date}</Text>
+                </Space>
+              }>
+                <Paragraph>{a.content}</Paragraph>
+                {a.expireDate && <Text type="secondary" style={{ fontSize: 11 }}>有效期至 {a.expireDate}</Text>}
+              </Card>
+            ))
+          )}
+        </div>
       </Modal>
     </>
   );

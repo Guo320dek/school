@@ -149,6 +149,8 @@ export interface Announcement {
   target: AnnounceTarget;
   expireDate: string;
   isExpired: boolean;
+  classId?: string;
+  className?: string;
 }
 
 // ===== 业务指标 =====
@@ -172,4 +174,14 @@ export interface Student {
   address?: string;
   enrollmentYear: number;
   status: '在读' | '休学' | '退学' | '毕业';
+}
+
+// ===== 校历 =====
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  endDate?: string;
+  type: '学期' | '假期' | '考试' | '活动' | '其他';
+  description?: string;
 }

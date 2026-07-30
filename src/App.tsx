@@ -14,6 +14,7 @@ import Attendance from './pages/Attendance';
 import Announcement from './pages/Announcement';
 import SubjectManage from './pages/SubjectManage';
 import StudentRoster from './pages/StudentRoster';
+import SchoolCalendar from './pages/SchoolCalendar';
 
 export default function App() {
   return (
@@ -71,6 +72,7 @@ export default function App() {
               <Route path="teaching/students" element={<StudentRoster />} />
               <Route path="teaching/timetable" element={<Timetable />} />
               <Route path="teaching/exam" element={<ExamArrange />} />
+              <Route path="calendar" element={<SchoolCalendar />} />
               <Route path="hr/staff" element={<StaffArchive />} />
               <Route path="hr/salary" element={<Salary />} />
               <Route path="hr/attendance" element={<Attendance />} />

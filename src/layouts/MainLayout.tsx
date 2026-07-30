@@ -6,6 +6,7 @@ import {
   BookOutlined,
   TeamOutlined,
   NotificationOutlined,
+  CalendarOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MenuOutlined,
@@ -27,6 +28,7 @@ interface Category {
 
 const categories: Category[] = [
   { key: 'dashboard', icon: <DashboardOutlined />, label: '业务版面', path: '/' },
+  { key: 'calendar', icon: <CalendarOutlined />, label: '校历', path: '/calendar' },
   { key: 'teaching', icon: <BookOutlined />, label: '教学管理', path: '/teaching/class', children: [
     { key: '/teaching/class', label: '班级管理' },
     { key: '/teaching/students', label: '学生花名册' },

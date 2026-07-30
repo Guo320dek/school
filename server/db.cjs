@@ -161,7 +161,8 @@ function initSchema() {
 
     CREATE TABLE IF NOT EXISTS announcements (
       id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT,
-      priority TEXT, target TEXT, expireDate TEXT, isExpired INTEGER DEFAULT 0
+      priority TEXT, target TEXT, expireDate TEXT, isExpired INTEGER DEFAULT 0,
+      classId TEXT, className TEXT
     );
 
     CREATE TABLE IF NOT EXISTS students (
@@ -170,12 +171,20 @@ function initSchema() {
       phone TEXT, address TEXT, enrollmentYear INTEGER,
       status TEXT DEFAULT '在读'
     );
+
+    CREATE TABLE IF NOT EXISTS calendar_events (
+      id TEXT PRIMARY KEY, title TEXT, date TEXT, endDate TEXT,
+      type TEXT, description TEXT DEFAULT ''
+    );
   `);
 
   // Migration: add teacherIds column if missing
   try {
     db.exec(`ALTER TABLE subjects ADD COLUMN teacherIds TEXT DEFAULT '[]'`);
   } catch {}
+  // Migration: add classId/className to announcements
+  try { db.exec(`ALTER TABLE announcements ADD COLUMN classId TEXT`); } catch {}
+  try { db.exec(`ALTER TABLE announcements ADD COLUMN className TEXT`); } catch {}
 
   const count = db.prepare('SELECT COUNT(*) as c FROM staff').get();
   if (!count || count.c === 0) seed();
@@ -396,13 +405,14 @@ function seed() {
 
     // Announcements
     const ann = [
-      ['n1','关于开展暑期教师培训的通知','请高一、高二年级全体教师于8月20日前完成线上暑期培训课程。','2026-07-20','重要','高一','2026-08-25',0],
-      ['n2','关于加强校园安全管理的紧急通知','接上级通知，近期需全面排查校园安全隐患。','2026-07-19','紧急','全体','2026-07-26',0],
-      ['n3','高三年级毕业典礼安排','2026届高三毕业典礼定于7月25日上午9:00在学校礼堂举行。','2026-07-18','重要','高三','2026-07-25',0],
-      ['n4','7月份工资发放时间调整通知','因银行系统维护，7月份工资将推迟至7月18日发放。','2026-07-15','普通','全体','2026-07-20',1],
-      ['n5','高一年级家长会通知','定于7月28日下午2:30在各班教室召开高一年级期末家长会。','2026-07-16','普通','高一','2026-07-28',0],
+      ['n1','关于开展暑期教师培训的通知','请高一、高二年级全体教师于8月20日前完成线上暑期培训课程。','2026-07-20','重要','高一','2026-08-25',0,null,null],
+      ['n2','关于加强校园安全管理的紧急通知','接上级通知，近期需全面排查校园安全隐患。','2026-07-19','紧急','全体','2026-07-26',0,null,null],
+      ['n3','高三年级毕业典礼安排','2026届高三毕业典礼定于7月25日上午9:00在学校礼堂举行。','2026-07-18','重要','高三','2026-07-25',0,null,null],
+      ['n4','7月份工资发放时间调整通知','因银行系统维护，7月份工资将推迟至7月18日发放。','2026-07-15','普通','全体','2026-07-20',1,null,null],
+      ['n5','高一年级家长会通知','定于7月28日下午2:30在各班教室召开高一年级期末家长会。','2026-07-16','普通','高一','2026-07-28',0,null,null],
+      ['n6','高一(1)班期末动员','各位同学，期末考试即将到来，请认真复习。','2026-07-20','重要','高一','2026-07-28',0,'c11','高一(1)班'],
     ];
-    const insAn = db.prepare('INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?)');
+    const insAn = db.prepare('INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?,?,?)');
     for (const a of ann) insAn.run(...a);
 
     // Students (based on class studentCount)
@@ -436,6 +446,30 @@ function seed() {
     }
     const insStu = db.prepare('INSERT INTO students VALUES (?,?,?,?,?,?,?,?,?,?)');
     for (const s of students) insStu.run(...s);
+
+    // Calendar events
+    const calEvents = [
+      ['cal1','第一学期开学','2026-09-01','2026-09-01','学期','2026-2027学年第一学期开学日'],
+      ['cal2','中秋节放假','2026-09-15','2026-09-17','假期','中秋节假期3天'],
+      ['cal3','国庆节放假','2026-10-01','2026-10-07','假期','国庆节假期7天'],
+      ['cal4','期中考试周','2026-11-09','2026-11-13','考试','全校期中考试'],
+      ['cal5','秋季运动会','2026-10-22','2026-10-23','活动','全校秋季田径运动会'],
+      ['cal6','元旦放假','2027-01-01','2027-01-03','假期','元旦假期3天'],
+      ['cal7','期末考试周','2027-01-12','2027-01-16','考试','第一学期期末考试'],
+      ['cal8','寒假开始','2027-01-18','2027-02-14','假期','寒假4周'],
+      ['cal9','第二学期开学','2027-02-15','2027-02-15','学期','2026-2027学年第二学期开学日'],
+      ['cal10','清明放假','2027-04-05','2027-04-05','假期','清明节放假1天'],
+      ['cal11','期中考试周','2027-04-19','2027-04-23','考试','全校期中考试'],
+      ['cal12','劳动节放假','2027-05-01','2027-05-05','假期','劳动节假期5天'],
+      ['cal13','高考','2027-06-07','2027-06-09','考试','全国高考'],
+      ['cal14','期末考试周','2027-06-21','2027-06-25','考试','第二学期期末考试'],
+      ['cal15','暑假开始','2027-06-28','2027-08-31','假期','暑假约9周'],
+      ['cal16','高三一模','2027-03-15','2027-03-16','考试','高三年级第一次模拟考试'],
+      ['cal17','高三二模','2027-04-26','2027-04-27','考试','高三年级第二次模拟考试'],
+      ['cal18','校园开放日','2027-05-15','2027-05-15','活动','校园开放日，欢迎家长参观'],
+    ];
+    const insCal = db.prepare('INSERT INTO calendar_events VALUES (?,?,?,?,?,?)');
+    for (const e of calEvents) insCal.run(...e);
   });
 }
 

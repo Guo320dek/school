@@ -43,7 +43,7 @@ function crud(table, idField = 'id', allowedFields = null) {
   const VALID_TABLES = [
     'staff', 'salary_records', 'attendance_records',
     'classes', 'subjects', 'grade_courses', 'timetable_entries',
-    'exams', 'exam_sessions', 'exam_rooms', 'announcements', 'students',
+    'exams', 'exam_sessions', 'exam_rooms', 'announcements', 'students', 'calendar_events',
   ];
   if (!VALID_TABLES.includes(table)) {
     throw new Error(`Invalid table name: ${table}`);
@@ -212,12 +212,20 @@ app.put('/api/exam-rooms/:id', examRoomApi.update);
 app.delete('/api/exam-rooms/:id', examRoomApi.delete);
 
 // Announcements
-const announcementApi = crud('announcements', 'id', ['title','content','date','priority','target','expireDate','isExpired']);
+const announcementApi = crud('announcements', 'id', ['title','content','date','priority','target','expireDate','isExpired','classId','className']);
 app.get('/api/announcements', announcementApi.list);
 app.get('/api/announcements/:id', announcementApi.get);
 app.post('/api/announcements', announcementApi.create);
 app.put('/api/announcements/:id', announcementApi.update);
 app.delete('/api/announcements/:id', announcementApi.delete);
+
+// Calendar events
+const calendarApi = crud('calendar_events', 'id', ['title','date','endDate','type','description']);
+app.get('/api/calendar', calendarApi.list);
+app.get('/api/calendar/:id', calendarApi.get);
+app.post('/api/calendar', calendarApi.create);
+app.put('/api/calendar/:id', calendarApi.update);
+app.delete('/api/calendar/:id', calendarApi.delete);
 
 // Students (with auto-sync class studentCount)
 const studentApi = crud('students', 'id', ['name','gender','classId','className','studentNo','phone','address','enrollmentYear','status']);
