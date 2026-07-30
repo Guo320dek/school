@@ -11,7 +11,13 @@ console.log('Using DB path:', DB_PATH);
 let db;
 
 async function initDb() {
-  const SQL = await initSqlJs();
+  const SQL = await initSqlJs({
+    locateFile: (file) => {
+      // Try node_modules path first, fall back to default
+      const nmPath = path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file);
+      return fs.existsSync(nmPath) ? nmPath : file;
+    },
+  });
 
   let buffer = null;
   try { buffer = fs.readFileSync(DB_PATH); } catch {}

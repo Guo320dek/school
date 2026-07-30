@@ -342,11 +342,17 @@ process.on('unhandledRejection', (reason) => {
 // Wait for DB then start
 console.log('Starting server...');
 console.log('Node version:', process.version);
-console.log('CWD:', process.cwd());
 console.log('PORT env:', process.env.PORT);
+
+// Start HTTP server immediately for health checks
+const PORT = parseInt(process.env.PORT, 10) || 3001;
+httpServer.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT} (DB initializing...)`);
+});
+
+// Initialize DB in background
 ensureDb().then(() => {
   console.log('DB initialized successfully');
-  // Startup diagnostics
   console.log('dist path:', distPath);
   console.log('dist exists:', fs.existsSync(distPath));
   console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
@@ -356,17 +362,9 @@ ensureDb().then(() => {
     const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
     console.log('Database OK - staff count:', staffCount.c);
   } catch (e) {
-    console.error('Database init failed:', e.message);
+    console.error('Database verify failed:', e.message);
   }
-
-  const srv = httpServer.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-  srv.on('error', (err) => {
-    console.error('Server failed to start:', err);
-    process.exit(1);
-  });
 }).catch((err) => {
-  console.error('Failed to initialize database:', err);
+  console.error('Failed to initialize database:', err.stack || err);
   process.exit(1);
 });
