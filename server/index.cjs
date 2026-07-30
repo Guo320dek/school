@@ -4,18 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { WebSocketServer } = require('ws');
-
-let getDb, ensureDb;
-try {
-  const db = require('./db.cjs');
-  getDb = db.getDb;
-  ensureDb = db.ensureDb;
-} catch (e) {
-  console.error('Failed to load db.cjs:', e.stack || e.message);
-  // Start minimal server anyway for debugging
-  getDb = () => { throw new Error('DB not available'); };
-  ensureDb = async () => { throw e; };
-}
+const { getDb, ensureDb } = require('./db.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,9 +23,16 @@ const distPath = path.join(__dirname, '..', 'dist');
 app.use(cors());
 app.use(express.json());
 
-// Health check (no DB dependency for Railway)
+// Health check
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok' });
+  try {
+    const db = getDb();
+    db.prepare('SELECT 1').get();
+    const { DB_PATH } = require('./db.cjs');
+    res.json({ status: 'ok', db: 'connected', dbPath: DB_PATH });
+  } catch (e) {
+    res.status(500).json({ status: 'error', db: e.message });
+  }
 });
 
 // Serve static frontend in production
@@ -342,28 +338,20 @@ app.use((err, req, res, _next) => {
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught exception:', err.stack || err);
-  process.exit(1);
-});
-process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled rejection:', reason);
-  process.exit(1);
+  console.error('Uncaught exception:', err);
 });
 
 // Wait for DB then start
-console.log('Starting server...');
-console.log('Node version:', process.version);
-console.log('PORT env:', process.env.PORT);
-
-// Start HTTP server immediately for health checks
-const PORT = parseInt(process.env.PORT, 10) || 3001;
-httpServer.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT} (DB initializing...)`);
+// Start listening immediately, init DB in background
+const srv = httpServer.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT} (DB initializing in background...)`);
+});
+srv.on('error', (err) => {
+  console.error('Server failed to start:', err);
+  process.exit(1);
 });
 
-// Initialize DB in background
 ensureDb().then(() => {
-  console.log('DB initialized successfully');
   console.log('dist path:', distPath);
   console.log('dist exists:', fs.existsSync(distPath));
   console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
@@ -373,9 +361,9 @@ ensureDb().then(() => {
     const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
     console.log('Database OK - staff count:', staffCount.c);
   } catch (e) {
-    console.error('Database verify failed:', e.message);
+    console.error('Database init failed:', e.message);
   }
 }).catch((err) => {
-  console.error('Failed to initialize database:', err.stack || err);
+  console.error('Failed to initialize database:', err);
   process.exit(1);
 });
