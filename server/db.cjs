@@ -1,4 +1,4 @@
-const initSqlJs = require('sql.js');
+const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
@@ -9,86 +9,6 @@ const DB_PATH = fs.existsSync('/data') ? VOL_PATH : LOCAL_PATH;
 console.log('Using DB path:', DB_PATH);
 
 let db;
-
-async function initDb() {
-  const SQL = await initSqlJs({
-    locateFile: (file) => {
-      // Try node_modules path first, fall back to default
-      const nmPath = path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file);
-      return fs.existsSync(nmPath) ? nmPath : file;
-    },
-  });
-
-  let buffer = null;
-  try { buffer = fs.readFileSync(DB_PATH); } catch {}
-
-  const raw = new SQL.Database(buffer);
-
-  db = {
-    _raw: raw,
-    _dirty: false,
-
-    exec(sql) {
-      raw.run(sql);
-      this._markDirty();
-    },
-
-    prepare(sql) {
-      const stmt = raw.prepare(sql);
-      return {
-        run(...params) {
-          if (params.length) stmt.bind(params);
-          stmt.step();
-          stmt.reset();
-          db._markDirty();
-          return { changes: raw.getRowsModified() };
-        },
-        get(...params) {
-          if (params.length) stmt.bind(params);
-          let result;
-          if (stmt.step()) result = stmt.getAsObject();
-          else result = undefined;
-          stmt.free();
-          return result;
-        },
-        all(...params) {
-          if (params.length) stmt.bind(params);
-          const rows = [];
-          while (stmt.step()) rows.push(stmt.getAsObject());
-          stmt.free();
-          return rows;
-        },
-      };
-    },
-
-    pragma() { /* WAL not supported in sql.js, no-op */ },
-
-    transaction(fn) {
-      raw.run('BEGIN');
-      try { fn(); raw.run('COMMIT'); this._markDirty(); }
-      catch (e) { raw.run('ROLLBACK'); throw e; }
-    },
-
-    close() { this._save(); raw.close(); },
-
-    _markDirty() {
-      this._dirty = true;
-      // Auto-save after 500ms debounce
-      clearTimeout(this._saveTimer);
-      this._saveTimer = setTimeout(() => this._save(), 500);
-    },
-
-    _save() {
-      if (!this._dirty) return;
-      const data = raw.export();
-      fs.writeFileSync(DB_PATH, Buffer.from(data));
-      this._dirty = false;
-    },
-  };
-
-  return db;
-}
-
 let dbReady = false;
 
 function getDb() {
@@ -96,13 +16,20 @@ function getDb() {
   return db;
 }
 
-async function ensureDb() {
-  if (dbReady) return db;
-  db = await initDb();
-  initSchema();
-  dbReady = true;
-  db._save(); // persist initial data
-  return db;
+function ensureDb() {
+  if (dbReady) return Promise.resolve(db);
+  return new Promise((resolve, reject) => {
+    try {
+      db = new Database(DB_PATH);
+      db.pragma('journal_mode = WAL');
+      db.pragma('foreign_keys = ON');
+      initSchema();
+      dbReady = true;
+      resolve(db);
+    } catch (e) {
+      reject(e);
+    }
+  });
 }
 
 function initSchema() {
@@ -184,11 +111,8 @@ function initSchema() {
     );
   `);
 
-  // Migration: add teacherIds column if missing
-  try {
-    db.exec(`ALTER TABLE subjects ADD COLUMN teacherIds TEXT DEFAULT '[]'`);
-  } catch {}
-  // Migration: add classId/className to announcements
+  // Migration: add columns that might be missing in old DBs
+  try { db.exec(`ALTER TABLE subjects ADD COLUMN teacherIds TEXT DEFAULT '[]'`); } catch {}
   try { db.exec(`ALTER TABLE announcements ADD COLUMN classId TEXT`); } catch {}
   try { db.exec(`ALTER TABLE announcements ADD COLUMN className TEXT`); } catch {}
 
@@ -197,7 +121,7 @@ function initSchema() {
 }
 
 function seed() {
-  db.transaction(() => {
+  const doSeed = db.transaction(() => {
     // Staff
     const staff = [
       ['s01','郭建国','T2015001','教务处','教务主任','高级教师','硕士','教育管理','13801010001','2010-09-01','2024-09-01','2027-08-31','在职',''],
@@ -257,11 +181,11 @@ function seed() {
 
     // Classes
     const classes = [
-      ['c11','高一','高一(1)班','物化生','赵德明','教学楼3层301',51,55,'在读',null],
-      ['c12','高一','高一(2)班','物化地','周明辉','教学楼3层302',50,55,'在读',null],
-      ['c13','高一','高一(3)班','史地政','黄丽萍','教学楼3层303',49,55,'在读',null],
-      ['c14','高一','高一(4)班','物化生','陈丽华','教学楼3层304',52,55,'在读',null],
-      ['c15','高一','高一(5)班','物生政','吴秀英','教学楼3层305',50,55,'在读',null],
+      ['c11','高一','高一(1)班','物化生','郭建国','教学楼3层301',51,55,'在读',null],
+      ['c12','高一','高一(2)班','物化地','赵德明','教学楼3层302',50,55,'在读',null],
+      ['c13','高一','高一(3)班','物化政','陈丽华','教学楼3层303',49,55,'在读',null],
+      ['c14','高一','高一(4)班','物生政','钱思远','教学楼3层304',52,55,'在读',null],
+      ['c15','高一','高一(5)班','史地政','周晓雯','教学楼3层305',50,55,'在读',null],
       ['c16','高一','高一(6)班','史政生','高洁','教学楼3层306',48,55,'在读',null],
       ['c21','高二','高二(1)班','物化生','王美玲','教学楼4层401',53,55,'在读',null],
       ['c22','高二','高二(2)班','物化地','孙晓红','教学楼4层402',50,55,'在读',null],
@@ -306,87 +230,55 @@ function seed() {
       ['t1','c11','高一(1)班','高一',1,1,'sub2','数学','s20','赵德明'],
       ['t2','c11','高一(1)班','高一',1,2,'sub2','数学','s20','赵德明'],
       ['t3','c11','高一(1)班','高一',1,3,'sub1','语文','s10','孙晓红'],
-      ['t4','c11','高一(1)班','高一',1,4,'sub4','物理','s40','周明辉'],
-      ['t5','c11','高一(1)班','高一',1,5,'sub3','英语','s30','王美玲'],
-      ['t6','c11','高一(1)班','高一',1,6,'sub5','化学','s42','吴秀英'],
-      ['t7','c11','高一(1)班','高一',1,7,'sub10','体育','s60','黄建军'],
-      ['t8','c11','高一(1)班','高一',2,1,'sub1','语文','s10','孙晓红'],
-      ['t9','c11','高一(1)班','高一',2,2,'sub3','英语','s30','王美玲'],
-      ['t10','c11','高一(1)班','高一',2,3,'sub4','物理','s40','周明辉'],
-      ['t11','c11','高一(1)班','高一',2,4,'sub2','数学','s20','赵德明'],
-      ['t12','c11','高一(1)班','高一',2,5,'sub7','历史','s50','黄丽萍'],
-      ['t13','c11','高一(1)班','高一',2,6,'sub6','生物','s44','郑文博'],
-      ['t14','c11','高一(1)班','高一',2,7,'sub8','地理','s52','陈晓宇'],
-      ['t15','c11','高一(1)班','高一',3,1,'sub3','英语','s30','王美玲'],
-      ['t16','c11','高一(1)班','高一',3,2,'sub2','数学','s20','赵德明'],
-      ['t17','c11','高一(1)班','高一',3,3,'sub1','语文','s10','孙晓红'],
-      ['t18','c11','高一(1)班','高一',3,4,'sub5','化学','s42','吴秀英'],
-      ['t19','c11','高一(1)班','高一',3,5,'sub4','物理','s40','周明辉'],
-      ['t20','c11','高一(1)班','高一',3,6,'sub9','政治','s54','高洁'],
+      ['t4','c11','高一(1)班','高一',1,4,'sub3','英语','s30','王美玲'],
+      ['t5','c11','高一(1)班','高一',1,5,'sub4','物理','s40','周明辉'],
+      ['t6','c12','高一(2)班','高一',1,1,'sub1','语文','s10','孙晓红'],
+      ['t7','c12','高一(2)班','高一',1,2,'sub3','英语','s30','王美玲'],
     ];
     const insT = db.prepare('INSERT INTO timetable_entries VALUES (?,?,?,?,?,?,?,?,?,?)');
     for (const t of tt) insT.run(...t);
 
     // Exams
     const exams = [
-      ['e1','2026年7月期末考试','期末','高一','2026-07-10','2026-07-12'],
-      ['e2','2026年7月期末考试','期末','高二','2026-07-10','2026-07-12'],
+      ['e1','高一期中考试','期中','高一','2026-11-09','2026-11-11'],
+      ['e2','高二期中考试','期中','高二','2026-11-09','2026-11-11'],
     ];
     const insE = db.prepare('INSERT INTO exams VALUES (?,?,?,?,?,?)');
     for (const e of exams) insE.run(...e);
 
-    const examSessions = [
-      ['es1','e1','2026-07-10','上午','sub1','语文',150],
-      ['es2','e1','2026-07-10','下午','sub2','数学',120],
-      ['es3','e1','2026-07-11','上午','sub3','英语',120],
-      ['es4','e1','2026-07-11','下午','sub4','物理',90],
-      ['es5','e1','2026-07-12','上午','sub5','化学',90],
-      ['es6','e1','2026-07-12','下午','sub6','生物',90],
+    // Exam sessions
+    const sessions = [
+      ['es1','e1','2026-11-09','08:00-10:00','sub1','语文',120],
+      ['es2','e1','2026-11-09','14:00-16:00','sub2','数学',120],
+      ['es3','e1','2026-11-10','08:00-10:00','sub3','英语',120],
     ];
     const insEs = db.prepare('INSERT INTO exam_sessions VALUES (?,?,?,?,?,?,?)');
-    for (const s of examSessions) insEs.run(...s);
+    for (const s of sessions) insEs.run(...s);
 
-    const examRooms = [
-      ['er1','e1','教学楼3层301',30,'赵德明','吴秀英'],
-      ['er2','e1','教学楼3层302',30,'周明辉','郑文博'],
-      ['er3','e1','教学楼3层303',30,'孙晓红','王美玲'],
-      ['er4','e1','教学楼3层304',30,'郭建国','陈丽华'],
-      ['er5','e1','教学楼3层305',30,'李志鹏','冯露'],
-      ['er6','e1','教学楼3层306',30,'赵雅文','马超'],
+    // Exam rooms
+    const rooms = [
+      ['er1','e1','教学楼3层301',30,'郭建国','林晓燕'],
+      ['er2','e1','教学楼3层302',30,'刘志强','何静'],
     ];
     const insEr = db.prepare('INSERT INTO exam_rooms VALUES (?,?,?,?,?,?)');
-    for (const r of examRooms) insEr.run(...r);
+    for (const r of rooms) insEr.run(...r);
 
     // Salary
-    const mk = (id, sid, name, base, bonus, ded, month, status) => {
-      const total = base + bonus - ded;
-      return [id, sid, name, 2026, month, base, bonus, ded, total, status, status === '已发放' ? `2026-0${month}-15` : null];
-    };
+    function mk(id,sid,name,base,bonus,ded,month,status) { return [id,sid,name,2026,month,base,bonus,ded,base+bonus-ded,status,null]; }
     const salaries = [
-      mk('sa01','s01','郭建国',12000,3000,800,6,'已发放'),mk('sa02','s02','林晓燕',7000,1500,400,6,'已发放'),
-      mk('sa03','s03','刘志强',9500,2000,500,6,'已发放'),mk('sa04','s04','何静',6500,1200,350,6,'已发放'),
-      mk('sa05','s10','孙晓红',15000,4000,1000,6,'已发放'),mk('sa06','s11','赵雅文',9500,2200,550,6,'已发放'),
-      mk('sa07','s12','钱思远',8000,1800,400,6,'已发放'),mk('sa08','s13','周晓雯',7000,1500,350,6,'已发放'),
-      mk('sa09','s20','赵德明',10000,2500,450,6,'已发放'),mk('sa10','s21','陈丽华',11000,2800,700,6,'已发放'),
-      mk('sa11','s22','李志鹏',9000,2000,500,6,'已发放'),mk('sa12','s23','吴桐',6500,1400,350,6,'已发放'),
-      mk('sa13','s30','王美玲',10500,2500,600,6,'已发放'),mk('sa14','s31','郑晓明',9500,2200,500,6,'已发放'),
-      mk('sa15','s32','冯露',8000,1800,400,6,'已发放'),mk('sa16','s33','韩梅梅',6500,1300,350,6,'已发放'),
-      mk('sa17','s40','周明辉',13000,3500,900,6,'已发放'),mk('sa18','s41','马超',7500,1600,400,6,'已发放'),
-      mk('sa19','s42','吴秀英',9500,2200,550,6,'已发放'),mk('sa20','s43','朱明',7500,1600,400,6,'已发放'),
-      mk('sa21','s44','郑文博',8500,2000,450,6,'已发放'),mk('sa22','s45','沈洁',6500,1400,350,6,'已发放'),
-      mk('sa23','s70','许国栋',7000,1500,350,6,'已发放'),mk('sa24','s71','梁师傅',5500,1000,300,6,'已发放'),
-      mk('sa25','s01','郭建国',12000,3500,800,7,'待发放'),mk('sa26','s02','林晓燕',7000,1800,400,7,'待发放'),
-      mk('sa27','s03','刘志强',9500,2500,500,7,'待发放'),mk('sa28','s04','何静',6500,1500,350,7,'待发放'),
-      mk('sa29','s10','孙晓红',15000,4500,1000,7,'待发放'),mk('sa30','s11','赵雅文',9500,2500,550,7,'待发放'),
-      mk('sa31','s12','钱思远',8000,2000,400,7,'待发放'),mk('sa32','s13','周晓雯',7000,1800,350,7,'待发放'),
-      mk('sa33','s20','赵德明',10000,2800,450,7,'待发放'),mk('sa34','s21','陈丽华',11000,3200,700,7,'待发放'),
-      mk('sa35','s22','李志鹏',9000,2400,500,7,'待发放'),mk('sa36','s23','吴桐',6500,1700,350,7,'待发放'),
-      mk('sa37','s30','王美玲',10500,2800,600,7,'待发放'),mk('sa38','s31','郑晓明',9500,2500,500,7,'待发放'),
-      mk('sa39','s32','冯露',8000,2000,400,7,'待发放'),mk('sa40','s33','韩梅梅',6500,1600,350,7,'待发放'),
-      mk('sa41','s40','周明辉',13000,3800,900,7,'待发放'),mk('sa42','s41','马超',7500,1900,400,7,'待发放'),
-      mk('sa43','s42','吴秀英',9500,2500,550,7,'待发放'),mk('sa44','s43','朱明',7500,1900,400,7,'待发放'),
-      mk('sa45','s44','郑文博',8500,2200,450,7,'待发放'),mk('sa46','s45','沈洁',6500,1700,350,7,'待发放'),
-      mk('sa47','s70','许国栋',7000,1800,350,7,'待发放'),mk('sa48','s71','梁师傅',5500,1200,300,7,'待发放'),
+      mk('sa01','s01','郭建国',12000,3200,800,7,'待发放'),mk('sa02','s02','林晓燕',6500,1500,300,7,'待发放'),
+      mk('sa03','s03','刘志强',11000,3000,700,7,'待发放'),mk('sa04','s04','何静',6000,1400,300,7,'待发放'),
+      mk('sa10','s10','孙晓红',10000,2800,600,7,'待发放'),mk('sa11','s11','赵雅文',9000,2400,500,7,'待发放'),
+      mk('sa12','s12','钱思远',7500,1900,400,7,'待发放'),mk('sa13','s13','周晓雯',7000,1800,350,7,'待发放'),
+      mk('sa20','s20','赵德明',10500,2900,650,7,'待发放'),mk('sa21','s21','陈丽华',10000,2800,600,7,'待发放'),
+      mk('sa22','s22','李志鹏',9000,2400,500,7,'待发放'),mk('sa23','s23','吴桐',7000,1800,350,7,'待发放'),
+      mk('sa30','s30','王美玲',10000,2800,600,7,'待发放'),mk('sa31','s31','郑晓明',9000,2400,500,7,'待发放'),
+      mk('sa32','s32','冯露',7500,1900,400,7,'待发放'),mk('sa33','s33','韩梅梅',7000,1800,350,7,'待发放'),
+      mk('sa40','s40','周明辉',11000,3000,700,7,'待发放'),
+      mk('sa41','s41','马超',7500,1900,400,7,'待发放'),
+      mk('sa42','s42','吴秀英',9500,2500,550,7,'待发放'),mk('sa43','s43','朱明',7500,1900,400,7,'待发放'),
+      mk('sa44','s44','郑文博',8500,2200,450,7,'待发放'),mk('sa45','s45','沈洁',6500,1700,350,7,'待发放'),
+      mk('sa46','s70','许国栋',7000,1800,350,7,'待发放'),mk('sa47','s71','梁师傅',5500,1200,300,7,'待发放'),
     ];
     const insSa = db.prepare('INSERT INTO salary_records VALUES (?,?,?,?,?,?,?,?,?,?,?)');
     for (const s of salaries) insSa.run(...s);
@@ -421,17 +313,17 @@ function seed() {
     const insAn = db.prepare('INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?,?,?)');
     for (const a of ann) insAn.run(...a);
 
-    // Students (based on class studentCount)
+    // Students
     const firstNames = ['伟','芳','娜','敏','静','丽','强','磊','洋','勇','艳','杰','军','秀英','涛','明','超','平','辉','玲','文','博','宇','轩','琪','瑶','峰','霖','昊','萱'];
     const lastNames = ['张','李','王','刘','陈','杨','赵','黄','周','吴','徐','孙','马','朱','胡','郭','何','高','林','罗','郑','梁','宋','唐','韩','冯','董','程','曹','袁'];
     const genders = ['男','女'];
     const students = [];
     let stuIdx = 0;
     for (const cls of classes) {
-      const studentCount = cls[6]; // actual count from class data
+      const studentCount = cls[6];
       const gradeDigit = cls[1] === '高一' ? '1' : cls[1] === '高二' ? '2' : '3';
       const classNum = cls[2].match(/(\d+)班/)?.[1] ?? '1';
-      const classBaseNo = '2024' + gradeDigit + classNum.padStart(2, '0'); // e.g. 2024101
+      const classBaseNo = '2024' + gradeDigit + classNum.padStart(2, '0');
       for (let i = 0; i < studentCount; i++) {
         stuIdx++;
         const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
@@ -442,7 +334,7 @@ function seed() {
           genders[Math.floor(Math.random() * 2)],
           cls[0],
           cls[2],
-          classBaseNo + (i + 1).toString().padStart(2, '0'), // e.g. 202410101
+          classBaseNo + (i + 1).toString().padStart(2, '0'),
           '138' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
           '青云路' + (Math.floor(Math.random() * 100) + 1) + '号',
           2024,
@@ -477,6 +369,7 @@ function seed() {
     const insCal = db.prepare('INSERT INTO calendar_events VALUES (?,?,?,?,?,?)');
     for (const e of calEvents) insCal.run(...e);
   });
+  doSeed();
 }
 
 module.exports = { getDb, ensureDb, DB_PATH };
