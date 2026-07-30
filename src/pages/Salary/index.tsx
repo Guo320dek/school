@@ -4,15 +4,16 @@ import type { ColumnsType } from 'antd/es/table';
 import { getSalaries, createSalary, updateSalary, deleteSalary, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { SalaryRecord, Staff } from '../../types';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 const fmt = (v: number) => `¥ ${v.toLocaleString()}`;
 
 export default function Salary() {
   const [salaries, setSalaries] = useState<SalaryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [filterYear, setFilterYear] = useState<number>();
   const [filterMonth, setFilterMonth] = useState<number>();
@@ -22,8 +23,8 @@ export default function Salary() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [form] = Form.useForm();
 
-  const loadSalaries = () => { getSalaries().then(setSalaries).catch(console.error); };
-  useEffect(() => { loadSalaries(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  const loadSalaries = () => { setLoading(true); getSalaries().then(setSalaries).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
+  useEffect(() => { loadSalaries(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
   useRealtime('salary_records', loadSalaries);
   const { editable } = usePermission();
 
@@ -40,7 +41,7 @@ export default function Salary() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ year: dayjs().year(), month: dayjs().month() + 1 }); setModalOpen(true); }
   function openEdit(r: SalaryRecord) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { deleteSalary(id).then(loadSalaries).then(() => message.success('已删除')); }
+  function handleDelete(id: string) { deleteSalary(id).then(loadSalaries).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
 
   function onFormValuesChange() {
     const base = form.getFieldValue('basePay') || 0;
@@ -107,7 +108,7 @@ export default function Salary() {
         </Col>
         {editable && <Col><Space><Button onClick={handleBatchPay} disabled={selectedRowKeys.length === 0}>批量发放</Button><Button type="primary" onClick={openAdd}>添加工资</Button></Space></Col>}
       </Row>
-      <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 10 }} scroll={{ x: 900 }}
+      <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} pagination={{ pageSize: 10 }} scroll={{ x: 900 }}
         rowSelection={{ selectedRowKeys, onChange: (keys) => setSelectedRowKeys(keys), getCheckboxProps: (r) => ({ disabled: r.status !== '待发放' }) }} />
       <Modal title={editing ? '编辑工资' : '添加工资'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={480}>
         <Form form={form} layout="vertical" style={{ marginTop: 12 }} onValuesChange={onFormValuesChange}>

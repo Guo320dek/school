@@ -60,12 +60,18 @@ export const mockStaff: Staff[] = [
 
 // ===== 科目库 =====
 export const mockSubjects: Subject[] = [
-  { id: 'sub1', name: '语文', category: '主科' }, { id: 'sub2', name: '数学', category: '主科' },
-  { id: 'sub3', name: '英语', category: '主科' }, { id: 'sub4', name: '物理', category: '选考' },
-  { id: 'sub5', name: '化学', category: '选考' }, { id: 'sub6', name: '生物', category: '选考' },
-  { id: 'sub7', name: '历史', category: '选考' }, { id: 'sub8', name: '地理', category: '选考' },
-  { id: 'sub9', name: '政治', category: '选考' }, { id: 'sub10', name: '体育', category: '艺体' },
-  { id: 'sub11', name: '美术', category: '艺体' }, { id: 'sub12', name: '信息技术', category: '其他' },
+  { id: 'sub1', name: '语文', category: '主科', teacherIds: ['s10','s11','s12','s13'] },
+  { id: 'sub2', name: '数学', category: '主科', teacherIds: ['s20','s21','s22','s23'] },
+  { id: 'sub3', name: '英语', category: '主科', teacherIds: ['s30','s31','s32','s33'] },
+  { id: 'sub4', name: '物理', category: '选考', teacherIds: ['s40','s41'] },
+  { id: 'sub5', name: '化学', category: '选考', teacherIds: ['s42','s43'] },
+  { id: 'sub6', name: '生物', category: '选考', teacherIds: ['s44','s45'] },
+  { id: 'sub7', name: '历史', category: '选考', teacherIds: ['s50','s51'] },
+  { id: 'sub8', name: '地理', category: '选考', teacherIds: ['s52','s53'] },
+  { id: 'sub9', name: '政治', category: '选考', teacherIds: ['s54','s55'] },
+  { id: 'sub10', name: '体育', category: '艺体', teacherIds: ['s60','s61'] },
+  { id: 'sub11', name: '美术', category: '艺体', teacherIds: [] },
+  { id: 'sub12', name: '信息技术', category: '其他', teacherIds: [] },
 ];
 
 // ===== 班级（每级6个班，共18个）=====

@@ -4,6 +4,7 @@ import { PlusOutlined, NotificationOutlined, ClockCircleOutlined, TeamOutlined }
 import { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { Announcement, AnnounceTarget } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -13,16 +14,16 @@ const priorityColor: Record<string, string> = { '紧急': 'red', '重要': 'oran
 const targetColor: Record<string, string> = { '全体': 'purple', '高一': 'cyan', '高二': 'geekblue', '高三': 'blue' };
 const targetIcon: Record<string, React.ReactNode> = { '全体': <TeamOutlined />, '高一': <span>I</span>, '高二': <span>II</span>, '高三': <span>III</span> };
 
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 export default function Announcement() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterTarget, setFilterTarget] = useState<string>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [form] = Form.useForm();
 
-  const loadAnnouncements = () => { getAnnouncements().then(setAnnouncements).catch(console.error); };
+  const loadAnnouncements = () => { setLoading(true); getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
   useEffect(() => { loadAnnouncements(); }, []);
   useRealtime('announcements', loadAnnouncements);
   const { editable } = usePermission();
@@ -43,7 +44,7 @@ export default function Announcement() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ date: dayjs(), expireDate: dayjs().add(7, 'day') }); setModalOpen(true); }
   function openEdit(r: Announcement) { setEditing(r); form.setFieldsValue({ ...r, date: dayjs(r.date), expireDate: dayjs(r.expireDate) }); setModalOpen(true); }
-  function handleDelete(id: string) { deleteAnnouncement(id).then(loadAnnouncements).then(() => message.success('已删除')); }
+  function handleDelete(id: string) { deleteAnnouncement(id).then(loadAnnouncements).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
@@ -85,13 +86,13 @@ export default function Announcement() {
                 dataSource={activeList}
                 renderItem={(item) => (
                   <List.Item
+                    style={{ padding: '12px 0' }}
                     actions={editable ? [
                       <Button key="edit" type="link" size="small" onClick={() => openEdit(item)}>编辑</Button>,
                       <Popconfirm key="del" title="确定删除？" onConfirm={() => handleDelete(item.id)}>
                         <Button type="link" size="small" danger>删除</Button>
                       </Popconfirm>,
                     ] : undefined}
-                    style={{ padding: '12px 0' }}
                   >
                     <List.Item.Meta
                       avatar={
@@ -114,7 +115,7 @@ export default function Announcement() {
                       }
                       description={
                         <div style={{ marginTop: 4 }}>
-                          <Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 4, color: '#555', fontSize: 13 }}>
+                          <Paragraph ellipsis={expandedId === item.id ? false : { rows: 2 }} style={{ marginBottom: 4, color: '#555', fontSize: 13 }}>
                             {item.content}
                           </Paragraph>
                           <Space size={12}>
@@ -124,6 +125,9 @@ export default function Announcement() {
                             <Text type="secondary" style={{ fontSize: 11 }}>
                               有效期至 {item.expireDate}
                             </Text>
+                            <a style={{ fontSize: 11 }} onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}>
+                              {expandedId === item.id ? '收起' : '展开详情'}
+                            </a>
                           </Space>
                         </div>
                       }

@@ -38,6 +38,9 @@ body {
 .ant-table-tbody > tr {
   transition: background 0.15s ease;
 }
+.ant-table-tbody > tr:hover {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
 
 .ant-tabs-tab { color: var(--text-muted); }
 .ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--accent); font-weight: 600; }

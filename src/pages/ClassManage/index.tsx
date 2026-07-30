@@ -7,6 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { getClasses, createClass, updateClass, deleteClass, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { ClassInfo, GradeLevel, SubjectTrack, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -15,18 +16,17 @@ const trackOptions: SubjectTrack[] = ['物化生', '物化地', '物生政', '�
 const trackColors: Record<string, string> = { '物化生': '#5B6CF0', '物化地': '#13C2C2', '物生政': '#7C3AED', '史地政': '#D97706', '史政生': '#EB2F96', '物化政': '#10B981' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 export default function ClassManage() {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [loading, setLoading] = useState(true);
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [activeGrade, setActiveGrade] = useState<string>('all');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<ClassInfo | null>(null);
   const [form] = Form.useForm();
 
-  const loadClasses = () => { getClasses().then(setClasses).catch(console.error); };
-  useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  const loadClasses = () => { setLoading(true); getClasses().then(setClasses).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
+  useEffect(() => { loadClasses(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
   useRealtime('classes', loadClasses);
   const { editable } = usePermission();
 
@@ -59,7 +59,7 @@ export default function ClassManage() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ maxStudents: 55 }); setModalOpen(true); }
   function openEdit(r: ClassInfo) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { deleteClass(id).then(loadClasses).then(() => message.success('已删除')); }
+  function handleDelete(id: string) { deleteClass(id).then(loadClasses).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
 
   function handleGraduate(cls: ClassInfo) {
     updateClass(cls.id, { status: '毕业', graduateYear: 2026 }).then(loadClasses).then(() => message.success(`${cls.name} 已标记为毕业`));
@@ -173,7 +173,7 @@ export default function ClassManage() {
         {editable && <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>添加班级</Button></Col>}
       </Row>
 
-      <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 10, showTotal: (t) => `共 ${t} 班` }}
+      <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} pagination={{ pageSize: 10, showTotal: (t) => `共 ${t} 班` }}
         scroll={{ x: 800 }} size="middle" />
 
       <Modal title={editing ? '编辑班级' : '添加班级'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={500}>

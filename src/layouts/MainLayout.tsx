@@ -29,7 +29,9 @@ const categories: Category[] = [
   { key: 'dashboard', icon: <DashboardOutlined />, label: '业务版面', path: '/' },
   { key: 'teaching', icon: <BookOutlined />, label: '教学管理', path: '/teaching/class', children: [
     { key: '/teaching/class', label: '班级管理' },
+    { key: '/teaching/students', label: '学生花名册' },
     { key: '/teaching/course', label: '课程设置' },
+    { key: '/teaching/subjects', label: '科目管理' },
     { key: '/teaching/timetable', label: '课表管理' },
     { key: '/teaching/exam', label: '考试安排' },
   ]},

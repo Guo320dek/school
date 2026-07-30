@@ -4,16 +4,16 @@ import type { ColumnsType } from 'antd/es/table';
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { AttendanceRecord, Staff } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 const statusColor: Record<string, string> = { '正常': '#059669', '迟到': '#D97706', '早退': '#D97706', '缺勤': '#DC2626', '请假': '#5B6CF0' };
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 export default function Attendance() {
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [searchName, setSearchName] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
@@ -23,8 +23,8 @@ export default function Attendance() {
   const [form] = Form.useForm();
   const today = dayjs().format('YYYY-MM-DD');
 
-  const loadRecords = () => { getAttendance().then(setRecords).catch(console.error); };
-  useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(console.error); }, []);
+  const loadRecords = () => { setLoading(true); getAttendance().then(setRecords).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
+  useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
   useRealtime('attendance_records', loadRecords);
   const { editable } = usePermission();
 
@@ -47,7 +47,7 @@ export default function Attendance() {
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ date: dayjs() }); setModalOpen(true); }
   function openEdit(r: AttendanceRecord) { setEditing(r); form.setFieldsValue({ ...r, date: dayjs(r.date), checkIn: r.checkIn ? dayjs(r.checkIn, 'HH:mm') : null, checkOut: r.checkOut ? dayjs(r.checkOut, 'HH:mm') : null }); setModalOpen(true); }
-  function handleDelete(id: string) { deleteAttendance(id).then(loadRecords).then(() => message.success('已删除')); }
+  function handleDelete(id: string) { deleteAttendance(id).then(loadRecords).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
@@ -104,7 +104,7 @@ export default function Attendance() {
         </Col>
         {editable && <Col><Button type="primary" onClick={openAdd}>添加考勤</Button></Col>}
       </Row>
-      <Table rowKey="id" columns={columns} dataSource={filtered} pagination={{ pageSize: 10 }} scroll={{ x: 800 }} />
+      <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} pagination={{ pageSize: 10 }} scroll={{ x: 800 }} />
       <Modal title={editing ? '编辑考勤' : '添加考勤'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={480}>
         <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
           {!editing && (<Form.Item name="staffId" label="员工" rules={[{ required: true }]}>

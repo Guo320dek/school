@@ -129,7 +129,8 @@ function initSchema() {
     );
 
     CREATE TABLE IF NOT EXISTS subjects (
-      id TEXT PRIMARY KEY, name TEXT, category TEXT
+      id TEXT PRIMARY KEY, name TEXT, category TEXT,
+      teacherIds TEXT DEFAULT '[]'
     );
 
     CREATE TABLE IF NOT EXISTS grade_courses (
@@ -162,7 +163,19 @@ function initSchema() {
       id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT,
       priority TEXT, target TEXT, expireDate TEXT, isExpired INTEGER DEFAULT 0
     );
+
+    CREATE TABLE IF NOT EXISTS students (
+      id TEXT PRIMARY KEY, name TEXT, gender TEXT,
+      classId TEXT, className TEXT, studentNo TEXT,
+      phone TEXT, address TEXT, enrollmentYear INTEGER,
+      status TEXT DEFAULT '在读'
+    );
   `);
+
+  // Migration: add teacherIds column if missing
+  try {
+    db.exec(`ALTER TABLE subjects ADD COLUMN teacherIds TEXT DEFAULT '[]'`);
+  } catch {}
 
   const count = db.prepare('SELECT COUNT(*) as c FROM staff').get();
   if (!count || count.c === 0) seed();
@@ -211,12 +224,20 @@ function seed() {
 
     // Subjects
     const subjects = [
-      ['sub1','语文','主科'],['sub2','数学','主科'],['sub3','英语','主科'],
-      ['sub4','物理','选考'],['sub5','化学','选考'],['sub6','生物','选考'],
-      ['sub7','历史','选考'],['sub8','地理','选考'],['sub9','政治','选考'],
-      ['sub10','体育','艺体'],['sub11','美术','艺体'],['sub12','信息技术','其他'],
+      ['sub1','语文','主科','["s10","s11","s12","s13"]'],
+      ['sub2','数学','主科','["s20","s21","s22","s23"]'],
+      ['sub3','英语','主科','["s30","s31","s32","s33"]'],
+      ['sub4','物理','选考','["s40","s41"]'],
+      ['sub5','化学','选考','["s42","s43"]'],
+      ['sub6','生物','选考','["s44","s45"]'],
+      ['sub7','历史','选考','["s50","s51"]'],
+      ['sub8','地理','选考','["s52","s53"]'],
+      ['sub9','政治','选考','["s54","s55"]'],
+      ['sub10','体育','艺体','["s60","s61"]'],
+      ['sub11','美术','艺体','[]'],
+      ['sub12','信息技术','其他','[]'],
     ];
-    const insSub = db.prepare('INSERT INTO subjects VALUES (?,?,?)');
+    const insSub = db.prepare('INSERT INTO subjects VALUES (?,?,?,?)');
     for (const s of subjects) insSub.run(...s);
 
     // Classes
@@ -260,6 +281,7 @@ function seed() {
       ['g25','高三','sub5','化学',5,'s42','吴秀英'],['g26','高三','sub6','生物',4,'s44','郑文博'],
       ['g27','高三','sub7','历史',4,'s50','黄丽萍'],['g28','高三','sub8','地理',3,'s52','陈晓宇'],
       ['g29','高三','sub9','政治',3,'s54','高洁'],
+      ['g30','高一','sub1','语文',6,'s20','赵德明'],
     ];
     const insG = db.prepare('INSERT INTO grade_courses VALUES (?,?,?,?,?,?,?)');
     for (const c of courses) insG.run(...c);
@@ -382,6 +404,38 @@ function seed() {
     ];
     const insAn = db.prepare('INSERT INTO announcements VALUES (?,?,?,?,?,?,?,?)');
     for (const a of ann) insAn.run(...a);
+
+    // Students (based on class studentCount)
+    const firstNames = ['伟','芳','娜','敏','静','丽','强','磊','洋','勇','艳','杰','军','秀英','涛','明','超','平','辉','玲','文','博','宇','轩','琪','瑶','峰','霖','昊','萱'];
+    const lastNames = ['张','李','王','刘','陈','杨','赵','黄','周','吴','徐','孙','马','朱','胡','郭','何','高','林','罗','郑','梁','宋','唐','韩','冯','董','程','曹','袁'];
+    const genders = ['男','女'];
+    const students = [];
+    let stuIdx = 0;
+    for (const cls of classes) {
+      const studentCount = cls[6]; // actual count from class data
+      const gradeDigit = cls[1] === '高一' ? '1' : cls[1] === '高二' ? '2' : '3';
+      const classNum = cls[2].match(/(\d+)班/)?.[1] ?? '1';
+      const classBaseNo = '2024' + gradeDigit + classNum.padStart(2, '0'); // e.g. 2024101
+      for (let i = 0; i < studentCount; i++) {
+        stuIdx++;
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        students.push([
+          'stu' + stuIdx.toString().padStart(4, '0'),
+          lastName + firstName,
+          genders[Math.floor(Math.random() * 2)],
+          cls[0],
+          cls[2],
+          classBaseNo + (i + 1).toString().padStart(2, '0'), // e.g. 202410101
+          '138' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+          '青云路' + (Math.floor(Math.random() * 100) + 1) + '号',
+          2024,
+          '在读'
+        ]);
+      }
+    }
+    const insStu = db.prepare('INSERT INTO students VALUES (?,?,?,?,?,?,?,?,?,?)');
+    for (const s of students) insStu.run(...s);
   });
 }
 

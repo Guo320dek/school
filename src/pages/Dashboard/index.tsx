@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Row, Col, Tag, Space, Button, Avatar } from 'antd';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Row, Col, Tag, Space, Button, Avatar, message } from 'antd';
 import { useSplitText } from '../../utils/animations';
 import {
   TeamOutlined, BookOutlined, DollarOutlined, ClockCircleOutlined,
@@ -9,6 +9,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { getSchool, getMetrics, getAnnouncements, getAttendance } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import MiniBarChart from '../../components/MiniBarChart';
 import type { School, BusinessMetric, Announcement, AttendanceRecord } from '../../types';
 import dayjs from 'dayjs';
 
@@ -132,21 +133,36 @@ export default function Dashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [heroVisible, setHeroVisible] = useState(false);
+  const [expandedAnnouncement, setExpandedAnnouncement] = useState<string | null>(null);
 
   useEffect(() => {
-    getSchool().then(setSchoolInfo).catch(console.error);
-    getMetrics().then(setMetrics).catch(console.error);
-    getAnnouncements().then(setAnnouncements).catch(console.error);
-    getAttendance().then(setAttendance).catch(console.error);
+    getSchool().then(setSchoolInfo).catch(() => message.error('加载数据失败，请刷新重试'));
+    getMetrics().then(setMetrics).catch(() => message.error('加载数据失败，请刷新重试'));
+    getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试'));
+    getAttendance().then(setAttendance).catch(() => message.error('加载数据失败，请刷新重试'));
     // Trigger hero illustration entrance after mount
     setTimeout(() => setHeroVisible(true), 200);
   }, []);
-  useRealtime('announcements', () => { getAnnouncements().then(setAnnouncements).catch(console.error); });
-  useRealtime('attendance_records', () => { getAttendance().then(setAttendance).catch(console.error); });
+  useRealtime('announcements', () => { getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')); });
+  useRealtime('attendance_records', () => { getAttendance().then(setAttendance).catch(() => message.error('加载数据失败，请刷新重试')); });
 
   const active = announcements.filter((a) => !a.isExpired);
   const today = dayjs().format('YYYY-MM-DD');
   const todayAttendance = attendance.filter((a) => a.date === today);
+
+  // Last 5 days attendance trend
+  const attendanceTrend = useMemo(() => {
+    const days: Record<string, number> = {};
+    for (let i = 4; i >= 0; i--) {
+      const d = dayjs().subtract(i, 'day').format('MM-DD');
+      days[d] = 0;
+    }
+    attendance.forEach((r) => {
+      const d = dayjs(r.date).format('MM-DD');
+      if (d in days) days[d]++;
+    });
+    return Object.entries(days).map(([label, value]) => ({ label, value }));
+  }, [attendance]);
 
   useSplitText('#hero-title', { stagger: 0.03 });
 
@@ -296,12 +312,35 @@ export default function Dashboard() {
                           background:'#F5F3F0',color:T.muted}}>{item.target}</span>
                         <span style={{fontSize:14,fontWeight:500}}>{item.title}</span>
                       </div>
-                      <div style={{fontSize:12,color:T.muted}}>{item.date} · 有效期至 {item.expireDate}</div>
+                      <div style={{fontSize:12,color:T.muted}}>{item.date} · 有效期至 {item.expireDate}
+                        <a style={{marginLeft:8,fontSize:11}} onClick={(e) => { e.stopPropagation(); setExpandedAnnouncement(expandedAnnouncement === item.id ? null : item.id); }}>
+                          {expandedAnnouncement === item.id ? '收起' : '展开'}
+                        </a>
+                      </div>
+                      {expandedAnnouncement === item.id && (
+                        <div style={{marginTop:8,padding:10,background:'#FCFAF8',borderRadius:6,fontSize:13,color:'#555',lineHeight:1.7}}>
+                          {item.content}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        </Col>
+        </Row>
+
+      <Row gutter={16} style={{ marginTop: 16 }}>
+        <Col span={24}>
+          <div className="card-flat" style={{
+            background: T.surface, borderRadius: 8, padding: '20px 24px',
+            border: `1px solid ${T.border}`,
+          }}>
+            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: T.text }}>
+              近 5 日出勤人次
+            </div>
+            <MiniBarChart data={attendanceTrend} height={100} />
           </div>
         </Col>
       </Row>

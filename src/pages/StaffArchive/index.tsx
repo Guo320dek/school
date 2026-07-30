@@ -9,6 +9,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { getStaff, createStaff, updateStaff, deleteStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { Staff } from '../../types';
 import dayjs from 'dayjs';
 
@@ -23,10 +24,9 @@ const deptMeta: Record<string, { color: string; icon: React.ReactNode; desc: str
   '校办':   { color: '#EB2F96', icon: <BankOutlined />, desc: '行政办公' },
 };
 
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 export default function StaffArchive() {
   const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeDept, setActiveDept] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('在职');
@@ -34,7 +34,7 @@ export default function StaffArchive() {
   const [editing, setEditing] = useState<Staff | null>(null);
   const [form] = Form.useForm();
 
-  const loadStaff = () => { getStaff().then(setStaff).catch(console.error); };
+  const loadStaff = () => { setLoading(true); getStaff().then(setStaff).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
   useEffect(() => { loadStaff(); }, []);
   useRealtime('staff', loadStaff);
   const { editable } = usePermission();
@@ -68,7 +68,7 @@ export default function StaffArchive() {
 
   function openAdd() { setEditing(null); form.resetFields(); setModalOpen(true); }
   function openEdit(r: Staff) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
-  function handleDelete(id: string) { deleteStaff(id).then(loadStaff).then(() => message.success('已删除')); }
+  function handleDelete(id: string) { deleteStaff(id).then(loadStaff).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
@@ -217,7 +217,7 @@ export default function StaffArchive() {
 
       {/* 表格 */}
       <Table
-        rowKey="id" columns={columns} dataSource={filtered}
+        rowKey="id" columns={columns} dataSource={filtered} loading={loading}
         pagination={{ pageSize: 15, showTotal: (t) => `共 ${t} 人`, showSizeChanger: true, pageSizeOptions: ['10', '15', '20', '50'] }}
         scroll={{ x: 750 }} size="middle"
         expandable={{

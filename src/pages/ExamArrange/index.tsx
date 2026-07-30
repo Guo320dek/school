@@ -5,6 +5,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { getExams, createExam, deleteExam, getExamSessions, createExamSession, deleteExamSession, getExamRooms, createExamRoom, deleteExamRoom, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
+import { newId } from '../../utils/id';
 import type { Exam, ExamSession, ExamRoom, GradeLevel, Subject, Staff } from '../../types';
 
 const { Title, Text } = Typography;
@@ -12,10 +13,9 @@ const { Title, Text } = Typography;
 const typeColor: Record<string, string> = { '月考': 'blue', '期中': 'orange', '期末': 'red', '一模': 'purple', '二模': 'purple', '三模': 'purple' };
 const gradeOptions: GradeLevel[] = ['高一', '高二', '高三'];
 
-function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-
 export default function ExamArrange() {
   const [exams, setExams] = useState<Exam[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState<ExamSession[]>([]);
   const [rooms, setRooms] = useState<ExamRoom[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -29,10 +29,20 @@ export default function ExamArrange() {
   const [roomForm] = Form.useForm();
   const [examForm] = Form.useForm();
 
-  const loadExams = () => { getExams().then(setExams).catch(console.error); };
-  const loadSessions = () => { getExamSessions().then(setSessions).catch(console.error); };
-  const loadRooms = () => { getExamRooms().then(setRooms).catch(console.error); };
-  useEffect(() => { loadExams(); loadSessions(); loadRooms(); getSubjects().then(setSubjects).catch(console.error); getStaff().then(setAllStaff).catch(console.error);   }, []);
+  const loadExams = () => { getExams().then(setExams).catch(() => message.error('加载数据失败，请刷新重试')); };
+  const loadSessions = () => { getExamSessions().then(setSessions).catch(() => message.error('加载数据失败，请刷新重试')); };
+  const loadRooms = () => { getExamRooms().then(setRooms).catch(() => message.error('加载数据失败，请刷新重试')); };
+  const loadAll = () => {
+    setLoading(true);
+    Promise.all([getExams(), getExamSessions(), getExamRooms(), getSubjects(), getStaff()])
+      .then(([exams, sessions, rooms, subjects, staff]) => {
+        setExams(exams); setSessions(sessions); setRooms(rooms);
+        setSubjects(subjects); setAllStaff(staff);
+      })
+      .catch(() => message.error('加载数据失败，请刷新重试'))
+      .finally(() => setLoading(false));
+  };
+  useEffect(() => { loadAll(); }, []);
   useRealtime('exams', loadExams);
   useRealtime('exam_sessions', loadSessions);
   useRealtime('exam_rooms', loadRooms);
@@ -131,13 +141,13 @@ export default function ExamArrange() {
           sortedSessions.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 40 }}><Text type="secondary">暂无考试科目，点击"添加科目"开始安排</Text></div>
           ) : (
-            <Table rowKey="id" columns={sessionCols} dataSource={sortedSessions} pagination={false} size="middle" />
+            <Table rowKey="id" columns={sessionCols} dataSource={sortedSessions} loading={loading} pagination={false} size="middle" />
           )
         ) : (
           examRooms.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 40 }}><Text type="secondary">暂未分配考场，点击"添加考场"开始</Text></div>
           ) : (
-            <Table rowKey="id" columns={roomCols} dataSource={examRooms} pagination={false} size="middle" />
+            <Table rowKey="id" columns={roomCols} dataSource={examRooms} loading={loading} pagination={false} size="middle" />
           )
         )}
       </Card>

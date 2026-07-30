@@ -79,6 +79,7 @@ export interface Subject {
   id: string;
   name: string;
   category: '主科' | '选考' | '学考' | '艺体' | '其他';
+  teacherIds: string[];
 }
 
 export interface GradeCourse {
@@ -157,4 +158,18 @@ export interface BusinessMetric {
   unit: string;
   trend: 'up' | 'down' | 'stable';
   icon: string;
+}
+
+// ===== 学生 =====
+export interface Student {
+  id: string;
+  name: string;
+  gender: string;
+  classId: string;
+  className: string;
+  studentNo: string;
+  phone?: string;
+  address?: string;
+  enrollmentYear: number;
+  status: '在读' | '休学' | '退学' | '毕业';
 }
