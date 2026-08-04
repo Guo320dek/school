@@ -3,7 +3,7 @@ import { Row, Col, Tag, Space, Button, Avatar, message } from 'antd';
 import { useSplitText } from '../../utils/animations';
 import {
   TeamOutlined, BookOutlined, DollarOutlined, ClockCircleOutlined,
-  BankOutlined, NotificationOutlined, ArrowUpOutlined, ArrowDownOutlined,
+  NotificationOutlined, ArrowUpOutlined, ArrowDownOutlined,
   MinusOutlined, RightOutlined, ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -228,7 +228,7 @@ export default function Dashboard() {
 
         {/* Bottom stat bar */}
         <div style={{position:'relative',zIndex:1,display:'flex',borderTop:'1px solid rgba(0,0,0,0.06)',margin:'0 48px'}}>
-          {[{label:'学生',value:schoolInfo.studentCount},{label:'教职工',value:schoolInfo.staffCount},{label:'班级',value:'18'},{label:'课程',value:'24'}].map((s,i)=>(
+          {[{label:'学生',value:schoolInfo.studentCount},{label:'教职工',value:schoolInfo.staffCount},{label:'班级',value:schoolInfo.classCount},{label:'课程',value:schoolInfo.courseCount}].map((s,i)=>(
             <div key={s.label} style={{flex:1,padding:'16px 0',textAlign:'center',borderRight:i<3?'1px solid rgba(0,0,0,0.04)':'none'}}>
               <div style={{fontSize:22,fontWeight:700,color:T.accent,lineHeight:1.2}}>{s.value}</div>
               <div style={{fontSize:12,color:T.muted,marginTop:4}}>{s.label}</div>

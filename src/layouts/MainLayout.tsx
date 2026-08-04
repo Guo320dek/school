@@ -1,20 +1,23 @@
 // 青云高级中学 — 管理系统
 import { useMemo, useState } from 'react';
-import { Layout, Menu, Tabs, theme, Button, Input, Modal, Drawer, Grid } from 'antd';
+import { Layout, Menu, Tabs, theme, Button, Drawer, Grid, Dropdown } from 'antd';
 import {
   DashboardOutlined,
   BookOutlined,
   TeamOutlined,
   NotificationOutlined,
   CalendarOutlined,
+  HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MenuOutlined,
-  LockOutlined,
-  UnlockOutlined,
+  BellOutlined,
+  UserOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { usePermission } from '../contexts/PermissionContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../hooks/useNotifications';
 
 const { Header, Sider, Content } = Layout;
 
@@ -28,6 +31,7 @@ interface Category {
 
 const categories: Category[] = [
   { key: 'dashboard', icon: <DashboardOutlined />, label: '业务版面', path: '/' },
+  { key: 'homeroom', icon: <HomeOutlined />, label: '我的班级', path: '/homeroom' },
   { key: 'calendar', icon: <CalendarOutlined />, label: '校历', path: '/calendar' },
   { key: 'teaching', icon: <BookOutlined />, label: '教学管理', path: '/teaching/class', children: [
     { key: '/teaching/class', label: '班级管理' },
@@ -36,6 +40,8 @@ const categories: Category[] = [
     { key: '/teaching/subjects', label: '科目管理' },
     { key: '/teaching/timetable', label: '课表管理' },
     { key: '/teaching/exam', label: '考试安排' },
+    { key: '/teaching/scores', label: '成绩录入' },
+    { key: '/teaching/score-analysis', label: '成绩分析' },
   ]},
   { key: 'hr', icon: <TeamOutlined />, label: '行政人事', path: '/hr/staff', children: [
     { key: '/hr/staff', label: '职工档案' },
@@ -77,16 +83,10 @@ export default function MainLayout() {
   const { token } = theme.useToken();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { editable, unlock, lock } = usePermission();
-  const [pwModal, setPwModal] = useState(false);
-  const [pw, setPw] = useState('');
+  const { user, logout, isAdmin } = useAuth();
+  const { notifications, unreadCount, markAllRead, clearAll, TABLE_LABELS } = useNotifications();
   const screens = Grid.useBreakpoint();
   const isMobile = !screens.md;
-
-  function handleUnlock() {
-    if (unlock(pw)) { setPwModal(false); setPw(''); }
-    else { setPw(''); }
-  }
 
   const activeCategory = useMemo(() => {
     if (location.pathname === '/') return categories[0];
@@ -189,8 +189,53 @@ export default function MainLayout() {
             />
           )}
           <span style={{ fontSize: 15, fontWeight: 600, flex: 1, color: '#333' }}>{activeCategory.label}</span>
-          <Button type="text" icon={editable ? <UnlockOutlined style={{ color: '#10B981' }} /> : <LockOutlined style={{ color: '#9CA3AF' }} />}
-            onClick={() => editable ? lock() : setPwModal(true)} title={editable ? '点击锁定' : '解锁编辑'} />
+          <Dropdown menu={{
+            items: notifications.length === 0
+              ? [{ key: 'empty', label: '暂无通知', disabled: true }]
+              : [
+                  ...notifications.slice(0, 10).map((n) => ({
+                    key: n.id,
+                    label: (
+                      <span style={{ fontSize: 12, opacity: n.read ? 0.6 : 1 }}>
+                        {TABLE_LABELS[n.table] || n.table} · {n.action}
+                        <span style={{ marginLeft: 8, color: '#999', fontSize: 11 }}>
+                          {new Date(n.time).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </span>
+                    ),
+                    disabled: true,
+                  })),
+                  { type: 'divider' },
+                  { key: 'clear', label: '清空通知', danger: true },
+                ],
+            onClick: ({ key }) => {
+              if (key === 'clear') clearAll();
+              else markAllRead();
+            },
+          }} trigger={['click']} onOpenChange={(open) => { if (!open) markAllRead(); }}>
+            <Button type="text" icon={<BellOutlined />}
+              style={{ fontWeight: 500, position: 'relative' }}>
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: 4, right: 4,
+                  width: 16, height: 16, borderRadius: '50%', background: '#EF4444',
+                  color: '#fff', fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+              )}
+            </Button>
+          </Dropdown>
+          <Dropdown menu={{
+            items: [
+              { key: 'role', label: `${isAdmin ? '管理员' : '教师'}`, icon: <UserOutlined />, disabled: true },
+              { type: 'divider' },
+              { key: 'logout', label: '退出登录', icon: <LogoutOutlined />, danger: true },
+            ],
+            onClick: ({ key }) => { if (key === 'logout') { logout(); navigate('/login'); } },
+          }} trigger={['click']}>
+            <Button type="text" icon={<UserOutlined />} style={{ fontWeight: 500 }}>
+              {user?.displayName || user?.username}
+            </Button>
+          </Dropdown>
         </Header>
         {subTabs && (
           <div style={{
@@ -219,9 +264,6 @@ export default function MainLayout() {
           <Outlet />
         </Content>
       </Layout>
-      <Modal title="解锁编辑" open={pwModal} onOk={handleUnlock} onCancel={() => setPwModal(false)} width={300}>
-        <Input.Password placeholder="请输入管理密码" value={pw} onChange={(e) => setPw(e.target.value)} onPressEnter={handleUnlock} />
-      </Modal>
     </Layout>
   );
 }

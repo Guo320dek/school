@@ -12,7 +12,7 @@ function getWsUrl(): string {
   return 'ws://localhost:3001';
 }
 
-export function useRealtime(table: string, onRefresh: () => void) {
+export function useRealtime(_table: string, onRefresh: () => void) {
   const onRefreshRef = useRef(onRefresh);
   onRefreshRef.current = onRefresh;
 

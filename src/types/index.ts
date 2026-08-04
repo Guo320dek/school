@@ -10,6 +10,8 @@ export interface School {
   address: string;
   studentCount: number;
   staffCount: number;
+  classCount: number;
+  courseCount: number;
 }
 
 // ===== 职工 =====
@@ -184,4 +186,45 @@ export interface CalendarEvent {
   endDate?: string;
   type: '学期' | '假期' | '考试' | '活动' | '其他';
   description?: string;
+}
+
+// ===== 用户/权限 =====
+export interface User {
+  id: string;
+  username: string;
+  role: 'admin' | 'teacher';
+  staffId?: string;
+  displayName?: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+// ===== 成绩 =====
+export interface ExamScore {
+  id: string;
+  examId: string;
+  examSessionId?: string;
+  studentId: string;
+  studentName: string;
+  classId: string;
+  className: string;
+  subjectId: string;
+  subjectName: string;
+  score: number;
+  grade?: string;
+  rank?: number;
+}
+
+export interface ScoreSummary {
+  subjectId: string;
+  subjectName: string;
+  classId: string;
+  className: string;
+  avgScore: number;
+  maxScore: number;
+  minScore: number;
+  count: number;
 }

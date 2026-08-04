@@ -1,29 +1,27 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Button, Select, Modal, Form, Popconfirm, Input, DatePicker, Space, Tag, Card, Row, Col, Typography, message, List, Empty, Timeline } from 'antd';
+import { Button, Select, Modal, Form, Popconfirm, Input, DatePicker, Space, Tag, Card, Row, Col, Typography, message, List, Empty } from 'antd';
 import { PlusOutlined, NotificationOutlined, ClockCircleOutlined, TeamOutlined } from '@ant-design/icons';
 import { getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
-import type { Announcement, AnnounceTarget } from '../../types';
+import type { Announcement } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
 const { Title, Text, Paragraph } = Typography;
 
 const priorityColor: Record<string, string> = { '紧急': 'red', '重要': 'orange', '普通': 'blue' };
 const targetColor: Record<string, string> = { '全体': 'purple', '高一': 'cyan', '高二': 'geekblue', '高三': 'blue' };
-const targetIcon: Record<string, React.ReactNode> = { '全体': <TeamOutlined />, '高一': <span>I</span>, '高二': <span>II</span>, '高三': <span>III</span> };
 
 export default function Announcement() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filterTarget, setFilterTarget] = useState<string>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [form] = Form.useForm();
 
-  const loadAnnouncements = () => { setLoading(true); getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
+  const loadAnnouncements = () => { getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')); };
   useEffect(() => { loadAnnouncements(); }, []);
   useRealtime('announcements', loadAnnouncements);
   const { editable } = usePermission();

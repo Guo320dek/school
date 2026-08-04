@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Button, Select, Modal, Form, Popconfirm, Space, Tag, Card, Typography, message, Radio, Tooltip, Empty, Row, Col } from 'antd';
+import { Button, Select, Modal, Form, Popconfirm, Space, Card, Typography, message, Radio, Tooltip, Empty, Row, Col } from 'antd';
 import {
   EditOutlined, DeleteOutlined, PlusOutlined, ScheduleOutlined,
   UserOutlined, BookOutlined, WarningFilled,
 } from '@ant-design/icons';
 import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { useFilteredTeachers } from '../../hooks/useFilteredTeachers';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
 import type { TimetableEntry, ClassInfo, Subject, Staff } from '../../types';
@@ -18,6 +19,125 @@ const PERIODS = [
   { idx: 5, time: '14:00-14:45' }, { idx: 6, time: '14:55-15:40' },
   { idx: 7, time: '15:50-16:35' },
 ];
+
+// ---- Helpers ----
+
+interface EntryParams {
+  classId: string;
+  dayOfWeek: number;
+  period: number;
+  subjectId: string;
+  teacherId: string;
+}
+
+function buildEntry(
+  id: string | null,
+  params: EntryParams,
+  classes: ClassInfo[],
+  subjects: Subject[],
+  teachers: Staff[],
+): TimetableEntry {
+  const cls = classes.find((c) => c.id === params.classId);
+  const sub = subjects.find((s) => s.id === params.subjectId);
+  const teacher = teachers.find((s) => s.id === params.teacherId);
+  return {
+    id: id ?? newId(),
+    classId: params.classId,
+    className: cls?.name ?? '',
+    grade: cls?.grade ?? '高一',
+    dayOfWeek: params.dayOfWeek,
+    period: params.period,
+    subjectId: params.subjectId,
+    subjectName: sub?.name ?? '',
+    teacherId: params.teacherId,
+    teacherName: teacher?.name ?? '',
+  };
+}
+
+// ---- Sub-components ----
+
+function MismatchModal({
+  open, onCancel, formValues, classes, subjects, allStaff,
+  editingEntryId, onForceSave,
+}: {
+  open: boolean; onCancel: () => void;
+  formValues: EntryParams | null;
+  classes: ClassInfo[]; subjects: Subject[]; allStaff: Staff[];
+  editingEntryId: string | null; onForceSave: (entry: TimetableEntry) => void;
+}) {
+  if (!formValues) return null;
+  const teacher = allStaff.find((s) => s.id === formValues.teacherId);
+  const subject = subjects.find((s) => s.id === formValues.subjectId);
+  return (
+    <Modal title="确认排课" open={open} onCancel={onCancel} footer={null} width={480}>
+      <div style={{ padding: 16, background: '#FFF7E6', borderRadius: 8, border: '1px solid #FFD591', marginBottom: 16 }}>
+        <Text strong style={{ color: '#D48806' }}>{teacher?.name}</Text>
+        <Text> 未被关联到「</Text>
+        <Text strong>{subject?.name}</Text>
+        <Text>」科目。</Text>
+        <br />
+        <Text type="secondary" style={{ fontSize: 12 }}>该科目在科目管理中配置了关联教师，当前选择的教师不在其列表中。</Text>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <Button onClick={onCancel}>返回修改</Button>
+        <Button type="primary" onClick={() => onForceSave(buildEntry(editingEntryId, formValues, classes, subjects, allStaff))}>
+          仍然排课
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+function ConflictModal({
+  open, onCancel, formValues, classes, subjects, allStaff,
+  editingEntryId, availableSlots, onApplySlot, onForceSave,
+}: {
+  open: boolean; onCancel: () => void;
+  formValues: EntryParams | null;
+  classes: ClassInfo[]; subjects: Subject[]; allStaff: Staff[];
+  editingEntryId: string | null;
+  availableSlots: { dayOfWeek: number; period: number }[];
+  onApplySlot: (dayOfWeek: number, period: number) => void;
+  onForceSave: (entry: TimetableEntry) => void;
+}) {
+  if (!formValues) return null;
+  const teacher = allStaff.find((s) => s.id === formValues.teacherId);
+  return (
+    <Modal
+      title={<Space><WarningFilled style={{ color: '#DC2626' }} />课表冲突</Space>}
+      open={open} onCancel={onCancel} footer={null} width={520}
+    >
+      <div style={{ marginBottom: 16, padding: 12, background: '#FFF2F0', borderRadius: 8, border: '1px solid #FFCCC7' }}>
+        <Text strong style={{ color: '#DC2626' }}>{teacher?.name}</Text>
+        <Text> 在 </Text>
+        <Text strong>{DAYS[formValues.dayOfWeek - 1]} 第{formValues.period}节</Text>
+        <Text> 已有排课，与当前安排冲突。</Text>
+      </div>
+      <Card size="small" title="可用时段（该班级与教师均空闲）" className="card-flat" style={{ marginBottom: 12 }}>
+        {availableSlots.length === 0 ? (
+          <Text type="secondary">暂无可用的空闲时段</Text>
+        ) : (
+          <Space wrap size={[8, 8]}>
+            {availableSlots.map((s) => (
+              <Button key={`${s.dayOfWeek}-${s.period}`} size="small" type="default"
+                onClick={() => onApplySlot(s.dayOfWeek, s.period)}>
+                {DAYS[s.dayOfWeek - 1]} 第{s.period}节 ({PERIODS.find((p) => p.idx === s.period)?.time})
+              </Button>
+            ))}
+          </Space>
+        )}
+      </Card>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <Button onClick={onCancel}>返回修改</Button>
+        <Button danger onClick={() => onForceSave(buildEntry(editingEntryId, formValues, classes, subjects, allStaff))}>
+          仍然添加（忽略冲突）
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+// ---- Main ----
 
 export default function Timetable() {
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
@@ -79,18 +199,7 @@ export default function Timetable() {
   }, [entries, selectedTeacher]);
 
   // Teachers filtered by selected subject in the add/edit form
-  const filteredTeachers = useMemo(() => {
-    const active = allStaff.filter((s) => s.status === '在职');
-    if (!selectedFormSubjectId) return active;
-    const sub = subjects.find((s) => s.id === selectedFormSubjectId);
-    if (!sub || sub.teacherIds.length === 0) return active;
-    const matching = active.filter((s) => sub.teacherIds.includes(s.id));
-    if (editingTeacherId && !matching.find((s) => s.id === editingTeacherId)) {
-      const current = active.find((s) => s.id === editingTeacherId);
-      if (current) return [current, ...matching];
-    }
-    return matching;
-  }, [selectedFormSubjectId, subjects, allStaff, editingTeacherId]);
+  const filteredTeachers = useFilteredTeachers(allStaff, subjects, selectedFormSubjectId, editingTeacherId);
 
   const conflictMap = useMemo(() => {
     const map: Record<string, string[]> = {};
@@ -142,41 +251,10 @@ export default function Timetable() {
     return slots;
   }
 
-  function forceSave() {
-    if (!pendingFormValues) return;
-    const v = pendingFormValues;
-    const cls = classes.find((c) => c.id === v.classId);
-    const sub = subjects.find((s) => s.id === v.subjectId);
-    const teacher = allStaff.find((s) => s.id === v.teacherId);
-    const entry = {
-      id: editingEntry?.id ?? newId(),
-      classId: v.classId, className: cls?.name ?? '', grade: cls?.grade ?? '高一',
-      dayOfWeek: v.dayOfWeek, period: v.period,
-      subjectId: v.subjectId, subjectName: sub?.name ?? '',
-      teacherId: v.teacherId, teacherName: teacher?.name ?? '',
-    };
-    const save = editingEntry
-      ? updateTimetableEntry(editingEntry.id, entry)
-      : createTimetableEntry(entry);
-    save.then(loadEntries).then(() => message.success(editingEntry ? '已更新' : '已添加（忽略冲突）'));
-    setConflictModalOpen(false);
-    setModalOpen(false);
-    setPendingFormValues(null);
-  }
-
   function applySlot(dayOfWeek: number, period: number) {
     if (!pendingFormValues) return;
-    const v = { ...pendingFormValues, dayOfWeek, period };
-    const cls = classes.find((c) => c.id === v.classId);
-    const sub = subjects.find((s) => s.id === v.subjectId);
-    const teacher = allStaff.find((s) => s.id === v.teacherId);
-    const entry = {
-      id: editingEntry?.id ?? newId(),
-      classId: v.classId, className: cls?.name ?? '', grade: cls?.grade ?? '高一',
-      dayOfWeek: v.dayOfWeek, period: v.period,
-      subjectId: v.subjectId, subjectName: sub?.name ?? '',
-      teacherId: v.teacherId, teacherName: teacher?.name ?? '',
-    };
+    const params = { ...pendingFormValues, dayOfWeek, period };
+    const entry = buildEntry(editingEntry?.id ?? null, params, classes, subjects, allStaff);
     const save = editingEntry
       ? updateTimetableEntry(editingEntry.id, entry)
       : createTimetableEntry(entry);
@@ -187,10 +265,8 @@ export default function Timetable() {
   }
 
   function handleSave() {
-    form.validateFields().then((v) => {
-      const cls = classes.find((c) => c.id === v.classId);
+    form.validateFields().then((v: EntryParams) => {
       const sub = subjects.find((s) => s.id === v.subjectId);
-      const teacher = allStaff.find((s) => s.id === v.teacherId);
 
       // Check 1: teacher-subject mismatch
       const teacherMismatch = sub && sub.teacherIds.length > 0 && !sub.teacherIds.includes(v.teacherId);
@@ -216,20 +292,27 @@ export default function Timetable() {
         return;
       }
 
-      const entry = {
-        id: editingEntry?.id ?? newId(),
-        classId: v.classId, className: cls?.name ?? '', grade: cls?.grade ?? '高一',
-        dayOfWeek: v.dayOfWeek, period: v.period,
-        subjectId: v.subjectId, subjectName: sub?.name ?? '',
-        teacherId: v.teacherId, teacherName: teacher?.name ?? '',
-      };
-      if (editingEntry) {
-        updateTimetableEntry(editingEntry.id, entry).then(loadEntries).then(() => message.success('已更新')).catch(() => message.error('更新失败'));
-      } else {
-        createTimetableEntry(entry).then(loadEntries).then(() => message.success('已添加')).catch(() => message.error('添加失败'));
-      }
-      setModalOpen(false);
+      doSave(v);
     });
+  }
+
+  function doSave(v: EntryParams) {
+    const entry = buildEntry(editingEntry?.id ?? null, v, classes, subjects, allStaff);
+    const save = editingEntry
+      ? updateTimetableEntry(editingEntry.id, entry)
+      : createTimetableEntry(entry);
+    save.then(loadEntries).then(() => message.success(editingEntry ? '已更新' : '已添加')).catch(() => message.error('保存失败'));
+    setModalOpen(false);
+  }
+
+  function handleForceSave(entry: TimetableEntry) {
+    const save = editingEntry
+      ? updateTimetableEntry(editingEntry.id, entry)
+      : createTimetableEntry(entry);
+    save.then(loadEntries).then(() => message.success(editingEntry ? '已更新' : '已添加')).catch(() => message.error('保存失败'));
+    setMismatchModalOpen(false);
+    setModalOpen(false);
+    setPendingFormValues(null);
   }
 
   return (
@@ -428,105 +511,33 @@ export default function Timetable() {
         </Form>
       </Modal>
 
-      <Modal
-        title={<Space><WarningFilled style={{ color: '#DC2626' }} />课表冲突</Space>}
+      <ConflictModal
         open={conflictModalOpen}
         onCancel={() => { setConflictModalOpen(false); setPendingFormValues(null); }}
-        footer={null}
-        width={520}
-      >
-        {pendingFormValues && (
-          <>
-            <div style={{ marginBottom: 16, padding: 12, background: '#FFF2F0', borderRadius: 8, border: '1px solid #FFCCC7' }}>
-              <Text strong style={{ color: '#DC2626' }}>
-                {allStaff.find((s) => s.id === pendingFormValues.teacherId)?.name}
-              </Text>
-              <Text> 在 </Text>
-              <Text strong>{DAYS[pendingFormValues.dayOfWeek - 1]} 第{pendingFormValues.period}节</Text>
-              <Text> 已有排课，与当前安排冲突。</Text>
-            </div>
+        formValues={pendingFormValues}
+        classes={classes} subjects={subjects} allStaff={allStaff}
+        editingEntryId={editingEntry?.id ?? null}
+        availableSlots={availableSlots}
+        onApplySlot={applySlot}
+        onForceSave={(entry) => {
+          const save = editingEntry
+            ? updateTimetableEntry(editingEntry.id, entry)
+            : createTimetableEntry(entry);
+          save.then(loadEntries).then(() => message.success(editingEntry ? '已更新' : '已添加（忽略冲突）'));
+          setConflictModalOpen(false);
+          setModalOpen(false);
+          setPendingFormValues(null);
+        }}
+      />
 
-            <Card size="small" title="可用时段（该班级与教师均空闲）" className="card-flat" style={{ marginBottom: 12 }}>
-              {availableSlots.length === 0 ? (
-                <Text type="secondary">暂无可用的空闲时段</Text>
-              ) : (
-                <Space wrap size={[8, 8]}>
-                  {availableSlots.map((s) => (
-                    <Button
-                      key={`${s.dayOfWeek}-${s.period}`}
-                      size="small"
-                      type="default"
-                      onClick={() => applySlot(s.dayOfWeek, s.period)}
-                    >
-                      {DAYS[s.dayOfWeek - 1]} 第{s.period}节 ({PERIODS.find((p) => p.idx === s.period)?.time})
-                    </Button>
-                  ))}
-                </Space>
-              )}
-            </Card>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <Button onClick={() => { setConflictModalOpen(false); setPendingFormValues(null); }}>
-                返回修改
-              </Button>
-              <Button danger onClick={forceSave}>
-                仍然添加（忽略冲突）
-              </Button>
-            </div>
-          </>
-        )}
-      </Modal>
-
-      {/* Teacher-Subject Mismatch Modal */}
-      <Modal
-        title="确认排课"
+      <MismatchModal
         open={mismatchModalOpen}
         onCancel={() => { setMismatchModalOpen(false); setPendingFormValues(null); }}
-        footer={null}
-        width={480}
-      >
-        {pendingFormValues && (
-          <>
-            <div style={{ padding: 16, background: '#FFF7E6', borderRadius: 8, border: '1px solid #FFD591', marginBottom: 16 }}>
-              <Text strong style={{ color: '#D48806' }}>
-                {allStaff.find((s) => s.id === pendingFormValues.teacherId)?.name}
-              </Text>
-              <Text> 未被关联到「</Text>
-              <Text strong>{subjects.find((s) => s.id === pendingFormValues.subjectId)?.name}</Text>
-              <Text>」科目。</Text>
-              <br />
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                该科目在科目管理中配置了关联教师，当前选择的教师不在其列表中。
-              </Text>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <Button onClick={() => { setMismatchModalOpen(false); setPendingFormValues(null); }}>返回修改</Button>
-              <Button type="primary" onClick={() => {
-                if (!pendingFormValues) return;
-                const cls = classes.find((c) => c.id === pendingFormValues.classId);
-                const sub = subjects.find((s) => s.id === pendingFormValues.subjectId);
-                const teacher = allStaff.find((s) => s.id === pendingFormValues.teacherId);
-                const entry = {
-                  id: editingEntry?.id ?? newId(),
-                  classId: pendingFormValues.classId, className: cls?.name ?? '', grade: cls?.grade ?? '高一',
-                  dayOfWeek: pendingFormValues.dayOfWeek, period: pendingFormValues.period,
-                  subjectId: pendingFormValues.subjectId, subjectName: sub?.name ?? '',
-                  teacherId: pendingFormValues.teacherId, teacherName: teacher?.name ?? '',
-                };
-                const save = editingEntry
-                  ? updateTimetableEntry(editingEntry.id, entry)
-                  : createTimetableEntry(entry);
-                save.then(loadEntries).then(() => message.success(editingEntry ? '已更新' : '已添加')).catch(() => message.error('保存失败'));
-                setMismatchModalOpen(false);
-                setModalOpen(false);
-                setPendingFormValues(null);
-              }}>
-                仍然排课
-              </Button>
-            </div>
-          </>
-        )}
-      </Modal>
+        formValues={pendingFormValues}
+        classes={classes} subjects={subjects} allStaff={allStaff}
+        editingEntryId={editingEntry?.id ?? null}
+        onForceSave={handleForceSave}
+      />
     </>
   );
 }

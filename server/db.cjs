@@ -109,6 +109,20 @@ function initSchema() {
       id TEXT PRIMARY KEY, title TEXT, date TEXT, endDate TEXT,
       type TEXT, description TEXT DEFAULT ''
     );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY, username TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL, role TEXT DEFAULT 'teacher',
+      staffId TEXT, displayName TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS exam_scores (
+      id TEXT PRIMARY KEY, examId TEXT NOT NULL,
+      examSessionId TEXT, studentId TEXT NOT NULL,
+      studentName TEXT, classId TEXT, className TEXT,
+      subjectId TEXT, subjectName TEXT, score REAL,
+      grade TEXT, rank INTEGER
+    );
   `);
 
   // Migration: add columns that might be missing in old DBs
@@ -368,6 +382,18 @@ function seed() {
     ];
     const insCal = db.prepare('INSERT INTO calendar_events VALUES (?,?,?,?,?,?)');
     for (const e of calEvents) insCal.run(...e);
+
+    // Users (password: 123456 hashed with bcryptjs)
+    const bcrypt = require('bcryptjs');
+    const users = [
+      ['u1','admin',bcrypt.hashSync('admin123',10),'admin','s01','郭建国'],
+      ['u2','s10',bcrypt.hashSync('123456',10),'teacher','s10','孙晓红'],
+      ['u3','s20',bcrypt.hashSync('123456',10),'teacher','s20','赵德明'],
+      ['u4','s21',bcrypt.hashSync('123456',10),'teacher','s21','陈丽华'],
+      ['u5','s30',bcrypt.hashSync('123456',10),'teacher','s30','王美玲'],
+    ];
+    const insUser = db.prepare('INSERT INTO users VALUES (?,?,?,?,?,?)');
+    for (const u of users) insUser.run(...u);
   });
   doSeed();
 }

@@ -4,6 +4,7 @@ import { PlusOutlined, BookOutlined, ClockCircleOutlined, UserOutlined } from '@
 import type { ColumnsType } from 'antd/es/table';
 import { getCourses, createCourse, updateCourse, deleteCourse, getSubjects, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { useFilteredTeachers } from '../../hooks/useFilteredTeachers';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
 import type { GradeCourse, GradeLevel, Subject, Staff } from '../../types';
@@ -72,19 +73,7 @@ export default function CourseSetup() {
   const MAX_TEACHER_HOURS = 10;
 
   // Teachers filtered by selected subject (dropdown shows only matching; always include current editing teacher)
-  const filteredTeachers = useMemo(() => {
-    const active = allStaff.filter((s) => s.status === '在职');
-    if (!selectedSubjectId) return active;
-    const sub = subjects.find((s) => s.id === selectedSubjectId);
-    if (!sub || sub.teacherIds.length === 0) return active;
-    const matching = active.filter((s) => sub.teacherIds.includes(s.id));
-    // Include current editing teacher even if they don't match (so modal can fire)
-    if (editingTeacherId && !matching.find((s) => s.id === editingTeacherId)) {
-      const current = active.find((s) => s.id === editingTeacherId);
-      if (current) return [current, ...matching];
-    }
-    return matching;
-  }, [selectedSubjectId, subjects, allStaff, editingTeacherId]);
+  const filteredTeachers = useFilteredTeachers(allStaff, subjects, selectedSubjectId, editingTeacherId);
 
   // Per-teacher weekly hours across ALL grades
   const teacherWorkload = useMemo(() => {
@@ -129,7 +118,6 @@ export default function CourseSetup() {
   function handleSave() {
     form.validateFields().then((v) => {
       const sub = subjects.find((s) => s.id === v.subjectId);
-      const teacher = allStaff.find((s) => s.id === v.teacherId);
 
       // Check 1: teacher-subject mismatch
       const teacherMismatch = sub && sub.teacherIds.length > 0 && !sub.teacherIds.includes(v.teacherId);

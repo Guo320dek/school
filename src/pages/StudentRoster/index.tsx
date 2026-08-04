@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Space, Tag, Row, Col, Typography, message } from 'antd';
-import { PlusOutlined, SearchOutlined, TeamOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { getStudents, createStudent, updateStudent, deleteStudent, getClasses, getStaff } from '../../api';
+import { getStudents, createStudent, updateStudent, deleteStudent, getClasses } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';

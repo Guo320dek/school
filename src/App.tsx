@@ -1,20 +1,57 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
+import { lazy, Suspense, type ReactNode } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ConfigProvider, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-import { PermissionProvider } from './contexts/PermissionContext';
+import { useAuth } from './contexts/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import MainLayout from './layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
-import ClassManage from './pages/ClassManage';
-import CourseSetup from './pages/CourseSetup';
-import Timetable from './pages/Timetable';
-import ExamArrange from './pages/ExamArrange';
-import StaffArchive from './pages/StaffArchive';
-import Salary from './pages/Salary';
-import Attendance from './pages/Attendance';
-import Announcement from './pages/Announcement';
-import SubjectManage from './pages/SubjectManage';
-import StudentRoster from './pages/StudentRoster';
-import SchoolCalendar from './pages/SchoolCalendar';
+
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ClassManage = lazy(() => import('./pages/ClassManage'));
+const CourseSetup = lazy(() => import('./pages/CourseSetup'));
+const Timetable = lazy(() => import('./pages/Timetable'));
+const ExamArrange = lazy(() => import('./pages/ExamArrange'));
+const StaffArchive = lazy(() => import('./pages/StaffArchive'));
+const Salary = lazy(() => import('./pages/Salary'));
+const Attendance = lazy(() => import('./pages/Attendance'));
+const Announcement = lazy(() => import('./pages/Announcement'));
+const SubjectManage = lazy(() => import('./pages/SubjectManage'));
+const StudentRoster = lazy(() => import('./pages/StudentRoster'));
+const SchoolCalendar = lazy(() => import('./pages/SchoolCalendar'));
+const ScoreEntry = lazy(() => import('./pages/ScoreEntry'));
+const ScoreAnalysis = lazy(() => import('./pages/ScoreAnalysis'));
+const Homeroom = lazy(() => import('./pages/Homeroom'));
+
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
+    <Spin size="large" />
+  </div>
+);
+
+function LazyPage({ children }: { children: ReactNode }) {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <PageLoader />;
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
+
+function PublicRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <PageLoader />;
+  if (user) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
 
 export default function App() {
   return (
@@ -61,26 +98,28 @@ export default function App() {
         },
       }}
     >
-      <PermissionProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="teaching/class" element={<ClassManage />} />
-              <Route path="teaching/course" element={<CourseSetup />} />
-              <Route path="teaching/subjects" element={<SubjectManage />} />
-              <Route path="teaching/students" element={<StudentRoster />} />
-              <Route path="teaching/timetable" element={<Timetable />} />
-              <Route path="teaching/exam" element={<ExamArrange />} />
-              <Route path="calendar" element={<SchoolCalendar />} />
-              <Route path="hr/staff" element={<StaffArchive />} />
-              <Route path="hr/salary" element={<Salary />} />
-              <Route path="hr/attendance" element={<Attendance />} />
-              <Route path="parents/announcement" element={<Announcement />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </PermissionProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LazyPage><PublicRoute><Login /></PublicRoute></LazyPage>} />
+          <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+            <Route index element={<LazyPage><Dashboard /></LazyPage>} />
+            <Route path="teaching/class" element={<LazyPage><ClassManage /></LazyPage>} />
+            <Route path="teaching/course" element={<LazyPage><CourseSetup /></LazyPage>} />
+            <Route path="teaching/subjects" element={<LazyPage><SubjectManage /></LazyPage>} />
+            <Route path="teaching/students" element={<LazyPage><StudentRoster /></LazyPage>} />
+            <Route path="teaching/timetable" element={<LazyPage><Timetable /></LazyPage>} />
+            <Route path="teaching/exam" element={<LazyPage><ExamArrange /></LazyPage>} />
+            <Route path="teaching/scores" element={<LazyPage><ScoreEntry /></LazyPage>} />
+            <Route path="teaching/score-analysis" element={<LazyPage><ScoreAnalysis /></LazyPage>} />
+            <Route path="homeroom" element={<LazyPage><Homeroom /></LazyPage>} />
+            <Route path="calendar" element={<LazyPage><SchoolCalendar /></LazyPage>} />
+            <Route path="hr/staff" element={<LazyPage><StaffArchive /></LazyPage>} />
+            <Route path="hr/salary" element={<LazyPage><Salary /></LazyPage>} />
+            <Route path="hr/attendance" element={<LazyPage><Attendance /></LazyPage>} />
+            <Route path="parents/announcement" element={<LazyPage><Announcement /></LazyPage>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ConfigProvider>
   );
 }

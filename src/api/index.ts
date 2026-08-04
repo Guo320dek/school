@@ -2,7 +2,7 @@ import type {
   Staff, SalaryRecord, AttendanceRecord,
   ClassInfo, Subject, GradeCourse, TimetableEntry,
   Exam, ExamSession, ExamRoom, Announcement, BusinessMetric, School,
-  Student,
+  Student, ExamScore, ScoreSummary, User, LoginResponse,
 } from '../types';
 import type { CreateInput, UpdateInput } from '../types/api';
 import type { CalendarEvent } from '../types';
@@ -105,3 +105,45 @@ export const deleteCalendarEvent = (id: string) => request<{ success: boolean }>
 
 // ===== Metrics =====
 export const getMetrics = () => request<BusinessMetric[]>('/metrics');
+
+// ===== Auth =====
+function getToken() { return localStorage.getItem('auth_token'); }
+
+async function authRequest<T>(url: string, options?: RequestInit): Promise<T> {
+  return request<T>(url, {
+    ...options,
+    headers: { ...options?.headers, Authorization: `Bearer ${getToken()}` },
+  });
+}
+
+export const login = (username: string, password: string) =>
+  request<LoginResponse>('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+
+export const getMe = () => authRequest<{ user: User }>('/auth/me');
+
+export const getMyClass = () => authRequest<{ cls: ClassInfo | null }>('/teacher/my-class');
+
+// ===== Scores =====
+export const getScores = (params?: { examId?: string; classId?: string; subjectId?: string }) => {
+  const qs = new URLSearchParams();
+  if (params?.examId) qs.set('examId', params.examId);
+  if (params?.classId) qs.set('classId', params.classId);
+  if (params?.subjectId) qs.set('subjectId', params.subjectId);
+  return request<ExamScore[]>(`/scores?${qs.toString()}`);
+};
+
+export const saveScores = (scores: Omit<ExamScore, 'id'>[]) =>
+  authRequest<{ success: boolean; count: number }>('/scores', {
+    method: 'POST', body: JSON.stringify({ scores }),
+  });
+
+export const updateScore = (id: string, score: number) =>
+  authRequest<{ success: boolean }>(`/scores/${id}`, {
+    method: 'PUT', body: JSON.stringify({ score }),
+  });
+
+export const deleteScore = (id: string) =>
+  authRequest<{ success: boolean }>(`/scores/${id}`, { method: 'DELETE' });
+
+export const getScoreSummary = (examId: string) =>
+  request<ScoreSummary[]>(`/scores/summary?examId=${examId}`);

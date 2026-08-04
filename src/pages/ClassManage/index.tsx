@@ -1,17 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, DatePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Progress, Tabs } from 'antd';
+import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, DatePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Progress } from 'antd';
 import {
   PlusOutlined, TeamOutlined, HomeOutlined, TrophyOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { getClasses, createClass, updateClass, deleteClass, getStaff, getAnnouncements, createAnnouncement, deleteAnnouncement } from '../../api';
+import { getClasses, createClass, updateClass, deleteClass, getStaff, getAnnouncements, createAnnouncement } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
 import type { ClassInfo, GradeLevel, SubjectTrack, Staff, Announcement } from '../../types';
-import dayjs from 'dayjs';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const trackOptions: SubjectTrack[] = ['物化生', '物化地', '物生政', '史地政', '史政生', '物化政'];
 const trackColors: Record<string, string> = { '物化生': '#5B6CF0', '物化地': '#13C2C2', '物生政': '#7C3AED', '史地政': '#D97706', '史政生': '#EB2F96', '物化政': '#10B981' };

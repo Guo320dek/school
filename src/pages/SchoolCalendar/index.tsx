@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Button, Modal, Form, Popconfirm, Input, Select, DatePicker, Card, Tag, Typography, message, Badge } from 'antd';
-import { PlusOutlined, LeftOutlined, RightOutlined, CalendarOutlined } from '@ant-design/icons';
+import { Button, Modal, Form, Popconfirm, Input, Select, DatePicker, Card, Tag, Space, Typography, message } from 'antd';
+import { PlusOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import { usePermission } from '../../contexts/PermissionContext';
@@ -9,7 +9,6 @@ import type { CalendarEvent } from '../../types';
 import dayjs, { Dayjs } from 'dayjs';
 
 const { Title, Text } = Typography;
-const { RangePicker } = DatePicker;
 
 const typeColor: Record<string, string> = {
   '学期': 'blue', '假期': 'orange', '考试': 'red', '活动': 'green', '其他': 'default',
@@ -17,15 +16,13 @@ const typeColor: Record<string, string> = {
 
 export default function SchoolCalendar() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(dayjs().startOf('month'));
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
   const [form] = Form.useForm();
 
   const loadEvents = () => {
-    setLoading(true);
-    getCalendarEvents().then(setEvents).catch(() => message.error('加载校历失败')).finally(() => setLoading(false));
+    getCalendarEvents().then(setEvents).catch(() => message.error('加载校历失败'));
   };
   useEffect(() => { loadEvents(); }, []);
   useRealtime('calendar_events', loadEvents);

@@ -8,7 +8,7 @@ import type {
 export const schoolInfo: School = {
   id: '1', name: '青云高级中学', region: '海淀区', type: '公立', level: '高中',
   contact: '张校长', phone: '010-66001234', address: '北京市海淀区青云路18号',
-  studentCount: 910, staffCount: 36,
+  studentCount: 910, staffCount: 36, classCount: 18, courseCount: 24,
 };
 
 // ===== 教职工（36人，覆盖所有科目×多个教师）=====

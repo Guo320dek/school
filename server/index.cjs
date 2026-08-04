@@ -3,8 +3,13 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { WebSocketServer } = require('ws');
 const { getDb, ensureDb } = require('./db.cjs');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'school-management-secret-key-2026';
+const TOKEN_EXPIRY = '24h';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,7 +25,13 @@ function broadcast(table) {
 
 const distPath = path.join(__dirname, '..', 'dist');
 
-app.use(cors());
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? [process.env.CORS_ORIGIN]
+  : ['https://school-production-80af.up.railway.app', 'http://localhost:3000'];
+app.use(cors({ origin: (origin, cb) => {
+  if (!origin || allowedOrigins.some(o => origin.startsWith(o))) return cb(null, true);
+  cb(new Error('Not allowed by CORS'));
+}}));
 app.use(express.json());
 
 // Health check
@@ -28,8 +39,7 @@ app.get('/api/health', (_req, res) => {
   try {
     const db = getDb();
     db.prepare('SELECT 1').get();
-    const { DB_PATH } = require('./db.cjs');
-    res.json({ status: 'ok', db: 'connected', dbPath: DB_PATH });
+    res.json({ status: 'ok', db: 'connected' });
   } catch (e) {
     res.status(500).json({ status: 'error', db: e.message });
   }
@@ -38,7 +48,51 @@ app.get('/api/health', (_req, res) => {
 // Serve static frontend in production
 app.use(express.static(distPath));
 
-// ===== UTILITY =====
+// ===== AUTH =====
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: '未登录' });
+  }
+  try {
+    const token = authHeader.split(' ')[1];
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: '登录已过期' });
+  }
+}
+
+function optionalAuth(req, _res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      req.user = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+    } catch {}
+  }
+  next();
+}
+
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: '请输入账号和密码' });
+    const db = getDb();
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ error: '账号或密码错误' });
+    }
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role, staffId: user.staffId, displayName: user.displayName },
+      JWT_SECRET, { expiresIn: TOKEN_EXPIRY }
+    );
+    res.json({ token, user: { id: user.id, username: user.username, role: user.role, staffId: user.staffId, displayName: user.displayName } });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/auth/me', authMiddleware, (req, res) => {
+  res.json({ user: req.user });
+});
 function crud(table, idField = 'id', allowedFields = null) {
   const VALID_TABLES = [
     'staff', 'salary_records', 'attendance_records',
@@ -284,6 +338,76 @@ app.delete('/api/students/:id', (req, res, next) => {
   studentApi.delete(req, res, next);
 });
 
+// ===== SCORES =====
+app.get('/api/scores', (req, res) => {
+  try {
+    const db = getDb();
+    const { examId, classId, subjectId } = req.query;
+    let sql = 'SELECT * FROM exam_scores WHERE 1=1';
+    const params = [];
+    if (examId) { sql += ' AND examId = ?'; params.push(examId); }
+    if (classId) { sql += ' AND classId = ?'; params.push(classId); }
+    if (subjectId) { sql += ' AND subjectId = ?'; params.push(subjectId); }
+    sql += ' ORDER BY subjectId, score DESC';
+    res.json(db.prepare(sql).all(...params));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/scores', authMiddleware, (req, res) => {
+  try {
+    const db = getDb();
+    const { scores } = req.body;
+    if (!scores || !Array.isArray(scores)) return res.status(400).json({ error: 'scores array required' });
+    const insert = db.prepare('INSERT OR REPLACE INTO exam_scores (id, examId, examSessionId, studentId, studentName, classId, className, subjectId, subjectName, score) VALUES (?,?,?,?,?,?,?,?,?,?)');
+    const transaction = db.transaction((items) => {
+      for (const s of items) {
+        const id = `${s.examId}_${s.studentId}_${s.subjectId}`;
+        insert.run(id, s.examId, s.examSessionId || null, s.studentId, s.studentName || '', s.classId || '', s.className || '', s.subjectId, s.subjectName || '', s.score);
+      }
+    });
+    transaction(scores);
+    broadcast('exam_scores');
+    res.json({ success: true, count: scores.length });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/scores/:id', authMiddleware, (req, res) => {
+  try {
+    const db = getDb();
+    const { score } = req.body;
+    db.prepare('UPDATE exam_scores SET score = ? WHERE id = ?').run(score, req.params.id);
+    broadcast('exam_scores');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/scores/:id', authMiddleware, (req, res) => {
+  try {
+    const db = getDb();
+    db.prepare('DELETE FROM exam_scores WHERE id = ?').run(req.params.id);
+    broadcast('exam_scores');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/scores/summary', (req, res) => {
+  try {
+    const db = getDb();
+    const { examId } = req.query;
+    if (!examId) return res.status(400).json({ error: 'examId required' });
+    const rows = db.prepare(`
+      SELECT subjectId, subjectName, classId, className,
+             ROUND(AVG(score), 1) as avgScore,
+             MAX(score) as maxScore, MIN(score) as minScore,
+             COUNT(*) as count
+      FROM exam_scores WHERE examId = ?
+      GROUP BY subjectId, classId
+      ORDER BY subjectId, classId
+    `).all(examId);
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // Dashboard metrics
 app.get('/api/metrics', (req, res) => {
   try {
@@ -316,11 +440,26 @@ app.get('/api/school', (req, res) => {
     const db = getDb();
     const students = db.prepare('SELECT SUM(studentCount) as c FROM classes WHERE status = ?').get('在读');
     const staff = db.prepare("SELECT COUNT(*) as c FROM staff WHERE status = '在职'").get();
+    const classes = db.prepare("SELECT COUNT(*) as c FROM classes WHERE status = '在读'").get();
+    const courses = db.prepare('SELECT COUNT(*) as c FROM grade_courses').get();
     res.json({
       id: '1', name: '青云高级中学', region: '海淀区', type: '公立', level: '高中',
       contact: '张校长', phone: '010-66001234', address: '北京市海淀区青云路18号',
       studentCount: students.c || 0, staffCount: staff.c,
+      classCount: classes.c || 0, courseCount: courses.c || 0,
     });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Homeroom: get the class where logged-in teacher is homeroom teacher
+app.get('/api/teacher/my-class', authMiddleware, (req, res) => {
+  try {
+    const db = getDb();
+    const staff = db.prepare('SELECT * FROM staff WHERE id = ?').get(req.user.staffId);
+    if (!staff) return res.status(404).json({ error: 'Staff not found' });
+    const cls = db.prepare("SELECT * FROM classes WHERE status = '在读' AND homeroomTeacher = ?").get(staff.name);
+    if (!cls) return res.json({ cls: null });
+    res.json({ cls });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
