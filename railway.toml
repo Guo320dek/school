@@ -11,4 +11,4 @@
     mountPath = "/data"
 
 [variables]
-  NIXPACKS_NODE_VERSION = "22"
+  NIXPACKS_APT_PACKAGES = "python3, gcc, g++, make"
