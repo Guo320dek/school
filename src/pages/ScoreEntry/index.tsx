@@ -162,7 +162,7 @@ export default function ScoreEntry() {
           <Table
             rowKey="id" columns={columns} dataSource={students}
             pagination={false} size="small" bordered
-            scroll={{ y: 500 }}
+            scroll={{ x: 'max-content', y: 500 }}
           />
         </>
       )}

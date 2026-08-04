@@ -80,7 +80,7 @@ export default function Homeroom() {
             key: 'students', label: <><TeamOutlined /> 学生名单 ({students.length})</>,
             children: (
               <Table rowKey="id" columns={studentColumns} dataSource={students}
-                pagination={false} size="small" bordered scroll={{ y: 400 }} />
+                pagination={false} size="small" bordered scroll={{ x: 'max-content', y: 400 }} />
             ),
           },
           {

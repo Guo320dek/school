@@ -264,7 +264,7 @@ export default function CourseSetup() {
         {editable && <Col><Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>添加课程</Button></Col>}
       </Row>
 
-      <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} pagination={false} size="middle" />
+      <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} pagination={false} size="middle" scroll={{ x: 'max-content' }} />
 
       <Modal title={editing ? '编辑课程' : '添加课程'} open={modalOpen} onOk={handleSave} onCancel={() => setModalOpen(false)} destroyOnClose width={420}>
         <Form form={form} layout="vertical" style={{ marginTop: 12 }} onValuesChange={(changed) => {

@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Row, Col, Tag, Space, Button, Avatar, message } from 'antd';
+import { Row, Col, Tag, Space, Button, Avatar, Card, message } from 'antd';
 import { useSplitText } from '../../utils/animations';
 import {
   TeamOutlined, BookOutlined, DollarOutlined, ClockCircleOutlined,
   NotificationOutlined, ArrowUpOutlined, ArrowDownOutlined,
-  MinusOutlined, RightOutlined, ExclamationCircleOutlined,
+  MinusOutlined,   RightOutlined, ExclamationCircleOutlined, WarningFilled,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { getSchool, getMetrics, getAnnouncements, getAttendance } from '../../api';
+import { getSchool, getMetrics, getAnnouncements, getAttendance, getTimetableConflicts } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
 import MiniBarChart from '../../components/MiniBarChart';
 import type { School, BusinessMetric, Announcement, AttendanceRecord } from '../../types';
@@ -134,13 +134,14 @@ export default function Dashboard() {
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [heroVisible, setHeroVisible] = useState(false);
   const [expandedAnnouncement, setExpandedAnnouncement] = useState<string | null>(null);
+  const [conflicts, setConflicts] = useState<Array<{ id: string; teacherName: string; dayOfWeek: number; period: number; subjectName: string; class1: string; class2: string }>>([]);
 
   useEffect(() => {
     getSchool().then(setSchoolInfo).catch(() => message.error('加载数据失败，请刷新重试'));
     getMetrics().then(setMetrics).catch(() => message.error('加载数据失败，请刷新重试'));
     getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试'));
     getAttendance().then(setAttendance).catch(() => message.error('加载数据失败，请刷新重试'));
-    // Trigger hero illustration entrance after mount
+    getTimetableConflicts().then(setConflicts).catch(() => {});
     setTimeout(() => setHeroVisible(true), 200);
   }, []);
   useRealtime('announcements', () => { getAnnouncements().then(setAnnouncements).catch(() => message.error('加载数据失败，请刷新重试')); });
@@ -243,6 +244,27 @@ export default function Dashboard() {
           <MetricCard key={m.title} m={m} index={i} />
         ))}
       </Row>
+
+      {/* ===== CONFLICTS ===== */}
+      {conflicts.length > 0 && (
+        <Card size="small" className="card-flat" style={{ marginBottom: 24, borderRadius: 14, border: `1px solid #FFCCC7`, background: '#FFFBFB' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <Space>
+              <WarningFilled style={{ color: '#DC2626', fontSize: 16 }} />
+              <span style={{ fontSize: 15, fontWeight: 600, color: '#333' }}>课表冲突提醒</span>
+              <Tag color="error">{conflicts.length} 处冲突</Tag>
+            </Space>
+            <Button type="link" size="small" onClick={() => navigate('/teaching/timetable')}>去处理 <RightOutlined style={{ fontSize: 10 }} /></Button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {conflicts.slice(0, 6).map((c, i) => (
+              <Tag key={i} color="error" style={{ borderRadius: 6, padding: '3px 10px', fontSize: 12 }}>
+                {c.teacherName} — {['','周一','周二','周三','周四','周五'][c.dayOfWeek]}第{c.period}节 — {c.class1} vs {c.class2}
+              </Tag>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* ===== ATTENDANCE + ANNOUNCEMENTS ===== */}
       <Row gutter={24}>

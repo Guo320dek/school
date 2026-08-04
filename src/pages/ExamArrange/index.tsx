@@ -141,13 +141,13 @@ export default function ExamArrange() {
           sortedSessions.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 40 }}><Text type="secondary">暂无考试科目，点击"添加科目"开始安排</Text></div>
           ) : (
-            <Table rowKey="id" columns={sessionCols} dataSource={sortedSessions} loading={loading} pagination={false} size="middle" />
+            <Table rowKey="id" columns={sessionCols} dataSource={sortedSessions} loading={loading} pagination={false} size="middle" scroll={{ x: 'max-content' }} />
           )
         ) : (
           examRooms.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 40 }}><Text type="secondary">暂未分配考场，点击"添加考场"开始</Text></div>
           ) : (
-            <Table rowKey="id" columns={roomCols} dataSource={examRooms} loading={loading} pagination={false} size="middle" />
+            <Table rowKey="id" columns={roomCols} dataSource={examRooms} loading={loading} pagination={false} size="middle" scroll={{ x: 'max-content' }} />
           )
         )}
       </Card>

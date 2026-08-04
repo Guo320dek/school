@@ -95,7 +95,7 @@ export default function ScoreAnalysis() {
           title={<Text strong style={{ fontSize: 15 }}>{subjectName}</Text>}
           loading={loading}
         >
-          <Table rowKey="classId" columns={columns} dataSource={rows} pagination={false} size="small" bordered />
+          <Table rowKey="classId" columns={columns} dataSource={rows} pagination={false} size="small" bordered scroll={{ x: 'max-content' }} />
 
           {/* Per-class score distribution */}
           {rows.map((r) => {

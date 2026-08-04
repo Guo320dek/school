@@ -106,6 +106,13 @@ export const deleteCalendarEvent = (id: string) => request<{ success: boolean }>
 // ===== Metrics =====
 export const getMetrics = () => request<BusinessMetric[]>('/metrics');
 
+// ===== Conflicts =====
+export const getTimetableConflicts = () => request<Array<{
+  id: string; teacherId: string; teacherName: string;
+  dayOfWeek: number; period: number;
+  subjectName: string; class1: string; class2: string;
+}>>('/timetable/conflicts');
+
 // ===== Auth =====
 function getToken() { return localStorage.getItem('auth_token'); }
 

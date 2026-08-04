@@ -463,6 +463,22 @@ app.get('/api/teacher/my-class', authMiddleware, (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Timetable conflicts summary
+app.get('/api/timetable/conflicts', (req, res) => {
+  try {
+    const db = getDb();
+    const rows = db.prepare(`
+      SELECT t1.id, t1.teacherId, t1.teacherName, t1.dayOfWeek, t1.period,
+             t1.subjectName, t1.className as class1, t2.className as class2
+      FROM timetable_entries t1
+      JOIN timetable_entries t2 ON t1.teacherId = t2.teacherId
+        AND t1.dayOfWeek = t2.dayOfWeek AND t1.period = t2.period
+        AND t1.id < t2.id
+    `).all();
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // SPA fallback: serve index.html for all non-API routes
 app.get(/^(?!\/api\/).*/, (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'), (err) => {

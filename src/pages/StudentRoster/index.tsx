@@ -82,15 +82,15 @@ export default function StudentRoster() {
   }
 
   const columns: ColumnsType<Student> = [
-    { title: '学号', dataIndex: 'studentNo', width: 100 },
-    { title: '姓名', dataIndex: 'name', width: 100, render: (v: string) => <Text strong>{v}</Text> },
+    { title: '学号', dataIndex: 'studentNo', width: 100, sorter: (a, b) => a.studentNo.localeCompare(b.studentNo) },
+    { title: '姓名', dataIndex: 'name', width: 100, sorter: (a, b) => a.name.localeCompare(b.name), render: (v: string) => <Text strong>{v}</Text> },
     { title: '性别', dataIndex: 'gender', width: 60 },
-    { title: '班级', dataIndex: 'className', width: 130 },
+    { title: '班级', dataIndex: 'className', width: 130, sorter: (a, b) => a.className.localeCompare(b.className) },
     {
       title: '状态', dataIndex: 'status', width: 80,
       render: (s: string) => <Tag color={statusColor[s]} style={{ borderRadius: 4 }}>{s}</Tag>,
     },
-    { title: '入学年份', dataIndex: 'enrollmentYear', width: 90 },
+    { title: '入学年份', dataIndex: 'enrollmentYear', width: 90, sorter: (a, b) => a.enrollmentYear - b.enrollmentYear },
     { title: '电话', dataIndex: 'phone', width: 130, ellipsis: true, render: (v?: string) => v ?? <Text type="secondary">--</Text> },
     { title: '地址', dataIndex: 'address', width: 160, ellipsis: true, render: (v?: string) => v ?? <Text type="secondary">--</Text> },
     ...(editable ? [{
@@ -173,7 +173,7 @@ export default function StudentRoster() {
       <Table
         rowKey="id" columns={columns} dataSource={filtered}
         loading={loading} pagination={{ pageSize: 15, showTotal: (t) => `共 ${t} 名` }}
-        scroll={{ x: 960 }} size="middle"
+        scroll={{ x: 'max-content' }} size="middle"
       />
 
       <Modal

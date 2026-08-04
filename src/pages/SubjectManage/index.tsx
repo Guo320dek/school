@@ -93,7 +93,7 @@ export default function SubjectManage() {
         <Text type="secondary">共 {subjects.length} 个科目 — 用于课程设置和教师关联</Text>
         {editable && <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>添加科目</Button>}
       </div>
-      <Table rowKey="id" columns={columns} dataSource={subjects} loading={loading} pagination={false} size="middle" />
+      <Table rowKey="id" columns={columns} dataSource={subjects} loading={loading} pagination={false} size="middle" scroll={{ x: 'max-content' }} />
       <Modal
         title={editing ? '编辑科目' : '添加科目'}
         open={modalOpen}
