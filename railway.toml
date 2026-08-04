@@ -9,3 +9,6 @@
   [service.volume]
     name = "data"
     mountPath = "/data"
+
+[variables]
+  NIXPACKS_NODE_VERSION = "22"
