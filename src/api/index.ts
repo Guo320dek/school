@@ -113,6 +113,10 @@ export const getTimetableConflicts = () => request<Array<{
   subjectName: string; class1: string; class2: string;
 }>>('/timetable/conflicts');
 
+// ===== Search =====
+export const globalSearch = (q: string) =>
+  request<{ results: Array<{ type: string; id: string; title: string; subtitle: string; url: string }> }>(`/search?q=${encodeURIComponent(q)}`);
+
 // ===== Auth =====
 function getToken() { return localStorage.getItem('auth_token'); }
 

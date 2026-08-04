@@ -1,6 +1,6 @@
 // 青云高级中学 — 管理系统
 import { useMemo, useState } from 'react';
-import { Layout, Menu, Tabs, theme, Button, Drawer, Grid, Dropdown } from 'antd';
+import { Layout, Menu, Tabs, theme, Button, Drawer, Grid, Dropdown, AutoComplete, Input } from 'antd';
 import {
   DashboardOutlined,
   BookOutlined,
@@ -11,6 +11,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MenuOutlined,
+  SearchOutlined,
   BellOutlined,
   UserOutlined,
   LogoutOutlined,
@@ -18,6 +19,7 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../hooks/useNotifications';
+import { globalSearch } from '../api';
 
 const { Header, Sider, Content } = Layout;
 
@@ -85,7 +87,30 @@ export default function MainLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
   const { notifications, unreadCount, markAllRead, clearAll, TABLE_LABELS } = useNotifications();
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState<Array<{ type: string; id: string; title: string; subtitle: string; url: string; value: string; label: React.ReactNode }>>([]);
   const screens = Grid.useBreakpoint();
+
+  const typeIcon: Record<string, string> = { student: '👤', staff: '👔', class: '📚' };
+  const typeColor: Record<string, string> = { student: '#4062BB', staff: '#128068', class: '#F59E0B' };
+
+  const handleSearch = async (value: string) => {
+    setSearchText(value);
+    if (value.length < 1) { setSearchResults([]); return; }
+    const { results } = await globalSearch(value);
+    setSearchResults(results.map((r) => ({
+      ...r,
+      value: r.title,
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: typeColor[r.type], fontWeight: 600, fontSize: 13 }}>
+            {typeIcon[r.type]} {r.title}
+          </span>
+          <span style={{ fontSize: 11, color: '#999' }}>{r.subtitle}</span>
+        </div>
+      ),
+    })));
+  };
   const isMobile = !screens.md;
 
   const activeCategory = useMemo(() => {
@@ -189,6 +214,19 @@ export default function MainLayout() {
             />
           )}
           <span style={{ fontSize: 15, fontWeight: 600, flex: 1, color: '#333' }}>{activeCategory.label}</span>
+          {!isMobile && (
+            <AutoComplete
+              value={searchText}
+              options={searchResults}
+              onSearch={handleSearch}
+              onSelect={(_, option) => { navigate((option as any).url); setSearchText(''); setSearchResults([]); }}
+              style={{ width: 240 }}
+            >
+              <Input prefix={<SearchOutlined style={{ color: '#bbb' }} />} placeholder="搜索学生/教师/班级..." allowClear
+                onClear={() => { setSearchText(''); setSearchResults([]); }}
+                style={{ borderRadius: 30 }} />
+            </AutoComplete>
+          )}
           <Dropdown menu={{
             items: notifications.length === 0
               ? [{ key: 'empty', label: '暂无通知', disabled: true }]

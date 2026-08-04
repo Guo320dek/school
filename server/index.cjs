@@ -171,7 +171,14 @@ function crud(table, idField = 'id', allowedFields = null) {
 const staffApi = crud('staff', 'id', ['name','staffNo','department','position','title','education','major','phone','hireDate','contractStart','contractEnd','status','remark']);
 app.get('/api/staff', staffApi.list);
 app.get('/api/staff/:id', staffApi.get);
-app.post('/api/staff', staffApi.create);
+app.post('/api/staff', (req, res, next) => {
+  if (req.body.staffNo) {
+    const db = getDb();
+    const dup = db.prepare('SELECT id FROM staff WHERE staffNo = ? AND id != ?').get(req.body.staffNo, req.body.id || '');
+    if (dup) return res.status(409).json({ error: `工号 ${req.body.staffNo} 已存在` });
+  }
+  staffApi.create(req, res, next);
+});
 app.put('/api/staff/:id', staffApi.update);
 app.delete('/api/staff/:id', staffApi.delete);
 
@@ -287,6 +294,12 @@ app.get('/api/students', studentApi.list);
 app.get('/api/students/:id', studentApi.get);
 
 app.post('/api/students', (req, res, next) => {
+  // Validate unique studentNo
+  if (req.body.studentNo) {
+    const db = getDb();
+    const dup = db.prepare('SELECT id FROM students WHERE studentNo = ? AND id != ?').get(req.body.studentNo, req.body.id || '');
+    if (dup) return res.status(409).json({ error: `学号 ${req.body.studentNo} 已存在` });
+  }
   const origJson = res.json.bind(res);
   res.json = function(body) {
     try {
@@ -460,6 +473,24 @@ app.get('/api/teacher/my-class', authMiddleware, (req, res) => {
     const cls = db.prepare("SELECT * FROM classes WHERE status = '在读' AND homeroomTeacher = ?").get(staff.name);
     if (!cls) return res.json({ cls: null });
     res.json({ cls });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Global search
+app.get('/api/search', (req, res) => {
+  try {
+    const db = getDb();
+    const q = req.query.q;
+    if (!q) return res.json({ results: [] });
+    const like = `%${q}%`;
+    const results = [];
+    const students = db.prepare('SELECT id, name, className, studentNo FROM students WHERE name LIKE ? OR studentNo LIKE ? LIMIT 5').all(like, like);
+    students.forEach((s) => results.push({ type: 'student', id: s.id, title: s.name, subtitle: `${s.className} · ${s.studentNo}`, url: '/teaching/students' }));
+    const staff = db.prepare('SELECT id, name, department, position FROM staff WHERE name LIKE ? OR staffNo LIKE ? LIMIT 5').all(like, like);
+    staff.forEach((s) => results.push({ type: 'staff', id: s.id, title: s.name, subtitle: `${s.department} · ${s.position}`, url: '/hr/staff' }));
+    const classes = db.prepare('SELECT id, name, grade, track FROM classes WHERE name LIKE ? LIMIT 3').all(like);
+    classes.forEach((c) => results.push({ type: 'class', id: c.id, title: c.name, subtitle: `${c.grade} · ${c.track}`, url: '/teaching/class' }));
+    res.json({ results: results.slice(0, 10) });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

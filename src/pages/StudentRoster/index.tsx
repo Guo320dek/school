@@ -4,6 +4,7 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { getStudents, createStudent, updateStudent, deleteStudent, getClasses } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { useDebounce } from '../../hooks/useDebounce';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
 import type { Student, ClassInfo, GradeLevel } from '../../types';
@@ -20,6 +21,7 @@ export default function StudentRoster() {
   const [filterGrade, setFilterGrade] = useState<string>('all');
   const [filterClass, setFilterClass] = useState<string>('all');
   const [searchText, setSearchText] = useState('');
+  const debouncedSearch = useDebounce(searchText, 300);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Student | null>(null);
   const [form] = Form.useForm();
@@ -44,9 +46,9 @@ export default function StudentRoster() {
   const filtered = useMemo(() => students.filter((s) => {
     if (filterGrade !== 'all' && !s.className?.startsWith(filterGrade)) return false;
     if (filterClass !== 'all' && s.classId !== filterClass) return false;
-    if (searchText && !s.name.includes(searchText) && !s.studentNo.includes(searchText)) return false;
+    if (debouncedSearch && !s.name.includes(debouncedSearch) && !s.studentNo.includes(debouncedSearch)) return false;
     return true;
-  }), [students, filterGrade, filterClass, searchText]);
+  }), [students, filterGrade, filterClass, debouncedSearch]);
 
   const gradeCounts = useMemo(() => {
     const counts: Record<string, number> = {};

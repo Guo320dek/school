@@ -3,6 +3,7 @@ import { Table, Button, Select, Modal, Form, Popconfirm, DatePicker, TimePicker,
 import type { ColumnsType } from 'antd/es/table';
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
 import { useRealtime } from '../../hooks/useRealtime';
+import { useDebounce } from '../../hooks/useDebounce';
 import { usePermission } from '../../contexts/PermissionContext';
 import { newId } from '../../utils/id';
 import type { AttendanceRecord, Staff } from '../../types';
@@ -16,6 +17,7 @@ export default function Attendance() {
   const [loading, setLoading] = useState(true);
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [searchName, setSearchName] = useState('');
+  const debouncedSearch = useDebounce(searchName, 300);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,11 +31,11 @@ export default function Attendance() {
   const { editable } = usePermission();
 
   const filtered = useMemo(() => records.filter((r) => {
-    if (searchName && !r.staffName.includes(searchName)) return false;
+    if (debouncedSearch && !r.staffName.includes(debouncedSearch)) return false;
     if (filterStatus.length > 0 && !filterStatus.includes(r.status)) return false;
     if (dateRange) { const d = dayjs(r.date); if (d.isBefore(dateRange[0]) || d.isAfter(dateRange[1])) return false; }
     return true;
-  }), [records, searchName, filterStatus, dateRange]);
+  }), [records, debouncedSearch, filterStatus, dateRange]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { '正常': 0, '迟到': 0, '早退': 0, '缺勤': 0, '请假': 0 };
