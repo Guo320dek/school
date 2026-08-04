@@ -9,6 +9,3 @@
   [service.volume]
     name = "data"
     mountPath = "/data"
-
-[variables]
-  NIXPACKS_APT_PACKAGES = "python3, gcc, g++, make"
