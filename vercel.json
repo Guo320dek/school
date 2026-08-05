@@ -1,6 +1,11 @@
 {
   "buildCommand": "echo 'Build skipped - dist committed'",
   "outputDirectory": "dist",
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" }
   ],
