@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - generic [ref=e10]:
+              - link "guo320dek's projects Hobby" [ref=e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=e13]:
+                  - generic [ref=e14]: guo320dek's projects
+                  - generic [ref=e15]: Hobby
+              - button [ref=e17] [cursor=pointer]
+            - button "Find F" [ref=e22]:
+              - generic [ref=e24]:
+                - generic [ref=e28]: Find
+                - generic [ref=e29]: F
+          - navigation [ref=e32]:
+            - generic [ref=e35]:
+              - link "Overview" [ref=e36] [cursor=pointer]:
+                - /url: /guo320deks-projects/school
+              - link "Deployments" [ref=e41] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/deployments
+              - link "Logs" [ref=e47] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/logs
+              - link "Analytics" [ref=e53] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/analytics
+              - link "Speed Insights" [ref=e59] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/speed-insights
+              - link "Observability" [ref=e65] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/observability
+              - link "Firewall" [ref=e74] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/firewall
+              - link "CDN" [ref=e84] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/cdn
+              - separator [ref=e93]
+              - link "Environment Variables" [ref=e94] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/environment-variables
+              - link "Domains" [ref=e100] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/domains
+              - link "Connect Beta" [ref=e106] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/connect
+                - generic [ref=e110]:
+                  - generic [ref=e111]: Connect
+                  - generic [ref=e112]: Beta
+              - link "Integrations" [ref=e114] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/integrations
+              - link "Storage" [ref=e120] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/stores
+              - link "Flags" [ref=e126] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/flags
+              - link "Agent" [ref=e135] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/agent
+              - link "AI Gateway" [ref=e144] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/ai-gateway
+              - link "Sandboxes" [ref=e153] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/sandboxes
+              - link "Workflows" [ref=e162] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/workflows
+              - link "Images Beta" [ref=e168] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/images
+                - generic [ref=e172]:
+                  - generic [ref=e173]: Images
+                  - generic [ref=e174]: Beta
+              - separator [ref=e176]
+              - link "Usage" [ref=e177] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/usage
+              - link "Support" [ref=e183] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/support
+              - link "Settings" [ref=e189] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings
+          - button "Avatar for guo320dek guo320dek" [ref=e203] [cursor=pointer]:
+            - img "Avatar for guo320dek" [ref=e204]:
+              - img "Avatar for guo320dek" [ref=e205]
+            - generic [ref=e206]: guo320dek
+        - button [ref=e216] [cursor=pointer]
+      - generic [ref=e220]:
+        - generic [ref=e221]:
+          - generic [ref=e224]:
+            - link "school" [ref=e225] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+            - button [ref=e229] [cursor=pointer]
+            - link "Back to team view" [ref=e235] [cursor=pointer]:
+              - /url: /guo320deks-projects/~/deployments
+          - navigation "Breadcrumb" [ref=e239]:
+            - generic [ref=e240]: Deployments
+          - button "Vercel Agent is available on Pro" [ref=e244] [cursor=pointer]:
+            - generic [ref=e257]: Agent
+        - generic [ref=e263]:
+          - combobox [ref=e265]:
+            - generic [ref=e266]:
+              - searchbox "All Branches" [ref=e267]
+              - button "Open menu" [ref=e268] [cursor=pointer]
+          - combobox [ref=e272]:
+            - generic [ref=e273]:
+              - searchbox "All Authors" [ref=e274]
+              - button "Open menu" [ref=e275] [cursor=pointer]
+          - button "Menu" [ref=e280] [cursor=pointer]:
+            - generic [ref=e281]: All Environments
+          - button "Select Date Range" [ref=e292] [cursor=pointer]
+          - generic [ref=e297]:
+            - button "Filter by deployment status. 6 of 7 statuses selected" [ref=e301] [cursor=pointer]:
+              - generic [ref=e302]:
+                - generic [ref=e308]: Status
+                - generic "6 of 7 statuses selected" [ref=e309]: 6/7
+            - button "Deployments actions" [ref=e316] [cursor=pointer]
+  - alert [ref=e646]

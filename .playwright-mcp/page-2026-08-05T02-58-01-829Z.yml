@@ -1,0 +1,203 @@
+- generic [active] [ref=f9e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=f9e3]:
+    - generic [ref=f9e4]:
+      - generic [ref=f9e5]:
+        - generic [ref=f9e6]:
+          - generic [ref=f9e7]:
+            - generic [ref=f9e10]:
+              - link "guo320dek's projects Hobby" [ref=f9e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=f9e13]:
+                  - generic [ref=f9e14]: guo320dek's projects
+                  - generic [ref=f9e15]: Hobby
+              - button [ref=f9e17] [cursor=pointer]
+            - button "Find F" [ref=f9e22]:
+              - generic [ref=f9e24]:
+                - generic [ref=f9e28]: Find
+                - generic [ref=f9e29]: F
+          - navigation [ref=f9e32]:
+            - generic [ref=f9e33]:
+              - generic:
+                - generic:
+                  - link "Overview":
+                    - /url: /guo320deks-projects/school
+                  - link "Deployments":
+                    - /url: /guo320deks-projects/school/deployments
+                  - link "Logs":
+                    - /url: /guo320deks-projects/school/logs
+                  - link "Analytics":
+                    - /url: /guo320deks-projects/school/analytics
+                  - link "Speed Insights":
+                    - /url: /guo320deks-projects/school/speed-insights
+                  - link "Observability":
+                    - /url: /guo320deks-projects/school/observability
+                  - link "Firewall":
+                    - /url: /guo320deks-projects/school/firewall
+                  - link "CDN":
+                    - /url: /guo320deks-projects/school/cdn
+                  - separator
+                  - link "Environment Variables":
+                    - /url: /guo320deks-projects/school/settings/environment-variables
+                  - link "Domains":
+                    - /url: /guo320deks-projects/school/settings/domains
+                  - link "Connect Beta":
+                    - /url: /guo320deks-projects/school/connect
+                    - generic:
+                      - generic: Connect
+                      - generic: Beta
+                  - link "Integrations":
+                    - /url: /guo320deks-projects/school/settings/integrations
+                  - link "Storage":
+                    - /url: /guo320deks-projects/school/stores
+                  - link "Flags":
+                    - /url: /guo320deks-projects/school/flags
+                  - link "Agent":
+                    - /url: /guo320deks-projects/school/agent
+                  - link "AI Gateway":
+                    - /url: /guo320deks-projects/school/ai-gateway
+                  - link "Sandboxes":
+                    - /url: /guo320deks-projects/school/sandboxes
+                  - link "Workflows":
+                    - /url: /guo320deks-projects/school/workflows
+                  - link "Images Beta":
+                    - /url: /guo320deks-projects/school/images
+                    - generic:
+                      - generic: Images
+                      - generic: Beta
+                  - separator
+                  - link "Usage":
+                    - /url: /guo320deks-projects/school/usage
+                  - link "Support":
+                    - /url: /guo320deks-projects/school/support
+                  - link "Settings":
+                    - /url: /guo320deks-projects/school/settings
+              - generic [ref=f9e34]:
+                - button "Settings" [ref=f9e36] [cursor=pointer]
+                - generic [ref=f9e42]:
+                  - link "General" [ref=f9e43] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/general
+                  - link "Build and Deployment" [ref=f9e46] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/build-and-deployment
+                  - link "Environments" [ref=f9e49] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/environments
+                  - link "Git" [ref=f9e52] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/git
+                  - link "Deployment Protection" [ref=f9e55] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/deployment-protection
+                  - link "Passport" [ref=f9e58] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/passport
+                  - link "Functions" [ref=f9e61] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/functions
+                  - link "Cron Jobs" [ref=f9e64] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/cron-jobs
+                  - link "Microfrontends" [ref=f9e67] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/microfrontends
+                  - link "Project Members" [ref=f9e70] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/project-members
+                  - link "Drains" [ref=f9e73] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/drains
+                  - link "Alerts" [ref=f9e76] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/alerts
+                  - link "Security" [ref=f9e79] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/security
+                  - link "Networking" [ref=f9e82] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/networking
+                  - link "Activity" [ref=f9e85] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/activity
+                  - link "Advanced" [ref=f9e88] [cursor=pointer]:
+                    - /url: /guo320deks-projects/school/settings/advanced
+          - button "Avatar for guo320dek guo320dek" [ref=f9e96] [cursor=pointer]:
+            - img "Avatar for guo320dek" [ref=f9e97]:
+              - img "Avatar for guo320dek" [ref=f9e98]
+            - generic [ref=f9e99]: guo320dek
+        - button [ref=f9e109] [cursor=pointer]
+      - generic [ref=f9e113]:
+        - generic [ref=f9e114]:
+          - generic [ref=f9e117]:
+            - link "school" [ref=f9e118] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+            - button [ref=f9e122] [cursor=pointer]
+            - link "Back to team view" [ref=f9e128] [cursor=pointer]:
+              - /url: /guo320deks-projects/~/settings
+          - navigation "Breadcrumb" [ref=f9e132]:
+            - link "Project Settings" [ref=f9e134] [cursor=pointer]:
+              - /url: /guo320deks-projects/school/settings
+            - generic [ref=f9e139]: Git
+          - button "Vercel Agent is available on Pro" [ref=f9e143] [cursor=pointer]:
+            - generic [ref=f9e156]: Agent
+        - generic [ref=f9e165]:
+          - generic [ref=f9e168]:
+            - heading [level=4] [ref=f9e170]:
+              - link "Connected Git Repository" [ref=f9e172] [cursor=pointer]:
+                - /url: "#connected-git-repository"
+            - paragraph [ref=f9e177]: Seamlessly create Deployments for any commits pushed to your Git repository.
+            - generic [ref=f9e189]:
+              - group [ref=f9e190]:
+                - generic [ref=f9e191]:
+                  - generic [ref=f9e192]:
+                    - generic [ref=f9e193]: Toggle Pull Request Comments
+                    - generic [ref=f9e194]: Pull Request Comments
+                  - generic "Toggle Pull Request Comments" [ref=f9e202]:
+                    - checkbox "Toggle Pull Request Comments" [checked] [disabled] [ref=f9e203]
+              - group [ref=f9e206]:
+                - generic [ref=f9e207]:
+                  - generic [ref=f9e208]:
+                    - generic [ref=f9e209]: Toggle Commit Comments
+                    - generic [ref=f9e210]: Commit Comments
+                  - generic "Toggle Commit Comments" [ref=f9e218]:
+                    - checkbox "Toggle Commit Comments" [disabled] [ref=f9e219]
+              - group [ref=f9e222]:
+                - generic [ref=f9e223]:
+                  - generic [ref=f9e224]:
+                    - generic [ref=f9e225]:
+                      - text: Toggle
+                      - generic [ref=f9e226]: deployment_status Events
+                    - generic [ref=f9e227]: deployment_status Events
+                  - generic "Toggle [object Object]" [ref=f9e236]:
+                    - checkbox "Toggle [object Object]" [checked] [disabled] [ref=f9e237]
+              - group [ref=f9e240]:
+                - generic [ref=f9e241]:
+                  - generic [ref=f9e242]:
+                    - generic [ref=f9e243]:
+                      - text: Toggle
+                      - generic [ref=f9e244]: repository_dispatch Events
+                    - generic [ref=f9e245]: repository_dispatch Events
+                  - generic "Toggle [object Object]" [ref=f9e254]:
+                    - checkbox "Toggle [object Object]" [checked] [disabled] [ref=f9e255]
+          - generic [ref=f9e263]:
+            - generic [ref=f9e264]:
+              - heading [level=4] [ref=f9e265]:
+                - link "Git Large File Storage (LFS)" [ref=f9e267] [cursor=pointer]:
+                  - /url: "#git-large-file-storage-(lfs)"
+              - paragraph [ref=f9e272]: Git LFS replaces large files such as audio samples, videos, datasets, and graphics with text pointers inside Git, while storing the file contents on a remote server like GitHub.com or GitHub Enterprise.
+              - generic [ref=f9e275]:
+                - generic [ref=f9e276]: Disabled
+                - checkbox "Disabled" [ref=f9e277]
+            - generic [ref=f9e281]:
+              - paragraph [ref=f9e283]:
+                - text: Learn more about
+                - link "Git LFS" [ref=f9e284] [cursor=pointer]:
+                  - /url: /docs/projects/overview#git-large-file-storage-lfs
+              - button "Save" [disabled] [ref=f9e290]
+          - generic [ref=f9e293]:
+            - generic [ref=f9e294]:
+              - heading [level=4] [ref=f9e295]:
+                - link "Deploy Hooks" [ref=f9e297] [cursor=pointer]:
+                  - /url: "#deploy-hooks"
+              - paragraph [ref=f9e302]: Deploy hooks are unique URLs that allow you to trigger a deployment of a given branch.
+              - paragraph [ref=f9e303]: This project does not have any deploy hooks.
+              - generic [ref=f9e307]:
+                - generic [ref=f9e308]:
+                  - generic [ref=f9e309]: Name
+                  - textbox "My Example Hook" [ref=f9e312]
+                - generic [ref=f9e313]:
+                  - generic [ref=f9e314]: Branch
+                  - textbox "main" [ref=f9e317]
+                - button "Create Hook" [ref=f9e318] [cursor=pointer]
+            - paragraph [ref=f9e322]:
+              - text: Learn more about
+              - link "Deploy Hooks" [ref=f9e323] [cursor=pointer]:
+                - /url: /docs/deploy-hooks
+  - alert [ref=f9e327]

@@ -1,0 +1,145 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=f3e3]:
+    - generic [ref=f3e4]:
+      - generic [ref=f3e5]:
+        - generic [ref=f3e6]:
+          - generic [ref=f3e7]:
+            - generic [ref=f3e10]:
+              - link "guo320dek's projects Hobby" [ref=f3e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=f3e13]:
+                  - generic [ref=f3e14]: guo320dek's projects
+                  - generic [ref=f3e15]: Hobby
+              - button [ref=f3e17] [cursor=pointer]
+            - button "Find F" [ref=f3e22]:
+              - generic [ref=f3e24]:
+                - generic [ref=f3e28]: Find
+                - generic [ref=f3e29]: F
+          - navigation [ref=f3e32]:
+            - generic [ref=f3e35]:
+              - link "Overview" [ref=f3e36] [cursor=pointer]:
+                - /url: /guo320deks-projects/school
+              - link "Deployments" [ref=f3e41] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/deployments
+              - link "Logs" [ref=f3e47] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/logs
+              - link "Analytics" [ref=f3e53] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/analytics
+              - link "Speed Insights" [ref=f3e59] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/speed-insights
+              - link "Observability" [ref=f3e65] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/observability
+              - link "Firewall" [ref=f3e74] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/firewall
+              - link "CDN" [ref=f3e84] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/cdn
+              - separator [ref=f3e93]
+              - link "Environment Variables" [ref=f3e94] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/environment-variables
+              - link "Domains" [ref=f3e100] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/domains
+              - link "Connect Beta" [ref=f3e106] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/connect
+                - generic [ref=f3e110]:
+                  - generic [ref=f3e111]: Connect
+                  - generic [ref=f3e112]: Beta
+              - link "Integrations" [ref=f3e114] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/integrations
+              - link "Storage" [ref=f3e120] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/stores
+              - link "Flags" [ref=f3e126] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/flags
+              - link "Agent" [ref=f3e135] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/agent
+              - link "AI Gateway" [ref=f3e144] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/ai-gateway
+              - link "Sandboxes" [ref=f3e153] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/sandboxes
+              - link "Workflows" [ref=f3e162] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/workflows
+              - link "Images Beta" [ref=f3e168] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/images
+                - generic [ref=f3e172]:
+                  - generic [ref=f3e173]: Images
+                  - generic [ref=f3e174]: Beta
+              - separator [ref=f3e176]
+              - link "Usage" [ref=f3e177] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/usage
+              - link "Support" [ref=f3e183] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/support
+              - link "Settings" [ref=f3e189] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings
+          - button "Avatar for guo320dek guo320dek" [ref=f3e203] [cursor=pointer]:
+            - img "Avatar for guo320dek" [ref=f3e204]:
+              - img "Avatar for guo320dek" [ref=f3e205]
+            - generic [ref=f3e206]: guo320dek
+        - button [ref=f3e216] [cursor=pointer]
+      - generic [ref=f3e220]:
+        - generic [ref=f3e221]:
+          - generic [ref=f3e224]:
+            - link "school" [ref=f3e225] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+            - button [ref=f3e229] [cursor=pointer]
+            - link "Back to team view" [ref=f3e235] [cursor=pointer]:
+              - /url: /guo320deks-projects
+          - navigation "Breadcrumb" [ref=f3e239]:
+            - generic [ref=f3e240]: Overview
+          - button "Vercel Agent is available on Pro" [ref=f3e244] [cursor=pointer]:
+            - generic [ref=f3e257]: Agent
+        - generic [ref=f3e260]:
+          - generic [ref=f3e264]:
+            - heading "Production Deployment" [level=3] [ref=f3e266]
+            - generic [ref=f3e278]:
+              - paragraph [ref=f3e281]: Deployment
+              - generic [ref=f3e284]: Domains
+              - generic [ref=f3e289]:
+                - paragraph [ref=f3e291]: Status
+                - paragraph [ref=f3e294]: Created
+              - paragraph [ref=f3e297]: Source
+            - button [disabled] [ref=f3e303] [cursor=pointer]
+          - generic [ref=f3e314]:
+            - generic [ref=f3e315]:
+              - generic [ref=f3e316]:
+                - generic [ref=f3e317]:
+                  - paragraph [ref=f3e318]:
+                    - strong [ref=f3e319]: Production Checklist
+                  - generic [ref=f3e320]: 1/5
+                - button "Go to page" [ref=f3e322] [cursor=pointer]
+                - button [ref=f3e326] [cursor=pointer]
+              - generic [ref=f3e330]:
+                - button "Connect Git Repository" [ref=f3e331] [cursor=pointer]
+                - button "Add Custom Domain" [ref=f3e337] [cursor=pointer]
+                - button "Preview Deployment" [ref=f3e341] [cursor=pointer]
+                - button "Enable Web Analytics" [ref=f3e345] [cursor=pointer]
+                - button "Enable Speed Insights" [ref=f3e349] [cursor=pointer]
+            - generic [ref=f3e353]:
+              - generic [ref=f3e354]:
+                - generic [ref=f3e355]:
+                  - paragraph [ref=f3e356]:
+                    - strong [ref=f3e357]: Observability
+                  - time [ref=f3e358]: 6h
+                - link "Go to page" [ref=f3e359] [cursor=pointer]:
+                  - /url: /guo320deks-projects/school/observability?period=6h
+                - link [ref=f3e363] [cursor=pointer]:
+                  - /url: /guo320deks-projects/school/observability?period=6h
+              - generic [ref=f3e365]:
+                - generic [ref=f3e366]: Edge Requests
+                - generic [ref=f3e375]: Function Invocations
+                - generic [ref=f3e384]: Error Rate
+            - generic [ref=f3e393]:
+              - generic [ref=f3e394]:
+                - paragraph [ref=f3e396]:
+                  - strong [ref=f3e397]: Analytics
+                - link "Go to page" [ref=f3e398] [cursor=pointer]:
+                  - /url: /guo320deks-projects/school/analytics
+                - link [ref=f3e402] [cursor=pointer]:
+                  - /url: /guo320deks-projects/school/analytics
+              - generic [ref=f3e404]:
+                - generic [ref=f3e408]:
+                  - paragraph [ref=f3e409]: Track Visitors and Page Views
+                  - paragraph [ref=f3e410]: See real-time traffic, top pages, and audience trends.
+                - link "Enable Analytics" [ref=f3e411] [cursor=pointer]:
+                  - /url: /guo320deks-projects/school/analytics?enable=1&source=project-overview-analytics-card
+  - alert [ref=f3e532]

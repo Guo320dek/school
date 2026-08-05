@@ -44,13 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(USER_KEY);
       }).finally(() => setLoading(false));
     } else {
-      // Auto-login as admin for teacher demo
+      // Auto-login: try API first, fallback to injected user
       apiLogin('admin', 'admin123').then((res) => {
         localStorage.setItem(TOKEN_KEY, res.token);
         localStorage.setItem(USER_KEY, JSON.stringify(res.user));
         setToken(res.token);
         setUser(res.user);
-      }).catch(() => {}).finally(() => setLoading(false));
+      }).catch(async () => {
+        // API failed — inject demo user so teacher can still see the UI
+        const demoUser = { id: 'u1', username: 'admin', role: 'admin' as const, displayName: '管理员', staffId: 's01' };
+        localStorage.setItem(USER_KEY, JSON.stringify(demoUser));
+        setUser(demoUser);
+      }).finally(() => setLoading(false));
     }
   }, []);
 

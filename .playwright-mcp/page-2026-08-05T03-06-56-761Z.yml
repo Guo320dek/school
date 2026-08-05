@@ -1,0 +1,117 @@
+- generic [active] [ref=f26e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=f26e3]:
+    - generic [ref=f26e4]:
+      - generic [ref=f26e5]:
+        - generic [ref=f26e6]:
+          - generic [ref=f26e7]:
+            - generic [ref=f26e10]:
+              - link "guo320dek's projects Hobby" [ref=f26e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=f26e13]:
+                  - generic [ref=f26e14]: guo320dek's projects
+                  - generic [ref=f26e15]: Hobby
+              - button [ref=f26e17] [cursor=pointer]
+            - button "Find F" [ref=f26e22]:
+              - generic [ref=f26e24]:
+                - generic [ref=f26e28]: Find
+                - generic [ref=f26e29]: F
+          - navigation [ref=f26e32]:
+            - generic [ref=f26e35]:
+              - link "Other Overview" [ref=f26e36] [cursor=pointer]:
+                - /url: /guo320deks-projects/school
+                - img "Other" [ref=f26e38]:
+                  - img "Other" [ref=f26e39]
+                - generic [ref=f26e40]: Overview
+              - link "Deployments" [ref=f26e42] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/deployments
+              - link "Logs" [ref=f26e48] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/logs
+              - link "Analytics" [ref=f26e54] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/analytics
+              - link "Speed Insights" [ref=f26e60] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/speed-insights
+              - link "Observability" [ref=f26e66] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/observability
+              - link "Firewall" [ref=f26e75] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/firewall
+              - link "CDN" [ref=f26e85] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/cdn
+              - separator [ref=f26e94]
+              - link "Environment Variables" [ref=f26e95] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/environment-variables
+              - link "Domains" [ref=f26e101] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/domains
+              - link "Connect Beta" [ref=f26e107] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/connect
+                - generic [ref=f26e111]:
+                  - generic [ref=f26e112]: Connect
+                  - generic [ref=f26e113]: Beta
+              - link "Integrations" [ref=f26e115] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/integrations
+              - link "Storage" [ref=f26e121] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/stores
+              - link "Flags" [ref=f26e127] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/flags
+              - link "Agent" [ref=f26e136] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/agent
+              - link "AI Gateway" [ref=f26e145] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/ai-gateway
+              - link "Sandboxes" [ref=f26e154] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/sandboxes
+              - link "Workflows" [ref=f26e163] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/workflows
+              - link "Images Beta" [ref=f26e169] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/images
+                - generic [ref=f26e173]:
+                  - generic [ref=f26e174]: Images
+                  - generic [ref=f26e175]: Beta
+              - separator [ref=f26e177]
+              - link "Usage" [ref=f26e178] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/usage
+              - link "Support" [ref=f26e184] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/support
+              - link "Settings" [ref=f26e190] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings
+          - generic [ref=f26e203]:
+            - button "Avatar for guo320dek guo320dek" [ref=f26e204] [cursor=pointer]:
+              - img "Avatar for guo320dek" [ref=f26e205]:
+                - img "Avatar for guo320dek" [ref=f26e206]
+              - generic [ref=f26e207]: guo320dek
+            - button "notifications" [ref=f26e214] [cursor=pointer]
+        - button [ref=f26e218] [cursor=pointer]
+      - generic [ref=f26e222]:
+        - generic [ref=f26e223]:
+          - generic [ref=f26e226]:
+            - link "Other school" [ref=f26e227] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+              - img "Other" [ref=f26e228]:
+                - img "Other" [ref=f26e229]
+              - generic [ref=f26e230]: school
+            - button [ref=f26e232] [cursor=pointer]
+            - link "Back to team view" [ref=f26e238] [cursor=pointer]:
+              - /url: /guo320deks-projects/~/domains
+          - navigation "Breadcrumb" [ref=f26e242]:
+            - generic [ref=f26e243]: Domains
+          - button "Vercel Agent is available on Pro" [ref=f26e247] [cursor=pointer]:
+            - generic [ref=f26e260]: Agent
+        - generic [ref=f26e269]:
+          - generic [ref=f26e270]:
+            - generic [ref=f26e271]:
+              - button "Filter domains" [ref=f26e272] [cursor=pointer]
+              - searchbox "Search" [ref=f26e278]
+            - generic [ref=f26e282]:
+              - button "Add Existing" [ref=f26e283] [cursor=pointer]
+              - button "Buy" [ref=f26e285] [cursor=pointer]
+          - generic [ref=f26e296]:
+            - button "school-chi-pearl.vercel.app Valid Configuration Production" [disabled] [ref=f26e297]:
+              - generic [ref=f26e301]:
+                - link "school-chi-pearl.vercel.app" [ref=f26e302] [cursor=pointer]:
+                  - /url: https://school-chi-pearl.vercel.app
+                - generic [ref=f26e303]: Valid Configuration
+              - generic [ref=f26e305]: Production
+            - generic [ref=f26e309]:
+              - button "Refresh" [ref=f26e310] [cursor=pointer]
+              - button "Edit" [ref=f26e312] [cursor=pointer]
+  - alert [ref=f26e314]
