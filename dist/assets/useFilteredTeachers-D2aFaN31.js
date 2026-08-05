@@ -1,0 +1,1 @@
+import{r as c}from"./vendor-react-DoSkYHCQ.js";function m(u,f,i,t){return c.useMemo(()=>{const n=u.filter(r=>r.status==="在职");if(!i)return n;const s=f.find(r=>r.id===i);if(!s||s.teacherIds.length===0)return n;const o=n.filter(r=>s.teacherIds.includes(r.id));if(t&&!o.find(r=>r.id===t)){const r=n.find(e=>e.id===t);if(r)return[r,...o]}return o},[i,f,u,t])}export{m as u};
