@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, DatePicker, TimePicker, Space, Tag, Card, Row, Col, Statistic, Typography, message, Radio, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance, getStaff } from '../../api';
@@ -11,6 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
+const ATTENDANCE_STATUSES = ['正常', '迟到', '早退', '缺勤', '请假'] as const;
 const statusColor: Record<string, string> = { '正常': '#059669', '迟到': '#D97706', '早退': '#D97706', '缺勤': '#DC2626', '请假': '#5B6CF0' };
 export default function Attendance() {
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
@@ -25,8 +26,8 @@ export default function Attendance() {
   const [form] = Form.useForm();
   const today = dayjs().format('YYYY-MM-DD');
 
-  const loadRecords = () => { setLoading(true); getAttendance().then(setRecords).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); };
-  useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, []);
+  const loadRecords = useCallback(() => { setLoading(true); getAttendance().then(setRecords).catch(() => message.error('加载数据失败，请刷新重试')).finally(() => setLoading(false)); }, []);
+  useEffect(() => { loadRecords(); getStaff().then(setAllStaff).catch(() => message.error('加载数据失败，请刷新重试')); }, [loadRecords]);
   useRealtime('attendance_records', loadRecords);
   const { editable } = usePermission();
 
@@ -44,12 +45,15 @@ export default function Attendance() {
   }, [filtered]);
 
   const todayRecords = useMemo(() => records.filter((r) => r.date === today), [records, today]);
-  const todayCounts: Record<string, number> = { '正常': 0, '迟到': 0, '早退': 0, '缺勤': 0, '请假': 0 };
-  todayRecords.forEach((r) => { todayCounts[r.status]++; });
+  const todayCounts = useMemo(() => {
+    const c: Record<string, number> = { '正常': 0, '迟到': 0, '早退': 0, '缺勤': 0, '请假': 0 };
+    todayRecords.forEach((r) => { c[r.status]++; });
+    return c;
+  }, [todayRecords]);
 
   function openAdd() { setEditing(null); form.resetFields(); form.setFieldsValue({ date: dayjs() }); setModalOpen(true); }
   function openEdit(r: AttendanceRecord) { setEditing(r); form.setFieldsValue({ ...r, date: dayjs(r.date), checkIn: r.checkIn ? dayjs(r.checkIn, 'HH:mm') : null, checkOut: r.checkOut ? dayjs(r.checkOut, 'HH:mm') : null }); setModalOpen(true); }
-  function handleDelete(id: string) { deleteAttendance(id).then(loadRecords).then(() => message.success('已删除')).catch(() => message.error('删除失败')); }
+  function handleDelete(id: string) { deleteAttendance(id).then(() => { message.success('已删除'); loadRecords(); }).catch(() => message.error('删除失败')); }
 
   function handleSave() {
     form.validateFields().then((v) => {
@@ -59,9 +63,11 @@ export default function Attendance() {
         id: editing?.id ?? newId(), staffId: v.staffId ?? editing?.staffId, staffName: staff?.name ?? editing?.staffName ?? '',
         date: (v.date as Dayjs).format('YYYY-MM-DD'), checkIn: tfmt(v.checkIn), checkOut: tfmt(v.checkOut), status: v.status, remark: v.remark || '',
       };
-      if (editing) { updateAttendance(editing.id, record).then(loadRecords).then(() => message.success('已更新')); }
-      else { createAttendance(record).then(loadRecords).then(() => message.success('已添加')); }
-      setModalOpen(false);
+      const promise = editing
+        ? updateAttendance(editing.id, record)
+        : createAttendance(record);
+      promise.then(() => { message.success(editing ? '已更新' : '已添加'); loadRecords(); setModalOpen(false); })
+        .catch(() => message.error(editing ? '更新失败' : '添加失败'));
     });
   }
 
@@ -83,14 +89,14 @@ export default function Attendance() {
       <Title level={4} style={{ marginBottom: 20, fontWeight: 600 }}>考勤系统</Title>
       <Card title={`今日打卡概况（${today}）`} size="small" className="card-flat" style={{ marginBottom: 16 }}>
         <Row gutter={16}>
-          {(['正常', '迟到', '早退', '缺勤', '请假'] as const).map((s) => (
+          {ATTENDANCE_STATUSES.map((s) => (
             <Col span={4} key={s}><Statistic title={s} value={todayCounts[s]} suffix="人次"
               valueStyle={{ color: statusColor[s], fontSize: 20 }} /></Col>
           ))}
         </Row>
       </Card>
       <Row gutter={16} style={{ marginBottom: 16 }}>
-        {(['正常', '迟到', '早退', '缺勤', '请假'] as const).map((s) => (
+        {ATTENDANCE_STATUSES.map((s) => (
           <Col key={s}><Card size="small" className="card-flat" style={{ minWidth: 90 }}><Statistic title={s} value={counts[s]} valueStyle={{ fontSize: 22, color: statusColor[s] }} /></Card></Col>
         ))}
         <Col flex="auto" /><Col><Card size="small" className="card-flat" style={{ minWidth: 100 }}><Statistic title="总计" value={filtered.length} valueStyle={{ fontSize: 22 }} /></Card></Col>
@@ -101,7 +107,7 @@ export default function Attendance() {
             <Input placeholder="搜索员工姓名" value={searchName} onChange={(e) => setSearchName(e.target.value)} allowClear style={{ width: 160 }} />
             <RangePicker value={dateRange} onChange={(v) => setDateRange(v as [Dayjs, Dayjs] | null)} placeholder={['开始日期', '结束日期']} />
             <Select mode="multiple" placeholder="考勤状态" value={filterStatus} onChange={setFilterStatus} allowClear style={{ width: 200 }}
-              options={[{ label: '正常', value: '正常' }, { label: '迟到', value: '迟到' }, { label: '早退', value: '早退' }, { label: '缺勤', value: '缺勤' }, { label: '请假', value: '请假' }]} />
+              options={ATTENDANCE_STATUSES.map((s) => ({ label: s, value: s }))} />
           </Space>
         </Col>
         {editable && <Col><Button type="primary" onClick={openAdd}>添加考勤</Button></Col>}
@@ -117,7 +123,7 @@ export default function Attendance() {
             <Col span={12}><Form.Item name="checkOut" label="签退时间"><TimePicker format="HH:mm" style={{ width: '100%' }} /></Form.Item></Col>
           </Row>
           <Form.Item name="status" label="考勤状态" rules={[{ required: true }]}>
-            <Radio.Group><Radio value="正常">正常</Radio><Radio value="迟到">迟到</Radio><Radio value="早退">早退</Radio><Radio value="缺勤">缺勤</Radio><Radio value="请假">请假</Radio></Radio.Group></Form.Item>
+            <Radio.Group>{ATTENDANCE_STATUSES.map((s) => <Radio key={s} value={s}>{s}</Radio>)}</Radio.Group></Form.Item>
           <Form.Item name="remark" label="备注"><Input.TextArea rows={2} /></Form.Item>
         </Form>
       </Modal>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Table, Button, Select, Modal, Form, Popconfirm, Input, InputNumber, Space, Tag, Row, Col, Typography, message } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -26,15 +26,15 @@ export default function StudentRoster() {
   const [editing, setEditing] = useState<Student | null>(null);
   const [form] = Form.useForm();
 
-  const loadStudents = () => {
+  const loadStudents = useCallback(() => {
     setLoading(true);
     getStudents().then(setStudents).catch(() => message.error('加载学生数据失败')).finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     loadStudents();
     getClasses().then(setClasses).catch(() => message.error('加载班级数据失败'));
-  }, []);
+  }, [loadStudents]);
   useRealtime('students', loadStudents);
   const { editable } = usePermission();
 
@@ -67,19 +67,18 @@ export default function StudentRoster() {
   }
   function openEdit(r: Student) { setEditing(r); form.setFieldsValue(r); setModalOpen(true); }
   function handleDelete(id: string) {
-    deleteStudent(id).then(loadStudents).then(() => message.success('已删除')).catch(() => message.error('删除失败'));
+    deleteStudent(id).then(() => { message.success('已删除'); loadStudents(); }).catch(() => message.error('删除失败'));
   }
 
   function handleSave() {
     form.validateFields().then((v) => {
       const cls = activeClasses.find((c) => c.id === v.classId);
       const data = { ...v, className: cls?.name ?? '' };
-      if (editing) {
-        updateStudent(editing.id, data).then(loadStudents).then(() => message.success('已更新')).catch(() => message.error('更新失败'));
-      } else {
-        createStudent({ id: newId(), ...data }).then(loadStudents).then(() => message.success('已添加')).catch(() => message.error('添加失败'));
-      }
-      setModalOpen(false);
+      const promise = editing
+        ? updateStudent(editing.id, data)
+        : createStudent({ id: newId(), ...data });
+      promise.then(() => { message.success(editing ? '已更新' : '已添加'); loadStudents(); setModalOpen(false); })
+        .catch(() => message.error(editing ? '更新失败' : '添加失败'));
     });
   }
 

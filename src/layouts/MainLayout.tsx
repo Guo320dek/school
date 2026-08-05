@@ -96,20 +96,24 @@ export default function MainLayout() {
 
   const handleSearch = async (value: string) => {
     setSearchText(value);
-    if (value.length < 1) { setSearchResults([]); return; }
-    const { results } = await globalSearch(value);
-    setSearchResults(results.map((r) => ({
-      ...r,
-      value: r.title,
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: typeColor[r.type], fontWeight: 600, fontSize: 13 }}>
-            {typeIcon[r.type]} {r.title}
-          </span>
-          <span style={{ fontSize: 11, color: '#999' }}>{r.subtitle}</span>
-        </div>
-      ),
-    })));
+    if (!value) { setSearchResults([]); return; }
+    try {
+      const { results } = await globalSearch(value);
+      setSearchResults(results.map((r) => ({
+        ...r,
+        value: r.title,
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: typeColor[r.type], fontWeight: 600, fontSize: 13 }}>
+              {typeIcon[r.type]} {r.title}
+            </span>
+            <span style={{ fontSize: 11, color: '#999' }}>{r.subtitle}</span>
+          </div>
+        ),
+      })));
+    } catch {
+      setSearchResults([]);
+    }
   };
   const isMobile = !screens.md;
 
@@ -219,7 +223,7 @@ export default function MainLayout() {
               value={searchText}
               options={searchResults}
               onSearch={handleSearch}
-              onSelect={(_, option) => { navigate((option as any).url); setSearchText(''); setSearchResults([]); }}
+              onSelect={(_, option) => { navigate(option.url); setSearchText(''); setSearchResults([]); }}
               style={{ width: 240 }}
             >
               <Input prefix={<SearchOutlined style={{ color: '#bbb' }} />} placeholder="搜索学生/教师/班级..." allowClear

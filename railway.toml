@@ -4,6 +4,9 @@
 
 [deploy]
   startCommand = "node server/index.cjs"
+  healthcheckPath = "/api/health"
+  healthcheckTimeout = 30
+  restartPolicyType = "ON_FAILURE"
 
 [service]
   [service.volume]
