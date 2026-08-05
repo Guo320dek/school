@@ -1,0 +1,590 @@
+- main [ref=f3e3]:
+  - generic [ref=f3e4]:
+    - paragraph [ref=f3e5]: Switching clouds? Get up to $10K in credits + hands-on help.
+    - link "Apply now" [ref=f3e6] [cursor=pointer]:
+      - /url: /migration-credits
+  - generic [ref=f3e11]:
+    - generic [ref=f3e12]:
+      - link [ref=f3e13] [cursor=pointer]:
+        - /url: /
+        - img "Render" [ref=f3e14]
+      - navigation [ref=f3e22]:
+        - list [ref=f3e23]:
+          - generic [ref=f3e24]:
+            - link [ref=f3e25] [cursor=pointer]:
+              - /url: "#"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - link:
+                      - /url: /platform
+                      - generic: Platform Overview
+                    - link:
+                      - /url: /workflows
+                      - generic: Workflows
+                  - generic:
+                    - generic:
+                      - generic: Features
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /docs/scaling
+                            - generic: Autoscaling
+                        - listitem:
+                          - link:
+                            - /url: /docs/private-services
+                            - generic: Private Networking
+                        - listitem:
+                          - link:
+                            - /url: /docs/disks
+                            - generic: Persistent Disks
+                        - listitem:
+                          - link:
+                            - /url: /docs/infrastructure-as-code
+                            - generic: Infrastructure as Code
+                        - listitem:
+                          - link:
+                            - /url: /docs/preview-environments
+                            - generic: Preview Environments
+                        - listitem:
+                          - link:
+                            - /url: /docs/deploys#zero-downtime-deploys
+                            - generic: Zero Downtime Deploys
+                        - listitem:
+                          - link:
+                            - /url: /docs/api
+                            - generic: Render API
+                    - generic:
+                      - generic: Services
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /docs/static-sites
+                            - generic: Static Sites
+                        - listitem:
+                          - link:
+                            - /url: /docs/web-services
+                            - generic: Web Services
+                        - listitem:
+                          - link:
+                            - /url: /docs/private-services
+                            - generic: Private Services
+                        - listitem:
+                          - link:
+                            - /url: /docs/background-workers
+                            - generic: Background Workers
+                        - listitem:
+                          - link:
+                            - /url: /docs/cronjobs
+                            - generic: Cron Jobs
+                        - listitem:
+                          - link:
+                            - /url: /docs/postgresql
+                            - generic: Render Postgres
+                        - listitem:
+                          - link:
+                            - /url: /docs/key-value
+                            - generic: Render Key Value
+          - generic [ref=f3e27]:
+            - link [ref=f3e28] [cursor=pointer]:
+              - /url: "#"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - link:
+                      - /url: /docs
+                      - generic: Docs
+                      - generic: Learn how to build and deploy on Render
+                    - link:
+                      - /url: /agents
+                      - generic: Agents
+                      - generic: Deploy to Render with your coding agent
+                  - generic:
+                    - generic:
+                      - generic: Get started
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /docs#quickstarts
+                            - generic: Framework Quickstarts
+                        - listitem:
+                          - link:
+                            - /url: /templates
+                            - generic: Templates
+                    - generic:
+                      - generic: Updates & Announcements
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /blog
+                            - generic: Blog
+                        - listitem:
+                          - link:
+                            - /url: /changelog
+                            - generic: Changelog
+          - generic [ref=f3e30]:
+            - link [ref=f3e31] [cursor=pointer]:
+              - /url: "#"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - link:
+                      - /url: /customers
+                      - generic: Customers
+                      - generic: How the best teams scale faster
+                    - link:
+                      - /url: /migration-credits
+                      - generic: Migration Credits
+                      - generic: Apply for credits to cover switching costs
+                  - generic:
+                    - generic:
+                      - generic: Build
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /startups
+                            - generic: Render for Startups
+                        - listitem:
+                          - link:
+                            - /url: /features/hipaa
+                            - generic: HIPAA on Render
+                    - generic:
+                      - generic: Migrate
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /docs/migrate-from-heroku
+                            - generic: Heroku Migration Guide
+                        - listitem:
+                          - link:
+                            - /url: /docs/migrate-from-railway
+                            - generic: Railway Migration Guide
+          - listitem [ref=f3e33]:
+            - link [ref=f3e34] [cursor=pointer]:
+              - /url: /pricing
+          - generic [ref=f3e36]:
+            - link [ref=f3e37] [cursor=pointer]:
+              - /url: "#"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - list:
+                        - listitem:
+                          - link:
+                            - /url: /about
+                            - generic: About Us
+                        - listitem:
+                          - link:
+                            - /url: /security
+                            - generic: Security
+                        - listitem:
+                          - link:
+                            - /url: /careers
+                            - generic: Careers
+                        - listitem:
+                          - link:
+                            - /url: /newsroom
+                            - generic: Newsroom
+    - generic [ref=f3e39]:
+      - list [ref=f3e40]:
+        - listitem [ref=f3e41]:
+          - link "Migrate to Render":
+            - /url: /migration-credits
+      - link "Sign In":
+        - /url: https://dashboard.render.com/
+      - link "Get Started" [ref=f3e42] [cursor=pointer]:
+        - /url: https://dashboard.render.com/register
+  - generic [ref=f3e44]:
+    - generic [ref=f3e48]:
+      - generic [ref=f3e49]:
+        - generic [ref=f3e50]:
+          - heading [level=1] [ref=f3e51]
+          - generic [ref=f3e55]: Intuitive infrastructure to scale any app or agent from your first user to your billionth.
+        - generic [ref=f3e56]:
+          - link "Start for free" [ref=f3e57] [cursor=pointer]:
+            - /url: https://dashboard.render.com/register
+          - link "Migrate to Render" [ref=f3e65] [cursor=pointer]:
+            - /url: /migration-credits
+      - figure [ref=f3e95]
+    - generic [ref=f3e96]:
+      - generic [ref=f3e97]: body
+      - generic [ref=f3e99]:
+        - generic [ref=f3e100]: Trusted by over 6 million builders
+        - generic [ref=f3e101]:
+          - img "Base 44" [ref=f3e104]
+          - img "Fortune" [ref=f3e107]
+          - img "Cognition" [ref=f3e110]
+          - img "Tripadvisor" [ref=f3e113]
+          - img "Basis" [ref=f3e116]
+          - img "Shopify" [ref=f3e119]
+          - img "Meter" [ref=f3e122]
+          - img "Content Square" [ref=f3e125]
+          - img "Commure" [ref=f3e128]
+          - img "McKinsey" [ref=f3e131]
+      - generic [ref=f3e133]:
+        - heading "Click, click, done." [level=2] [ref=f3e134]
+        - generic [ref=f3e135]:
+          - generic [ref=f3e136]:
+            - generic [ref=f3e137]:
+              - generic [ref=f3e138]: "1"
+              - generic [ref=f3e140]:
+                - heading "Select a service" [level=3] [ref=f3e141]
+                - paragraph [ref=f3e144]: Choose what you need to run your apps, APIs, agent logic, databases, cron jobs, and more.
+            - img "Deploy static sites, web services, private services, workflows, background workers, cron jobs, databases, and more" [ref=f3e146]
+          - generic [ref=f3e147]:
+            - generic [ref=f3e148]:
+              - generic [ref=f3e149]: "2"
+              - generic [ref=f3e151]:
+                - heading "Deploy your code" [level=3] [ref=f3e152]
+                - paragraph [ref=f3e155]: Just connect your repo. Render deploys on the right runtime for your framework.
+            - img "Connect your code, review your build commands, and deploy in seconds." [ref=f3e157]
+          - generic [ref=f3e158]:
+            - generic [ref=f3e159]:
+              - generic [ref=f3e160]: "3"
+              - generic [ref=f3e162]:
+                - heading "Render does the rest" [level=3] [ref=f3e163]
+                - paragraph [ref=f3e166]: Get instant networking, scaling, previews, deploys, rollbacks, and monitoring.
+            - img "Render automatically deploys your services on a private network whenever you push code." [ref=f3e168]
+      - generic [ref=f3e172]:
+        - generic [ref=f3e173]: Whatever your stack, it runs on Render.
+        - link "View Templates" [ref=f3e174] [cursor=pointer]:
+          - /url: /templates
+      - generic [ref=f3e185]:
+        - heading "Deploy apps and agents with zero ops" [level=3] [ref=f3e186]
+        - generic [ref=f3e187]:
+          - generic [ref=f3e188]:
+            - heading "Intuitive hosting and private networking for web services, Postgres databases, cron jobs, workflows, static sites, background jobs, key value stores, private services, WebSockets, edge caches, isolated environments," [level=3] [ref=f3e193]:
+              - text: Intuitive hosting and private networking for
+              - generic [ref=f3e194]: web services,
+              - generic [ref=f3e195]: Postgres databases,
+              - generic [ref=f3e196]: cron jobs,
+              - generic [ref=f3e197]: workflows,
+              - generic [ref=f3e198]: static sites,
+              - generic [ref=f3e199]: background jobs,
+              - generic [ref=f3e200]: key value stores,
+              - generic [ref=f3e201]: private services,
+              - generic [ref=f3e202]: WebSockets,
+              - generic [ref=f3e203]: edge caches,
+              - generic [ref=f3e204]: isolated environments,
+            - generic [ref=f3e206]:
+              - generic [ref=f3e207]:
+                - heading "Full-stack previews for every pull request" [level=3] [ref=f3e208]
+                - paragraph [ref=f3e210]: Iterate quickly with ephemeral previews of your entire application architecture for every change.
+              - link "Preview environment docs →" [ref=f3e211] [cursor=pointer]:
+                - /url: /docs/preview-environments
+          - generic [ref=f3e213]:
+            - generic [ref=f3e214]:
+              - generic [ref=f3e215]:
+                - heading "Load-based autoscaling that handles 100x traffic bursts and beyond" [level=3] [ref=f3e216]
+                - paragraph [ref=f3e218]: Keep your workloads running smoothly through viral moments, seasonal spikes, and launch days.
+              - link "Autoscaling docs →" [ref=f3e219] [cursor=pointer]:
+                - /url: /docs/scaling
+            - generic [ref=f3e220]: Instance Type:64 CPU512GB RAM
+          - generic [ref=f3e223]:
+            - generic [ref=f3e225]:
+              - generic [ref=f3e226]:
+                - heading "Durable, long-running workflows as code" [level=3] [ref=f3e227]
+                - paragraph [ref=f3e229]: Deploy reliable agents and background processes at scale, without wiring up queues, workers, and retry logic.
+              - link "Workflow docs →" [ref=f3e230] [cursor=pointer]:
+                - /url: /docs/workflows
+            - generic [ref=f3e233]:
+              - generic [ref=f3e234]:
+                - heading "Enterprise-grade Postgres databases" [level=3] [ref=f3e235]
+                - paragraph [ref=f3e237]: Deploy fully-managed databases with point-in-time recovery, read replicas, and high availability.
+              - link "Postgres docs →" [ref=f3e238] [cursor=pointer]:
+                - /url: /docs/postgresql
+          - generic [ref=f3e241]:
+            - generic [ref=f3e242]:
+              - heading "Integrated logs and monitoring for builds, deploys and live services" [level=3] [ref=f3e243]
+              - paragraph [ref=f3e245]: See critical metrics for all of your Render infrastructure from day zero, and stream telemetry to external tools.
+            - link "Observability docs →" [ref=f3e246] [cursor=pointer]:
+              - /url: /docs/service-metrics
+      - generic [ref=f3e277]:
+        - generic [ref=f3e279]:
+          - button [ref=f3e280] [cursor=pointer]:
+            - img "Base44" [ref=f3e281]
+          - button [ref=f3e283] [cursor=pointer]:
+            - img "Thatch" [ref=f3e284]
+          - button [ref=f3e286] [cursor=pointer]:
+            - img "Paradigm" [ref=f3e287]
+          - button [ref=f3e289] [cursor=pointer]:
+            - img "Fey" [ref=f3e290]
+          - button [ref=f3e292] [cursor=pointer]:
+            - img "mitchellh" [ref=f3e293]
+        - generic [ref=f3e296]:
+          - generic [ref=f3e297]:
+            - generic [ref=f3e298]: “
+            - text: Render has enabled us to deliver AI features much faster with a very lean engineering team. Its flexibility and reliability have scaled to meet our rapidly evolving needs. After using their platform over the last year, I’m convinced Render is the future of the cloud.”
+          - generic [ref=f3e299]: Maor Shlomo, Founder of Base44
+      - generic [ref=f3e320]:
+        - heading "Intuitive infrastructure, designed for builders" [level=2] [ref=f3e321]
+        - generic [ref=f3e322]: Ship software faster with integrated primitives that just work.
+        - generic [ref=f3e324]:
+          - generic [ref=f3e325]:
+            - img "Native language runtimes" [ref=f3e327]
+            - generic [ref=f3e328]:
+              - heading "Native language runtimes" [level=3] [ref=f3e330]
+              - generic [ref=f3e331]: High-performance environments for nearly every popular framework.
+          - generic [ref=f3e332]:
+            - img "Infrastructure as code" [ref=f3e334]
+            - generic [ref=f3e335]:
+              - heading "Infrastructure as code" [level=3] [ref=f3e337]
+              - generic [ref=f3e338]: Define, deploy, and version your entire architecture with a single YAML file.
+          - generic [ref=f3e339]:
+            - img "Isolated environments" [ref=f3e341]
+            - generic [ref=f3e342]:
+              - heading "Isolated environments" [level=3] [ref=f3e344]
+              - generic [ref=f3e345]: Prevent non-production environments from accessing production services.
+          - generic [ref=f3e346]:
+            - img "Object storage" [ref=f3e348]
+            - generic [ref=f3e349]:
+              - generic [ref=f3e350]:
+                - heading "Object storage" [level=3] [ref=f3e351]
+                - generic [ref=f3e352]: Coming Soon
+              - generic [ref=f3e354]: Store and retrieve files from your services with lightweight SDKs.
+          - generic [ref=f3e355]:
+            - img "Redis-compatible Key Value" [ref=f3e357]
+            - generic [ref=f3e358]:
+              - heading "Redis-compatible Key Value" [level=3] [ref=f3e360]
+              - generic [ref=f3e361]: Low-latency in-memory storage ideal for shared caches and job queues.
+          - generic [ref=f3e362]:
+            - img "WebSockets" [ref=f3e364]
+            - generic [ref=f3e365]:
+              - heading "WebSockets" [level=3] [ref=f3e367]
+              - generic [ref=f3e368]: Build real-time features with long-lived, bi-direction streaming.
+          - generic [ref=f3e369]:
+            - img "Edge caching" [ref=f3e371]
+            - generic [ref=f3e372]:
+              - heading "Edge caching" [level=3] [ref=f3e374]
+              - generic [ref=f3e375]: Serve static assets faster with caching powered by Render’s global CDN.
+          - generic [ref=f3e376]:
+            - img "Fully-managed TLS" [ref=f3e378]
+            - generic [ref=f3e379]:
+              - heading "Fully-managed TLS" [level=3] [ref=f3e381]
+              - generic [ref=f3e382]: Free TLS certificates for every domain, including wildcards.
+      - generic [ref=f3e386]:
+        - heading "Stay secure and resilient by default" [level=2] [ref=f3e387]
+        - generic [ref=f3e388]: Build products, not compliance.
+        - generic [ref=f3e389]:
+          - generic [ref=f3e390]:
+            - generic [ref=f3e391]:
+              - img "Private networking" [ref=f3e393]
+              - generic [ref=f3e394]:
+                - heading "Private networking" [level=3] [ref=f3e396]
+                - generic [ref=f3e397]: Keep internal traffic off the public internet without VPC complexity.
+            - generic [ref=f3e398]:
+              - img "Built-in DDoS protection" [ref=f3e400]
+              - generic [ref=f3e401]:
+                - heading "Built-in DDoS protection" [level=3] [ref=f3e403]
+                - generic [ref=f3e404]: Protect every service from attacks without extra configuration or add-ons.
+            - generic [ref=f3e405]:
+              - img "Managed compliance" [ref=f3e407]
+              - generic [ref=f3e408]:
+                - heading "Managed compliance" [level=3] [ref=f3e410]
+                - generic [ref=f3e411]: Meet SOC 2 Type 2, HIPAA, ISO 27001, and GDPR requirements without overhead.
+            - generic [ref=f3e412]:
+              - img "Audit controls" [ref=f3e414]
+              - generic [ref=f3e415]:
+                - heading "Audit controls" [level=3] [ref=f3e417]
+                - generic [ref=f3e418]: Built-in audit logging and monitoring for platform events.
+            - generic [ref=f3e419]:
+              - img "Encryption at rest" [ref=f3e421]
+              - generic [ref=f3e422]:
+                - heading "Encryption at rest" [level=3] [ref=f3e424]
+                - generic [ref=f3e425]: Minimum AES-128 encryption for databases, backups, and secrets.
+            - generic [ref=f3e426]:
+              - img "Unique user identification" [ref=f3e428]
+              - generic [ref=f3e429]:
+                - heading "Unique user identification" [level=3] [ref=f3e431]
+                - generic [ref=f3e432]: Control services and resources with role-based access control.
+          - generic [ref=f3e433]:
+            - link "Trust center" [ref=f3e434] [cursor=pointer]:
+              - /url: /security
+            - link "HIPAA on Render" [ref=f3e442] [cursor=pointer]:
+              - /url: /features/hipaa
+      - generic [ref=f3e549]:
+        - generic [ref=f3e550]:
+          - generic [ref=f3e551]: Start building with Render
+          - generic [ref=f3e552]: Zero ops, zero surprises.
+        - link "Deploy your app for free" [ref=f3e554] [cursor=pointer]:
+          - /url: https://dashboard.render.com/register
+  - generic [ref=f3e562]:
+    - generic [ref=f3e665]:
+      - generic [ref=f3e668]:
+        - generic [ref=f3e669]: Features
+        - list [ref=f3e670]:
+          - listitem [ref=f3e671]:
+            - link "Render CLI" [ref=f3e672] [cursor=pointer]:
+              - /url: /docs/cli
+          - listitem [ref=f3e673]:
+            - link "Render MCP" [ref=f3e674] [cursor=pointer]:
+              - /url: /docs/mcp-server
+          - listitem [ref=f3e675]:
+            - link "Autoscaling" [ref=f3e676] [cursor=pointer]:
+              - /url: https://docs.render.com/scaling
+          - listitem [ref=f3e677]:
+            - link "Private Networking" [ref=f3e678] [cursor=pointer]:
+              - /url: /docs/private-network
+          - listitem [ref=f3e679]:
+            - link "Persistent Disks" [ref=f3e680] [cursor=pointer]:
+              - /url: https://docs.render.com/disks
+          - listitem [ref=f3e681]:
+            - link "Infrastructure As Code" [ref=f3e682] [cursor=pointer]:
+              - /url: https://docs.render.com/infrastructure-as-code
+          - listitem [ref=f3e683]:
+            - link "Preview Environments" [ref=f3e684] [cursor=pointer]:
+              - /url: https://docs.render.com/preview-environments
+          - listitem [ref=f3e685]:
+            - link "Zero Downtime Deploys" [ref=f3e686] [cursor=pointer]:
+              - /url: https://docs.render.com/deploys#zero-downtime-deploys
+          - listitem [ref=f3e687]:
+            - link "Docker support" [ref=f3e688] [cursor=pointer]:
+              - /url: /docs/docker
+          - listitem [ref=f3e689]:
+            - link "REST API" [ref=f3e690] [cursor=pointer]:
+              - /url: https://docs.render.com/api
+      - generic [ref=f3e693]:
+        - generic [ref=f3e694]: Services
+        - list [ref=f3e695]:
+          - listitem [ref=f3e696]:
+            - link "Static Sites" [ref=f3e697] [cursor=pointer]:
+              - /url: https://docs.render.com/static-sites
+          - listitem [ref=f3e698]:
+            - link "Web Services" [ref=f3e699] [cursor=pointer]:
+              - /url: https://docs.render.com/web-services
+          - listitem [ref=f3e700]:
+            - link "Render Workflows" [ref=f3e701] [cursor=pointer]:
+              - /url: /docs/workflows
+          - listitem [ref=f3e702]:
+            - link "Private Services" [ref=f3e703] [cursor=pointer]:
+              - /url: https://docs.render.com/private-services
+          - listitem [ref=f3e704]:
+            - link "Background Workers" [ref=f3e705] [cursor=pointer]:
+              - /url: https://docs.render.com/background-workers
+          - listitem [ref=f3e706]:
+            - link "Cron Jobs" [ref=f3e707] [cursor=pointer]:
+              - /url: https://docs.render.com/cronjobs
+          - listitem [ref=f3e708]:
+            - link "Render Postgres" [ref=f3e709] [cursor=pointer]:
+              - /url: /docs/postgresql
+          - listitem [ref=f3e710]:
+            - link "Render Key Value" [ref=f3e711] [cursor=pointer]:
+              - /url: /docs/key-value
+      - generic [ref=f3e714]:
+        - generic [ref=f3e715]: Legal
+        - list [ref=f3e716]:
+          - listitem [ref=f3e717]:
+            - link "Privacy Policy" [ref=f3e718] [cursor=pointer]:
+              - /url: /privacy
+          - listitem [ref=f3e719]:
+            - link "Security" [ref=f3e720] [cursor=pointer]:
+              - /url: /security
+          - listitem [ref=f3e721]:
+            - link "Shared Responsibility Model" [ref=f3e722] [cursor=pointer]:
+              - /url: /docs/shared-responsibility-model
+          - listitem [ref=f3e723]:
+            - link "Terms of Use" [ref=f3e724] [cursor=pointer]:
+              - /url: /terms
+          - listitem [ref=f3e725]:
+            - link "DMCA Policy" [ref=f3e726] [cursor=pointer]:
+              - /url: /dmca-policy
+          - listitem [ref=f3e727]:
+            - link "DPA" [ref=f3e728] [cursor=pointer]:
+              - /url: /dpa
+          - listitem [ref=f3e729]:
+            - link "Acceptable Use" [ref=f3e730] [cursor=pointer]:
+              - /url: /acceptable-use
+      - generic [ref=f3e733]:
+        - generic [ref=f3e734]: Resources
+        - list [ref=f3e735]:
+          - listitem [ref=f3e736]:
+            - link "Pricing" [ref=f3e737] [cursor=pointer]:
+              - /url: /pricing
+          - listitem [ref=f3e738]:
+            - link "Docs" [ref=f3e739] [cursor=pointer]:
+              - /url: /docs
+          - listitem [ref=f3e740]:
+            - link "Changelog" [ref=f3e741] [cursor=pointer]:
+              - /url: /changelog
+          - listitem [ref=f3e742]:
+            - link "Templates" [ref=f3e743] [cursor=pointer]:
+              - /url: /templates
+          - listitem [ref=f3e744]:
+            - link "Blog" [ref=f3e745] [cursor=pointer]:
+              - /url: /blog
+          - listitem [ref=f3e746]:
+            - link "Articles" [ref=f3e747] [cursor=pointer]:
+              - /url: /articles
+          - listitem [ref=f3e748]:
+            - link "Render for Startups" [ref=f3e749] [cursor=pointer]:
+              - /url: /startups
+      - generic [ref=f3e752]:
+        - generic [ref=f3e753]: Company
+        - list [ref=f3e754]:
+          - listitem [ref=f3e755]:
+            - link "About" [ref=f3e756] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=f3e757]:
+            - link "Careers" [ref=f3e758] [cursor=pointer]:
+              - /url: /careers
+          - listitem [ref=f3e759]:
+            - link "Newsroom" [ref=f3e760] [cursor=pointer]:
+              - /url: /newsroom
+          - listitem [ref=f3e761]:
+            - link "Brand Kit" [ref=f3e762] [cursor=pointer]:
+              - /url: https://cdn.sanity.io/files/hvk0tap5/production/40134cba8baae95e988e65d2a0675c2521e9c731.zip
+          - listitem [ref=f3e763]:
+            - link "Contact" [ref=f3e764] [cursor=pointer]:
+              - /url: /contact
+      - generic [ref=f3e766]:
+        - generic [ref=f3e767]:
+          - generic [ref=f3e768]: Comparisons
+          - list [ref=f3e769]:
+            - listitem [ref=f3e770]:
+              - link "Vercel" [ref=f3e771] [cursor=pointer]:
+                - /url: /docs/render-vs-vercel-comparison
+            - listitem [ref=f3e772]:
+              - link "Heroku" [ref=f3e773] [cursor=pointer]:
+                - /url: /docs/render-vs-heroku-comparison
+            - listitem [ref=f3e774]:
+              - link "Railway" [ref=f3e775] [cursor=pointer]:
+                - /url: /articles/render-vs-railway
+            - listitem [ref=f3e776]:
+              - link "Fly.io" [ref=f3e777] [cursor=pointer]:
+                - /url: /articles/render-vs-fly-io
+        - generic [ref=f3e778]:
+          - generic [ref=f3e779]: Socials
+          - list [ref=f3e780]:
+            - listitem [ref=f3e781]:
+              - link "X / Twitter" [ref=f3e782] [cursor=pointer]:
+                - /url: https://x.com/render
+            - listitem [ref=f3e783]:
+              - link "LinkedIn" [ref=f3e784] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/renderco/
+            - listitem [ref=f3e785]:
+              - link "Discord" [ref=f3e786] [cursor=pointer]:
+                - /url: https://discord.gg/kt5namUTqb
+            - listitem [ref=f3e787]:
+              - link "Reddit" [ref=f3e788] [cursor=pointer]:
+                - /url: https://www.reddit.com/r/render/
+            - listitem [ref=f3e789]:
+              - link "YouTube" [ref=f3e790] [cursor=pointer]:
+                - /url: https://www.youtube.com/@render-inc
+    - generic [ref=f3e793]:
+      - list [ref=f3e794]:
+        - listitem [ref=f3e795]:
+          - link [ref=f3e796] [cursor=pointer]:
+            - /url: https://x.com/render
+        - listitem [ref=f3e798]:
+          - link [ref=f3e799] [cursor=pointer]:
+            - /url: https://www.linkedin.com/company/renderco/
+        - listitem [ref=f3e801]:
+          - link [ref=f3e802] [cursor=pointer]:
+            - /url: https://github.com/render-oss
+      - list [ref=f3e804]:
+        - listitem [ref=f3e805]: © Render 2026

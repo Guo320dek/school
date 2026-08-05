@@ -2,19 +2,10 @@ const sqlPromise = require('sql.js');
 const path = require('path');
 const fs = require('fs');
 
-// Use Railway volume if available, otherwise local file (or /tmp on Vercel)
+// Use Railway volume if available, otherwise local file
 const VOL_PATH = '/data/data.db';
-const TMP_PATH = '/tmp/data.db';
 const LOCAL_PATH = path.join(__dirname, 'data.db');
-
-let DB_PATH;
-if (fs.existsSync('/data')) {
-  DB_PATH = VOL_PATH;
-} else if (process.env.VERCEL || process.env.NOW) {
-  DB_PATH = TMP_PATH;
-} else {
-  DB_PATH = LOCAL_PATH;
-}
+const DB_PATH = fs.existsSync('/data') ? VOL_PATH : LOCAL_PATH;
 console.log('Using DB path:', DB_PATH);
 
 let db;
