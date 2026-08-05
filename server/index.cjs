@@ -13,14 +13,20 @@ const TOKEN_EXPIRY = '24h';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isServerless = !!(process.env.VERCEL || process.env.NOW);
 
-const httpServer = http.createServer(app);
-const wss = new WebSocketServer({ server: httpServer });
-const wsClients = new Set();
-wss.on('connection', (ws) => { wsClients.add(ws); ws.on('close', () => wsClients.delete(ws)); });
-function broadcast(table) {
-  const msg = JSON.stringify({ type: 'change', table });
-  for (const ws of wsClients) { try { ws.send(msg); } catch {} }
+let broadcast = () => {};
+let httpServer;
+
+if (!isServerless) {
+  httpServer = http.createServer(app);
+  const wss = new WebSocketServer({ server: httpServer });
+  const wsClients = new Set();
+  wss.on('connection', (ws) => { wsClients.add(ws); ws.on('close', () => wsClients.delete(ws)); });
+  broadcast = function broadcast(table) {
+    const msg = JSON.stringify({ type: 'change', table });
+    for (const ws of wsClients) { try { ws.send(msg); } catch {} }
+  };
 }
 
 const distPath = path.join(__dirname, '..', 'dist');
@@ -45,8 +51,10 @@ app.get('/api/health', (_req, res) => {
   }
 });
 
-// Serve static frontend in production
-app.use(express.static(distPath));
+// Serve static frontend in production (only when not on Vercel)
+if (!isServerless) {
+  app.use(express.static(distPath));
+}
 
 // ===== AUTH =====
 function authMiddleware(req, res, next) {
@@ -510,12 +518,14 @@ app.get('/api/timetable/conflicts', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// SPA fallback: serve index.html for all non-API routes
-app.get(/^(?!\/api\/).*/, (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'), (err) => {
-    if (err) res.status(404).send('Not found');
+// SPA fallback: serve index.html for all non-API routes (only when not on Vercel)
+if (!isServerless) {
+  app.get(/^(?!\/api\/).*/, (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'), (err) => {
+      if (err) res.status(404).send('Not found');
+    });
   });
-});
+}
 
 // Global error handler
 app.use((err, req, res, _next) => {
@@ -527,29 +537,35 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);
 });
 
-// Wait for DB then start
-// Start listening immediately, init DB in background
-const srv = httpServer.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT} (DB initializing in background...)`);
-});
-srv.on('error', (err) => {
-  console.error('Server failed to start:', err);
-  process.exit(1);
-});
+// Export for Vercel serverless
+module.exports = app;
 
-ensureDb().then(() => {
-  console.log('dist path:', distPath);
-  console.log('dist exists:', fs.existsSync(distPath));
-  console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
+// Only start listening when running as a standalone server (not serverless)
+if (!isServerless) {
+  // Wait for DB then start
+  // Start listening immediately, init DB in background
+  const srv = httpServer.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT} (DB initializing in background...)`);
+  });
+  srv.on('error', (err) => {
+    console.error('Server failed to start:', err);
+    process.exit(1);
+  });
 
-  try {
-    const db = getDb();
-    const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
-    console.log('Database OK - staff count:', staffCount.c);
-  } catch (e) {
-    console.error('Database init failed:', e.message);
-  }
-}).catch((err) => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
-});
+  ensureDb().then(() => {
+    console.log('dist path:', distPath);
+    console.log('dist exists:', fs.existsSync(distPath));
+    console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
+
+    try {
+      const db = getDb();
+      const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
+      console.log('Database OK - staff count:', staffCount.c);
+    } catch (e) {
+      console.error('Database init failed:', e.message);
+    }
+  }).catch((err) => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });
+}
