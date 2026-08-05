@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(true);
 
-  // Verify stored token on mount
+  // Verify stored token on mount, or auto-login as admin for demo
   useEffect(() => {
     if (token) {
       getMe().then(({ user: u }) => {
@@ -44,7 +44,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(USER_KEY);
       }).finally(() => setLoading(false));
     } else {
-      setLoading(false);
+      // Auto-login as admin for teacher demo
+      apiLogin('admin', 'admin123').then((res) => {
+        localStorage.setItem(TOKEN_KEY, res.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+        setToken(res.token);
+        setUser(res.user);
+      }).catch(() => {}).finally(() => setLoading(false));
     }
   }, []);
 
