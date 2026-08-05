@@ -1,0 +1,121 @@
+- generic [active] [ref=f11e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=f11e3]:
+    - generic [ref=f11e4]:
+      - generic [ref=f11e5]:
+        - generic [ref=f11e6]:
+          - generic [ref=f11e7]:
+            - generic [ref=f11e10]:
+              - link "guo320dek's projects Hobby" [ref=f11e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=f11e13]:
+                  - generic [ref=f11e14]: guo320dek's projects
+                  - generic [ref=f11e15]: Hobby
+              - button [ref=f11e17] [cursor=pointer]
+            - button "Find F" [ref=f11e22]:
+              - generic [ref=f11e24]:
+                - generic [ref=f11e28]: Find
+                - generic [ref=f11e29]: F
+          - navigation [ref=f11e32]:
+            - generic [ref=f11e35]:
+              - link "Overview" [ref=f11e36] [cursor=pointer]:
+                - /url: /guo320deks-projects/school
+              - link "Deployments" [ref=f11e41] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/deployments
+              - link "Logs" [ref=f11e47] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/logs
+              - link "Analytics" [ref=f11e53] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/analytics
+              - link "Speed Insights" [ref=f11e59] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/speed-insights
+              - link "Observability" [ref=f11e65] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/observability
+              - link "Firewall" [ref=f11e74] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/firewall
+              - link "CDN" [ref=f11e84] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/cdn
+              - separator [ref=f11e93]
+              - link "Environment Variables" [ref=f11e94] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/environment-variables
+              - link "Domains" [ref=f11e100] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/domains
+              - link "Connect Beta" [ref=f11e106] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/connect
+                - generic [ref=f11e110]:
+                  - generic [ref=f11e111]: Connect
+                  - generic [ref=f11e112]: Beta
+              - link "Integrations" [ref=f11e114] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/integrations
+              - link "Storage" [ref=f11e120] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/stores
+              - link "Flags" [ref=f11e126] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/flags
+              - link "Agent" [ref=f11e135] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/agent
+              - link "AI Gateway" [ref=f11e144] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/ai-gateway
+              - link "Sandboxes" [ref=f11e153] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/sandboxes
+              - link "Workflows" [ref=f11e162] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/workflows
+              - link "Images Beta" [ref=f11e168] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/images
+                - generic [ref=f11e172]:
+                  - generic [ref=f11e173]: Images
+                  - generic [ref=f11e174]: Beta
+              - separator [ref=f11e176]
+              - link "Usage" [ref=f11e177] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/usage
+              - link "Support" [ref=f11e183] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/support
+              - link "Settings" [ref=f11e189] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings
+          - generic [ref=f11e202]:
+            - button "Avatar for guo320dek guo320dek" [disabled]:
+              - img "Avatar for guo320dek":
+                - img "Avatar for guo320dek"
+              - generic: guo320dek
+        - button [ref=f11e208] [cursor=pointer]
+      - generic [ref=f11e212]:
+        - generic [ref=f11e213]:
+          - generic [ref=f11e216]:
+            - link "school" [ref=f11e217] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+            - button [ref=f11e221] [cursor=pointer]
+            - link "Back to team view" [ref=f11e227] [cursor=pointer]:
+              - /url: /guo320deks-projects
+          - navigation "Breadcrumb" [ref=f11e231]:
+            - generic [ref=f11e232]: Overview
+        - generic [ref=f11e236]:
+          - generic [ref=f11e240]:
+            - heading "Production Deployment" [level=3] [ref=f11e242]
+            - generic [ref=f11e254]:
+              - paragraph [ref=f11e257]: Deployment
+              - generic [ref=f11e260]: Domains
+              - generic [ref=f11e265]:
+                - paragraph [ref=f11e267]: Status
+                - paragraph [ref=f11e270]: Created
+              - paragraph [ref=f11e273]: Source
+            - button [disabled] [ref=f11e279] [cursor=pointer]
+          - generic [ref=f11e290]:
+            - paragraph [ref=f11e294]
+            - generic [ref=f11e299]:
+              - generic [ref=f11e300]:
+                - generic [ref=f11e301]:
+                  - paragraph [ref=f11e302]:
+                    - strong [ref=f11e303]: Observability
+                  - time [ref=f11e304]: 6h
+                - link "Go to page" [ref=f11e305] [cursor=pointer]:
+                  - /url: "#"
+                - link [ref=f11e309] [cursor=pointer]:
+                  - /url: "#"
+              - generic [ref=f11e311]:
+                - generic [ref=f11e312]: Edge Requests
+                - generic [ref=f11e317]: Function Invocations
+                - generic [ref=f11e322]: Error Rate
+            - generic [ref=f11e329]:
+              - paragraph [ref=f11e330]:
+                - strong [ref=f11e331]: Analytics
+              - time [ref=f11e332]: 1w
+  - alert [ref=f11e458]

@@ -10,6 +10,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const handleSubmit = async (values: { username: string; password: string }) => {
     setLoading(true);
@@ -21,6 +22,11 @@ export default function Login() {
       message.success('登录成功');
       navigate('/', { replace: true });
     }
+  };
+
+  const handleDemo = () => {
+    form.setFieldsValue({ username: 'admin', password: 'admin123' });
+    form.submit();
   };
 
   return (
@@ -44,7 +50,7 @@ export default function Login() {
           <Text type="secondary">教务管理系统</Text>
         </div>
 
-        <Form onFinish={handleSubmit} size="large" autoComplete="off">
+        <Form form={form} onFinish={handleSubmit} size="large" autoComplete="off">
           <Form.Item name="username" rules={[{ required: true, message: '请输入账号' }]}>
             <Input prefix={<UserOutlined />} placeholder="账号" />
           </Form.Item>
@@ -58,7 +64,13 @@ export default function Login() {
           </Form.Item>
         </Form>
 
-        <div style={{ marginTop: 20, textAlign: 'center' }}>
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          <Button type="dashed" block onClick={handleDemo} style={{ height: 40, borderRadius: 8 }}>
+            一键体验（管理员）
+          </Button>
+        </div>
+
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
             管理员: admin / admin123<br />教师: s10 / 123456
           </Text>

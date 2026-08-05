@@ -1,0 +1,98 @@
+- generic [active] [ref=f35e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - main [ref=f35e3]:
+    - generic [ref=f35e4]:
+      - generic [ref=f35e5]:
+        - generic [ref=f35e6]:
+          - generic [ref=f35e7]:
+            - generic [ref=f35e10]:
+              - link "guo320dek's projects Hobby" [ref=f35e11] [cursor=pointer]:
+                - /url: /guo320deks-projects
+                - generic [ref=f35e13]:
+                  - generic [ref=f35e14]: guo320dek's projects
+                  - generic [ref=f35e15]: Hobby
+              - button [ref=f35e17] [cursor=pointer]
+            - button "Find F" [ref=f35e22]:
+              - generic [ref=f35e24]:
+                - generic [ref=f35e28]: Find
+                - generic [ref=f35e29]: F
+          - navigation [ref=f35e32]:
+            - generic [ref=f35e35]:
+              - link "Overview" [ref=f35e36] [cursor=pointer]:
+                - /url: /guo320deks-projects/school
+              - link "Deployments" [ref=f35e41] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/deployments
+              - link "Logs" [ref=f35e47] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/logs
+              - link "Analytics" [ref=f35e53] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/analytics
+              - link "Speed Insights" [ref=f35e59] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/speed-insights
+              - link "Observability" [ref=f35e65] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/observability
+              - link "Firewall" [ref=f35e74] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/firewall
+              - link "CDN" [ref=f35e84] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/cdn
+              - separator [ref=f35e93]
+              - link "Environment Variables" [ref=f35e94] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/environment-variables
+              - link "Domains" [ref=f35e100] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/domains
+              - link "Connect Beta" [ref=f35e106] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/connect
+                - generic [ref=f35e110]:
+                  - generic [ref=f35e111]: Connect
+                  - generic [ref=f35e112]: Beta
+              - link "Integrations" [ref=f35e114] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings/integrations
+              - link "Storage" [ref=f35e120] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/stores
+              - link "Flags" [ref=f35e126] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/flags
+              - link "Agent" [ref=f35e135] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/agent
+              - link "AI Gateway" [ref=f35e144] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/ai-gateway
+              - link "Sandboxes" [ref=f35e153] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/sandboxes
+              - link "Workflows" [ref=f35e162] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/workflows
+              - link "Images Beta" [ref=f35e168] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/images
+                - generic [ref=f35e172]:
+                  - generic [ref=f35e173]: Images
+                  - generic [ref=f35e174]: Beta
+              - separator [ref=f35e176]
+              - link "Usage" [ref=f35e177] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/usage
+              - link "Support" [ref=f35e183] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/support
+              - link "Settings" [ref=f35e189] [cursor=pointer]:
+                - /url: /guo320deks-projects/school/settings
+          - button "Avatar for guo320dek guo320dek" [ref=f35e203] [cursor=pointer]:
+            - img "Avatar for guo320dek" [ref=f35e204]:
+              - img "Avatar for guo320dek" [ref=f35e205]
+            - generic [ref=f35e206]: guo320dek
+        - button [ref=f35e216] [cursor=pointer]
+      - generic [ref=f35e220]:
+        - generic [ref=f35e221]:
+          - generic [ref=f35e224]:
+            - link "school" [ref=f35e225] [cursor=pointer]:
+              - /url: /guo320deks-projects/school
+            - button [ref=f35e229] [cursor=pointer]
+            - link "Back to team view" [ref=f35e235] [cursor=pointer]:
+              - /url: /guo320deks-projects/~/domains
+          - navigation "Breadcrumb" [ref=f35e239]:
+            - generic [ref=f35e240]: Domains
+          - button "Vercel Agent is available on Pro" [ref=f35e244] [cursor=pointer]:
+            - generic [ref=f35e257]: Agent
+        - generic [ref=f35e267]:
+          - generic [ref=f35e268]:
+            - button "Filter domains" [ref=f35e269] [cursor=pointer]
+            - searchbox "Search" [ref=f35e275]
+          - generic [ref=f35e279]:
+            - button "Add Existing" [ref=f35e280] [cursor=pointer]
+            - button "Buy" [ref=f35e282] [cursor=pointer]
+  - alert [ref=f35e286]

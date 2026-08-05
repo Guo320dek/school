@@ -1,0 +1,60 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - generic [ref=e3]: New Project
+    - main [ref=e6]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - heading "Let's build something new" [level=2] [ref=e11]
+          - generic [ref=e14]:
+            - textbox "v0 Prompt or Git Repository URL" [ref=e16]:
+              - /placeholder: Ask v0 to build or enter a Git repository URL…
+            - generic [ref=e20]:
+              - button "Contact Form" [ref=e21] [cursor=pointer]
+              - button "Image Editor" [ref=e24] [cursor=pointer]
+              - button "Mini Game" [ref=e27] [cursor=pointer]
+              - button "Finance Calculator" [ref=e30] [cursor=pointer]
+              - button "Refresh suggestions" [ref=e33] [cursor=pointer]
+          - paragraph [ref=e37]:
+            - text: You can also drag and drop your project, or choose a
+            - link "file" [ref=e38] [cursor=pointer]
+            - text: or a
+            - link "folder" [ref=e39] [cursor=pointer]
+            - text: .
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - heading "Import Git Repository" [level=3] [ref=e44]
+            - generic [ref=e97]:
+              - generic [ref=e98]:
+                - heading "Clone Template" [level=2] [ref=e99]
+                - generic [ref=e100]:
+                  - button [ref=e101] [cursor=pointer]
+                  - link "Browse All" [ref=e106] [cursor=pointer]:
+                    - /url: /new/templates
+              - generic [ref=e111]:
+                - link "Chat Template A persisted Next.js chat template for eve, built with shadcn/ui, Tailwind CSS, Streamdown, Better Auth, Drizzle, and Neon. Chat Template thumbnail" [ref=e113] [cursor=pointer]:
+                  - /url: /new/clone?demo-description=A%20persisted%20Next.js%20chat%20template%20for%20eve%2C%20built%20with%20shadcn%2Fui%2C%20Tailwind%20CSS%2C%20Streamdown%2C%20Better%20Auth%2C%20Drizzle%2C%20and%20Neon.&demo-image=https%3A%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2FYXYTquqpBmvVFbASdIvrC%2Fbb50d21ba7866882d90e25d842b6fc02%2Feve-chat-no-bg.png&demo-title=eve%20Chat%20Template&demo-url=https%3A%2F%2Fchat.eve.dev&env=EVE_CHAT_PASSWORD&envDescription=Choose%20a%20strong%20password%20to%20protect%20your%20agent%20(16%2B%20characters%20recommended).%20&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Feve-chat-template%2Fblob%2Fmain%2Fdocs%2Fsetup-and-deploy.md&from=templates&project-name=eve%20Chat%20Template&repository-name=eve-chat-template&repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Feve-chat-template
+                  - generic [ref=e114]:
+                    - heading "Chat Template" [level=3] [ref=e116]
+                    - generic [ref=e119]: A persisted Next.js chat template for eve, built with shadcn/ui, Tailwind CSS, Streamdown, Better Auth, Drizzle, and Neon.
+                  - img "Chat Template thumbnail" [ref=e121]
+                - link "Slack Agent An eve template for Slack agents with webhook handling, Vercel Connect, a starter agent, and an example tool ready to deploy on Vercel. Slack Agent thumbnail" [ref=e123] [cursor=pointer]:
+                  - /url: /new/clone?connect=%5B%7B%22type%22%3A%22slack%22%2C%22env%22%3A%22SLACK_CONNECTOR%22%2C%22triggers%22%3Atrue%2C%22triggerPath%22%3A%22%2Feve%2Fv1%2Fslack%22%7D%5D&demo-description=An%20eve%20template%20for%20Slack%20agents%20with%20webhook%20handling%2C%20Vercel%20Connect%2C%20a%20starter%20agent%2C%20and%20an%20example%20tool%20ready%20to%20deploy%20on%20Vercel.&demo-image=https%3A%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F2mBY0MIfBcFytW99mnvinL%2Ffc3917c584ab1389af305788b8050f5d%2Fimage__1_.png&demo-title=eve%20Slack%20Agent&demo-url=https%3A%2F%2Fvercel.com%2Fkb%2Fguide%2Feve-slack-agent-starter&project-name=eve%20Slack%20Agent&repository-name=eve-slack-agent&repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Feve-slack-agent-template%2Ftree%2Fmain&teamSlug=vercel
+                  - generic [ref=e124]:
+                    - heading "Slack Agent" [level=3] [ref=e126]
+                    - generic [ref=e129]: An eve template for Slack agents with webhook handling, Vercel Connect, a starter agent, and an example tool ready to deploy on Vercel.
+                  - img "Slack Agent thumbnail" [ref=e131]
+                - link "Express.js on Vercel Simple Express.js + Vercel example that serves html content, JSON data and simulates an API route. Express.js on Vercel thumbnail" [ref=e133] [cursor=pointer]:
+                  - /url: /new/clone?demo-description=Simple%20Express.js%20%2B%20Vercel%20example%20that%20serves%20html%20content%2C%20JSON%20data%20and%20simulates%20an%20API%20route.&demo-image=https%3A%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2FswUZt4R6yxCjtb5PaoSMT%2F250fb904d33f82b2b96769b964d7848b%2FFlagsmith_Dark__1_.png&demo-title=Express.js%20on%20Vercel&demo-url=https%3A%2F%2Fexpress-vercel-example-demo.vercel.app&from=templates&project-name=Express.js%20on%20Vercel&repository-name=express-js-on-vercel&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fsolutions%2Fexpress&skippable-integrations=1
+                  - generic [ref=e134]:
+                    - heading "Express.js on Vercel" [level=3] [ref=e136]
+                    - generic [ref=e139]: Simple Express.js + Vercel example that serves html content, JSON data and simulates an API route.
+                  - img "Express.js on Vercel thumbnail" [ref=e141]
+                - link "Next.js Boilerplate Get started with Next.js and React in seconds. Next.js Boilerplate thumbnail" [ref=e143] [cursor=pointer]:
+                  - /url: /new/clone?demo-description=Get%20started%20with%20Next.js%20and%20React%20in%20seconds.&demo-image=https%3A%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F1aHobcZ8H6WY48u5CMXlOe%2F13f7ae605e457bb132a12cf7db323f43%2Fnextjs-template_1.png&demo-title=Next.js%20Boilerplate&demo-url=https%3A%2F%2Fnextjs-template.vercel.app%2F&from=templates&project-name=Next.js%20Boilerplate&repository-name=nextjs-boilerplate&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fvercel%2Ftree%2Fmain%2Fexamples%2Fnextjs
+                  - generic [ref=e144]:
+                    - heading "Next.js Boilerplate" [level=3] [ref=e146]
+                    - generic [ref=e149]: Get started with Next.js and React in seconds.
+                  - img "Next.js Boilerplate thumbnail" [ref=e151]
+          - button "Only need Web Analytics or Speed Insights? Create an empty project." [ref=e154] [cursor=pointer]

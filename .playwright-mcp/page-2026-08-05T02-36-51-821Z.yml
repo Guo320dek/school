@@ -1,0 +1,82 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - link [ref=f3e7] [cursor=pointer]:
+        - /url: /home
+      - generic [ref=f3e11]: New Project
+      - generic [ref=f3e14]:
+        - link "Login" [ref=f3e15] [cursor=pointer]:
+          - /url: /login?next=%2Fnew
+        - link "Sign Up" [ref=f3e17] [cursor=pointer]:
+          - /url: /signup?next=%2Fnew
+    - main [ref=f3e19]:
+      - generic [ref=f3e21]:
+        - generic [ref=f3e22]:
+          - heading "Let's build something new" [level=2] [ref=f3e24]
+          - generic [ref=f3e27]:
+            - textbox "v0 Prompt or Git Repository URL" [ref=f3e29]:
+              - /placeholder: Ask v0 to build or enter a Git repository URL…
+            - generic [ref=f3e33]:
+              - button "Contact Form" [ref=f3e34] [cursor=pointer]
+              - button "Image Editor" [ref=f3e37] [cursor=pointer]
+              - button "Mini Game" [ref=f3e40] [cursor=pointer]
+              - button "Finance Calculator" [ref=f3e43] [cursor=pointer]
+              - button "Refresh suggestions" [ref=f3e46] [cursor=pointer]
+          - paragraph [ref=f3e50]:
+            - text: You can also drag and drop your project, or choose a
+            - link "file" [ref=f3e51] [cursor=pointer]
+            - text: or a
+            - link "folder" [ref=f3e52] [cursor=pointer]
+            - text: .
+        - generic [ref=f3e54]:
+          - generic [ref=f3e56]:
+            - heading "Import Git Repository" [level=3] [ref=f3e57]
+            - generic [ref=f3e60]:
+              - paragraph [ref=f3e61]:
+                - text: If you don't have a Vercel account, by proceeding, you agree to creating a Vercel account subject to our
+                - link "Terms of Service" [ref=f3e62] [cursor=pointer]:
+                  - /url: /legal/terms
+                - text: and
+                - link "Privacy Policy" [ref=f3e63] [cursor=pointer]:
+                  - /url: /legal/privacy-policy
+                - text: .
+              - generic [ref=f3e67]:
+                - button "Continue with GitHub" [ref=f3e68] [cursor=pointer]:
+                  - generic [ref=f3e72]:
+                    - generic [ref=f3e73]: Continue with
+                    - text: GitHub
+                - button "Continue with GitLab" [ref=f3e74] [cursor=pointer]:
+                  - generic [ref=f3e78]:
+                    - generic [ref=f3e79]: Continue with
+                    - text: GitLab
+                - button "Continue with Bitbucket" [ref=f3e80] [cursor=pointer]:
+                  - generic [ref=f3e84]:
+                    - generic [ref=f3e85]: Continue with
+                    - text: Bitbucket
+          - generic [ref=f3e88]:
+            - generic [ref=f3e89]:
+              - heading "Clone Template" [level=2] [ref=f3e90]
+              - generic [ref=f3e91]:
+                - button [ref=f3e92] [cursor=pointer]
+                - link "Browse All" [ref=f3e97] [cursor=pointer]:
+                  - /url: /new/templates
+            - generic [ref=f3e102]:
+              - link [ref=f3e104] [cursor=pointer]:
+                - /url: /templates/other/
+                - generic [ref=f3e106]:
+                  - heading [level=3]
+              - link [ref=f3e111] [cursor=pointer]:
+                - /url: /templates/other/
+                - generic [ref=f3e113]:
+                  - heading [level=3]
+              - link [ref=f3e118] [cursor=pointer]:
+                - /url: /templates/other/
+                - generic [ref=f3e120]:
+                  - heading [level=3]
+              - link [ref=f3e125] [cursor=pointer]:
+                - /url: /templates/other/
+                - generic [ref=f3e127]:
+                  - heading [level=3]
+  - alert [ref=f3e131]
