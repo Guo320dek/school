@@ -6,7 +6,7 @@ const http = require('http');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { WebSocketServer } = require('ws');
-const { getDb, ensureDb } = require('./db.cjs');
+const { getDb, ensureDb, DB_PATH } = require('./db.cjs');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'school-management-secret-key-2026';
 const TOKEN_EXPIRY = '24h';
@@ -25,23 +25,38 @@ function broadcast(table) {
 
 const distPath = path.join(__dirname, '..', 'dist');
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? [process.env.CORS_ORIGIN]
-  : ['https://school-production-80af.up.railway.app', 'http://localhost:3000'];
-app.use(cors({ origin: (origin, cb) => {
-  if (!origin || allowedOrigins.some(o => origin.startsWith(o))) return cb(null, true);
-  cb(new Error('Not allowed by CORS'));
-}}));
+// CORS: allow all origins. The app serves frontend & API from same origin,
+// but Vite's crossorigin attributes on script/link tags require CORS headers.
+app.use(cors({ origin: true }));
 app.use(express.json());
 
-// Health check
+// Health check — returns DB status, uptime, table info for Railway diagnostics
 app.get('/api/health', (_req, res) => {
+  const info = {
+    status: dbStatus === 'connected' ? 'ok' : 'degraded',
+    uptime: Math.round(process.uptime()),
+    node: process.version,
+    db: dbStatus,
+    dbError: dbError || null,
+    tables: 0,
+    staffCount: 0,
+  };
+  if (dbStatus !== 'connected') {
+    return res.status(503).json(info);
+  }
   try {
     const db = getDb();
     db.prepare('SELECT 1').get();
-    res.json({ status: 'ok', db: 'connected' });
+    const tables = db.prepare("SELECT COUNT(*) as c FROM sqlite_master WHERE type='table'").get();
+    info.tables = tables.c;
+    const staff = db.prepare('SELECT COUNT(*) as c FROM staff').get();
+    info.staffCount = staff.c;
+    res.json(info);
   } catch (e) {
-    res.status(500).json({ status: 'error', db: e.message });
+    info.status = 'error';
+    info.db = 'error';
+    info.dbError = e.message;
+    res.status(500).json(info);
   }
 });
 
@@ -224,6 +239,20 @@ app.delete('/api/courses/:id', courseApi.delete);
 
 // Timetable
 const timetableApi = crud('timetable_entries', 'id', ['classId','className','grade','dayOfWeek','period','subjectId','subjectName','teacherId','teacherName']);
+app.get('/api/timetable/conflicts', (req, res) => {
+  try {
+    const db = getDb();
+    const rows = db.prepare(`
+      SELECT t1.id, t1.teacherId, t1.teacherName, t1.dayOfWeek, t1.period,
+             t1.subjectName, t1.className as class1, t2.className as class2
+      FROM timetable_entries t1
+      JOIN timetable_entries t2 ON t1.teacherId = t2.teacherId
+        AND t1.dayOfWeek = t2.dayOfWeek AND t1.period = t2.period
+        AND t1.id < t2.id
+    `).all();
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 app.get('/api/timetable', timetableApi.list);
 app.get('/api/timetable/:id', timetableApi.get);
 app.post('/api/timetable', timetableApi.create);
@@ -494,22 +523,6 @@ app.get('/api/search', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Timetable conflicts summary
-app.get('/api/timetable/conflicts', (req, res) => {
-  try {
-    const db = getDb();
-    const rows = db.prepare(`
-      SELECT t1.id, t1.teacherId, t1.teacherName, t1.dayOfWeek, t1.period,
-             t1.subjectName, t1.className as class1, t2.className as class2
-      FROM timetable_entries t1
-      JOIN timetable_entries t2 ON t1.teacherId = t2.teacherId
-        AND t1.dayOfWeek = t2.dayOfWeek AND t1.period = t2.period
-        AND t1.id < t2.id
-    `).all();
-    res.json(rows);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
 // SPA fallback: serve index.html for all non-API routes
 app.get(/^(?!\/api\/).*/, (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'), (err) => {
@@ -527,29 +540,55 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);
 });
 
-// Wait for DB then start
-// Start listening immediately, init DB in background
-const srv = httpServer.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT} (DB initializing in background...)`);
+// ===== STARTUP: Open port first, init DB in background =====
+// Railway needs the port open immediately for health checks.
+// DB init errors are surfaced through /api/health instead of crashing.
+let dbStatus = 'initializing';
+let dbError = null;
+
+console.log(`[startup] NODE_ENV=${process.env.NODE_ENV || '(not set)'}`);
+console.log(`[startup] DB path: ${DB_PATH}`);
+console.log(`[startup] dist path: ${distPath}`);
+console.log(`[startup] dist exists: ${fs.existsSync(distPath)}`);
+
+// Open port immediately
+httpServer.listen(PORT, () => {
+  console.log(`[startup] Server listening on port ${PORT} (DB initializing...)`);
 });
-srv.on('error', (err) => {
-  console.error('Server failed to start:', err);
+httpServer.on('error', (err) => {
+  console.error(`[startup] Server listen error: ${err.message}`);
   process.exit(1);
 });
 
-ensureDb().then(() => {
-  console.log('dist path:', distPath);
-  console.log('dist exists:', fs.existsSync(distPath));
-  console.log('index.html exists:', fs.existsSync(path.join(distPath, 'index.html')));
-
-  try {
-    const db = getDb();
-    const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
-    console.log('Database OK - staff count:', staffCount.c);
-  } catch (e) {
-    console.error('Database init failed:', e.message);
+// Init DB in background with a timeout safety net
+const DB_INIT_TIMEOUT = 30000;
+const dbInitTimer = setTimeout(() => {
+  if (dbStatus === 'initializing') {
+    console.error('[startup] DB init timed out after 30s');
+    dbStatus = 'error';
+    dbError = 'DB initialization timed out';
   }
-}).catch((err) => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
-});
+}, DB_INIT_TIMEOUT);
+
+ensureDb()
+  .then(() => {
+    clearTimeout(dbInitTimer);
+    try {
+      const db = getDb();
+      const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all();
+      console.log(`[startup] DB tables: ${tables.map(t => t.name).join(', ')}`);
+      const staffCount = db.prepare('SELECT COUNT(*) as c FROM staff').get();
+      console.log(`[startup] DB OK – staff count: ${staffCount.c}`);
+      dbStatus = 'connected';
+    } catch (e) {
+      console.error(`[startup] DB verification failed: ${e.message}`);
+      dbStatus = 'error';
+      dbError = e.message;
+    }
+  })
+  .catch((err) => {
+    clearTimeout(dbInitTimer);
+    console.error(`[startup] ensureDb failed: ${err.message || err}`);
+    dbStatus = 'error';
+    dbError = err.message || String(err);
+  });
